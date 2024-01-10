@@ -35,7 +35,7 @@ Source = "https://github.com/IEB-BIODATA/pydwca"
 path = "src/dwca/__about__.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/dwca"]
+packages = ["src/*"]
 
 [tool.hatch.envs.default]
 dependencies = [
