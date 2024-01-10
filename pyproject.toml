@@ -34,6 +34,9 @@ Source = "https://github.com/IEB-BIODATA/pydwca"
 [tool.hatch.version]
 path = "src/dwca/__about__.py"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/dwca"]
+
 [tool.hatch.envs.default]
 dependencies = [
   "coverage[toml]>=6.5",
