@@ -9,7 +9,9 @@
 import os
 import sys
 
-sys.path.append(os.path.abspath(os.path.join(os.pardir, os.pardir, "src")))
+PATH = os.path.abspath(os.path.dirname(__file__))
+
+sys.path.append(os.path.abspath(os.path.join(PATH, os.pardir, os.pardir, "src")))
 
 project = 'Python Darwin Core Archive'
 copyright = '2024, IEB-BIODATA'
