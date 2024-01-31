@@ -34,4 +34,23 @@ exclude_patterns = []
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'pydata_sphinx_theme'
-html_static_path = ['_static']
+
+html_static_path = ['_static',]
+html_js_files = [
+    '_js/pypi-icon.js',
+]
+
+html_theme_options = {
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/IEB-BIODATA/pydwca",
+            "icon": "fa-brands fa-github",
+        },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/pydwca/",
+            "icon": "fa-custom fa-pypi",
+        },
+    ]
+}

@@ -133,7 +133,6 @@ class TestEMLAddress(TestXML):
             eml_address.references.system,
             "References system wrong initialized"
         )
-        reference_xml = reference_xml.replace('<address>', '<address scope="document">')
         self.assertEqualTree(
             et.fromstring(reference_xml),
             eml_address.to_element(),
@@ -154,7 +153,6 @@ class TestEMLAddress(TestXML):
             eml_address.references.system,
             "References system wrong initialized"
         )
-        reference_xml = reference_xml.replace('<address>', '<address scope="document">')
         self.assertEqualTree(
             et.fromstring(reference_xml),
             eml_address.to_element(),

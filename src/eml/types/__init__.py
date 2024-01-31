@@ -1,3 +1,4 @@
+from eml.types.no_tag_object import _NoTagObject
 from eml.types.extension_string import ExtensionString
 from eml.types.eml_object import EMLObject, Scope
 from eml.types.i18n_string import I18nString

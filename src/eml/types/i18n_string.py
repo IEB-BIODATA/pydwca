@@ -5,9 +5,10 @@ from lxml import etree as et
 
 from dwca.utils import Language
 from dwca.xml import XMLObject
+from eml.types import _NoTagObject
 
 
-class I18nString(XMLObject):
+class I18nString(_NoTagObject):
     """
     Internationalization of a string representing a text and its language.
 
@@ -50,7 +51,6 @@ class I18nString(XMLObject):
             else:
                 raise TypeError("Language must be a Language type or a valid string")
             self.__lang__ = language
-            self.__tag__ = None
         return
 
     @property
@@ -72,6 +72,28 @@ class I18nString(XMLObject):
         else:
             return False
 
+    def __gt__(self, other: Union[str, I18nString]) -> bool:
+        if isinstance(other, str):
+            return self.__value__ > other
+        elif isinstance(other, I18nString):
+            return str(self) > str(other)
+        else:
+            raise TypeError(f"'>' not supported between instances of 'I18n String' and '{type(other)}'")
+
+    def __ge__(self, other: Union[str, I18nString]) -> bool:
+        return self.__value__ > other or self.__value__ == other
+
+    def __lt__(self, other: Union[str, I18nString]) -> bool:
+        if isinstance(other, str):
+            return self.__value__ < other
+        elif isinstance(other, I18nString):
+            return str(self) < str(other)
+        else:
+            raise TypeError(f"'<' not supported between instances of 'I18n String' and '{type(other)}'")
+
+    def __le__(self, other: Union[str, I18nString]) -> bool:
+        return self.__value__ < other or self.__value__ == other
+
     @classmethod
     def parse(cls, element: et.Element, nmap: Dict) -> I18nString | None:
         """
@@ -91,7 +113,8 @@ class I18nString(XMLObject):
         """
         if element is None:
             return None
-        return I18nString(element.text, lang=element.get(f"{{{cls.NAMESPACES['xml']}}}lang", "eng"))
+        text = element.text if element.text is not None else ""
+        return I18nString(text, lang=element.get(f"{{{cls.NAMESPACES['xml']}}}lang", "eng"))
 
     def to_element(self) -> et.Element:
         """
@@ -107,40 +130,7 @@ class I18nString(XMLObject):
         RuntimeError
             If tag is not set before calling this method.
         """
-        if self.__tag__ is None:
-            raise RuntimeError("First, set tag to call `to_element`")
-        element = et.Element(self.__tag__)
+        element = super().to_element()
         element.text = self.__value__
         element.set(f"{{{self.__namespace__['xml']}}}lang", self.__lang__.name.lower())
         return element
-
-    @classmethod
-    def check_principal_tag(cls, tag: str, nmap: Dict) -> None:
-        """
-        Always return True due tag not existing until set
-
-        Parameters
-        ----------
-        tag : str
-            Any tag.
-        nmap : Dict
-            Namespace.
-        """
-        return
-
-    def set_tag(self, tag: str) -> None:
-        """
-        Set tag for the element output.
-
-        Parameters
-        ----------
-        tag : str
-            Tag of the XML output element.
-
-        Returns
-        -------
-        None
-            Set tag.
-        """
-        self.__tag__ = tag
-        return
