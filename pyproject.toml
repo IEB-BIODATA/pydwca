@@ -29,7 +29,7 @@ classifiers = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/IEB-BIODATA/pydwca#readme"
+Documentation = "https://pydwca.readthedocs.io/en/latest/index.html"
 Issues = "https://github.com/IEB-BIODATA/pydwca/issues"
 Source = "https://github.com/IEB-BIODATA/pydwca"
 
