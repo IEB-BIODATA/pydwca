@@ -44,6 +44,14 @@ eml.types.individual\_name module
    :undoc-members:
    :show-inheritance:
 
+eml.types.no\_tag\_object module
+--------------------------------
+
+.. automodule:: eml.types.no_tag_object
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 eml.types.organization\_name module
 -----------------------------------
 
@@ -72,14 +80,6 @@ eml.types.responsible\_party module
 -----------------------------------
 
 .. automodule:: eml.types.responsible_party
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.types.user\_id module
--------------------------
-
-.. automodule:: eml.types.user_id
    :members:
    :undoc-members:
    :show-inheritance:

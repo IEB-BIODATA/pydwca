@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, Any
 
 import lxml.etree as et
 from enum import Enum
@@ -27,9 +27,9 @@ class EMLObject(XMLObject, ABC):
     system : str, optional
         The data management system within which an identifier is in scope and therefore unique.
     referencing : bool, optional, default=False
-        Whether the resource is referencing another or is being defined
+        Whether the resource is referencing another or is being defined.
     references_system : str, optional
-        System attribute of reference
+        System attribute of reference.
     """
     def __init__(
             self, _id: str = None,
@@ -186,3 +186,35 @@ See https://eml.ecoinformatics.org/validation-and-content-references#id-and-scop
         else:
             self.__references__.set_tag("references")
             return self.__references__.to_element()
+
+    def _to_element_(self, element: et.Element) -> et.Element:
+        """
+        Add references values and common values to element.
+
+        Returns
+        -------
+        lxml.tree.Element
+            Object in the Element format.
+        """
+        references = self.generate_references_element()
+        element.set("scope", self.scope.name.lower())
+        if self.system is not None:
+            element.set("system", self.system)
+        if references is not None:
+            element.append(references)
+        else:
+            if self.id is not None:
+                element.set("id", self.id)
+        return element
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, EMLObject):
+            return (
+                    self.id == other.id and
+                    self.scope == other.scope and
+                    self.system == other.system and
+                    self.referencing == other.referencing and
+                    self.references == other.references
+            )
+        else:
+            return False

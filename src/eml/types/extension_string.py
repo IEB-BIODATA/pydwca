@@ -1,12 +1,13 @@
 from __future__ import annotations
+
 from typing import Dict, Union
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from eml.types import _NoTagObject
 
 
-class ExtensionString(XMLObject):
+class ExtensionString(_NoTagObject):
     """
     Extension string representing a string value with extra attributes.
 
@@ -21,7 +22,6 @@ class ExtensionString(XMLObject):
         super().__init__()
         self.__value__ = value
         self.__system__ = system
-        self.__tag__ = None
         return
 
     @property
@@ -81,41 +81,8 @@ class ExtensionString(XMLObject):
         RuntimeError
             If tag is not set before calling this method.
         """
-        if self.__tag__ is None:
-            raise RuntimeError("First, set tag to call `to_element`")
-        element = et.Element(self.__tag__)
+        element = super().to_element()
         if self.__system__ is not None:
             element.set("system", self.__system__)
         element.text = self.__value__
         return element
-
-    @classmethod
-    def check_principal_tag(cls, tag: str, nmap: Dict) -> None:
-        """
-        Always return True due tag not existing until set.
-
-        Parameters
-        ----------
-        tag : str
-            Any tag.
-        nmap : Dict
-            Namespace.
-        """
-        return
-
-    def set_tag(self, tag: str) -> None:
-        """
-        Set tag for the element output.
-
-        Parameters
-        ----------
-        tag : str
-            Tag of the XML output element.
-
-        Returns
-        -------
-        None
-            Set tag.
-        """
-        self.__tag__ = tag
-        return

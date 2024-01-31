@@ -1,17 +1,19 @@
+import logging
 import os
 import unittest
 import lxml.etree as et
 
-from eml.types import ResponsibleParty
+from eml.types import ResponsibleParty, EMLAddress
 from test_xml.test_xml import TestXML
 
 
 class TestResponsibleParty(TestXML):
     def setUp(self) -> None:
+        logging.getLogger().setLevel(logging.DEBUG)
         with open(os.path.join(os.pardir, "example_data", "eml.xml"), "r", encoding="utf-8") as file:
             content = file.read()
         base_file = et.fromstring(content)
-        self.nmap = base_file.nmap
+        self.nmap = base_file.nsmap
         self.dataset_xml = base_file.find("dataset", namespaces=base_file.nsmap)
         return
 
@@ -20,9 +22,9 @@ class TestResponsibleParty(TestXML):
         text = et.tostring(xml, pretty_print=True).decode("utf-8")
         resp_party = ResponsibleParty.from_string(text)
         self.assertEqual("Rees, T. (compiler)", resp_party.organization_name, "Error on parsing organization name")
-        self.assertEqual("info@irmng.org", resp_party.mail, "Error on parsing electronic mail address")
-        self.assertEqual(None, resp_party.address, "Error on parsing address")
-        self.assertEqual("https://www.irmng.org", resp_party.url, "Error on parsing online url")
+        self.assertEqual("info@irmng.org", resp_party.mail[0], "Error on parsing electronic mail address")
+        self.assertEqual(EMLAddress(country="", city=""), resp_party.address[0], "Error on parsing address")
+        self.assertEqual("https://www.irmng.org", resp_party.url[0], "Error on parsing online url")
         self.assertRaises(
             RuntimeError,
             resp_party.to_element
@@ -39,9 +41,13 @@ class TestResponsibleParty(TestXML):
             resp_party.organization_name,
             "Error on parsing organization name"
         )
-        self.assertEqual("info@irmng.org", resp_party.mail, "Error on parsing electronic mail address")
-        self.assertEqual(None, resp_party.address, "Error on parsing address")
-        self.assertEqual("https://www.irmng.org", resp_party.url, "Error on parsing online url")
+        self.assertEqual("info@irmng.org", resp_party.mail[0], "Error on parsing electronic mail address")
+        self.assertEqual(
+            EMLAddress(city="Ostend", postal_code="8400", country="BE"),
+            resp_party.address[0],
+            "Error on parsing address"
+        )
+        self.assertEqual("https://www.irmng.org", resp_party.url[0], "Error on parsing online url")
         resp_party.set_tag("metadataProvider")
         self.assertEqualTree(et.fromstring(text), resp_party.to_element(), "Metadata Provider error on to element")
 
@@ -49,14 +55,14 @@ class TestResponsibleParty(TestXML):
         xml = self.dataset_xml.find("associatedParty", namespaces=self.nmap)
         text = et.tostring(xml, pretty_print=True).decode("utf-8")
         resp_party = ResponsibleParty.from_string(text)
-        self.assertEqual("Vandepitte, L", str(resp_party.individual_name), "Error on parsing individual name")
+        self.assertEqual("Vandepitte, L.", str(resp_party.individual_name), "Error on parsing individual name")
         self.assertEqual(
             "Vlaams Instituut voor de Zee",
             resp_party.organization_name,
             "Error on parsing organization name"
         )
-        self.assertEqual("leen.vandepitte@vliz.be", resp_party.mail, "Error on parsing electronic mail address")
-        self.assertEqual(None, resp_party.address, "Error on parsing address")
+        self.assertEqual("leen.vandepitte@vliz.be", resp_party.mail[0], "Error on parsing electronic mail address")
+        self.assertEqual(EMLAddress(country="Belgium"), resp_party.address[0], "Error on parsing address")
 
     def test_reference_resp_party(self):
         reference_xml = """
@@ -71,6 +77,7 @@ class TestResponsibleParty(TestXML):
             eml_resp_party.references.system,
             "References system wrong initialized"
         )
+        eml_resp_party.set_tag("creator")
         self.assertEqualTree(
             et.fromstring(reference_xml),
             eml_resp_party.to_element(),
@@ -83,17 +90,22 @@ class TestResponsibleParty(TestXML):
     <references system="http://gbif.org">1</references>
 </creator>
         """
-        eml_dataset = ResponsibleParty.from_string(reference_xml)
-        self.assertEqual("1", eml_dataset.id, "Id set incorrectly")
-        self.assertTrue(eml_dataset.referencing, "Referencing wrong initialized")
+        eml_resp_party = ResponsibleParty.from_string(reference_xml)
+        self.assertEqual("1", eml_resp_party.id, "Id set incorrectly")
+        self.assertTrue(eml_resp_party.referencing, "Referencing wrong initialized")
         self.assertEqual(
             "http://gbif.org",
-            eml_dataset.references.system,
+            eml_resp_party.references.system,
             "References system wrong initialized"
         )
+        self.assertRaises(
+            RuntimeError,
+            eml_resp_party.to_element
+        )
+        eml_resp_party.set_tag("creator")
         self.assertEqualTree(
             et.fromstring(reference_xml),
-            eml_dataset.to_element(),
+            eml_resp_party.to_element(),
             "Wrong referrer to element"
         )
 
