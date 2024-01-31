@@ -1,13 +1,15 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-requirements-txt"]
 build-backend = "hatchling.build"
 
 [project]
 name = "pydwca"
-version = "0.0.1"
+version = "0.0.5"
+dynamic = ["dependencies"]
 description = 'Python library to read, parse and write Darwin Core Archive files'
 readme = "README.md"
 requires-python = ">=3.8"
+license = "MPL-2.0"
 license-files = { paths = ["LICENSE"] }
 keywords = []
 authors = [
@@ -15,6 +17,7 @@ authors = [
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
@@ -24,7 +27,6 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
 
 [project.urls]
 Documentation = "https://github.com/IEB-BIODATA/pydwca#readme"
@@ -36,6 +38,9 @@ path = "src/dwca/__about__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/*"]
+
+[tool.hatch.metadata.hooks.requirements_txt]
+files = ["requirements.txt"]
 
 [tool.hatch.envs.default]
 dependencies = [
