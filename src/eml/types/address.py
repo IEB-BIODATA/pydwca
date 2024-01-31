@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Dict, Union, List
+import logging
+from typing import Dict, Union, List, Any
 
 from lxml import etree as et
 
@@ -131,7 +132,6 @@ class EMLAddress(EMLObject):
             referencing=True,
             references_system=references.get("system", None)
         )
-        address.__namespace__ = nmap
         return address
 
     @classmethod
@@ -148,7 +148,7 @@ class EMLAddress(EMLObject):
 
         Returns
         -------
-        EMLObject
+        EMLAddress
             Object parsed.
         """
         delivery_points = list()
@@ -164,7 +164,6 @@ class EMLAddress(EMLObject):
             postal_code=I18nString.parse(element.find("postalCode", nmap), nmap),
             country=I18nString.parse(element.find("country", nmap), nmap)
         )
-        address.__namespace__ = nmap
         return address
 
     def to_element(self) -> et.Element:
@@ -177,15 +176,9 @@ class EMLAddress(EMLObject):
             Object in the Element format.
         """
         address = super().to_element()
+        address = self._to_element_(address)
         references = self.generate_references_element()
-        address.set("scope", self.scope.name.lower())
-        if self.system is not None:
-            address.set("system", self.system)
-        if references is not None:
-            address.append(references)
-        else:
-            if self.id is not None:
-                address.set("id", self.id)
+        if references is None:
             for delivery_point in self.delivery_point:
                 delivery_point.set_tag("deliveryPoint")
                 address.append(delivery_point.to_element())
@@ -202,3 +195,28 @@ class EMLAddress(EMLObject):
                 self.country.set_tag("country")
                 address.append(self.country.to_element())
         return address
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, EMLAddress):
+            if not super().__eq__(other):
+                logging.debug(f"EML principal attributes are not equal between `{repr(self)}` and `{repr(other)}`")
+                return False
+            elif sorted(self.delivery_point) != sorted(other.delivery_point):
+                logging.debug(f"Delivery points are not equal between `{repr(self)}` and `{repr(other)}`")
+                return False
+            elif self.city != other.city:
+                logging.debug(f"Cities are not equal between `{repr(self)}` and `{repr(other)}`")
+                return False
+            elif self.administrative_area != other.administrative_area:
+                logging.debug(f"Administrative areas are not equal between `{repr(self)}` and `{repr(other)}`")
+                return False
+            elif self.postal_code != other.postal_code:
+                logging.debug(f"Postal codes are not equal between `{repr(self)}` and `{repr(other)}`")
+                return False
+            elif self.country != other.country:
+                logging.debug(f"Countries are not equal between `{repr(self)}` and `{repr(other)}`")
+                return False
+            else:
+                return True
+        else:
+            return False

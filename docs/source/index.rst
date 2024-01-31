@@ -10,7 +10,8 @@ Welcome to Python Darwin Core Archive's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   install
+   modules
 
 Indices and tables
 ==================

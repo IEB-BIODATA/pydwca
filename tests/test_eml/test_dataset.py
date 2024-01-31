@@ -54,7 +54,6 @@ class TestEMLDataset(TestXML):
         self.assertEqual("A Title", eml_dataset.title, "Title not set")
         self.assertEqual("Un Título Diferente", eml_dataset.extra_titles[1], "Extra titles set in wrong order")
         self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language")
-        dataset_xml = dataset_xml.replace('<title>', '<title xml:lang="eng">')
         self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element")
 
     def test_alternative_identifier(self):
@@ -91,7 +90,6 @@ class TestEMLDataset(TestXML):
                          "Alternative id set incorrectly")
         self.assertEqual("VCR3465", eml_dataset.alternative_identifiers[1], "Alternative system set incorrectly")
         self.assertIsNone(eml_dataset.alternative_identifiers[1].system, "Alternative system set incorrectly")
-        dataset_xml = dataset_xml.replace('<title>', '<title xml:lang="eng">')
         self.assertEqualTree(
             et.fromstring(dataset_xml),
             eml_dataset.to_element(),
