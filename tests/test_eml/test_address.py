@@ -7,6 +7,10 @@ from test_xml.test_xml import TestXML
 
 
 class TestEMLAddress(TestXML):
+    DEFAULT_TAGS = {
+        "scope": "document",
+    }
+
     EXAMPLE_XML = """
 <address id="1" scope="system" system="https://ieb-chile.cl">
     <deliveryPoint xml:lang="esp">Calle Las Palmeras #3425</deliveryPoint>
