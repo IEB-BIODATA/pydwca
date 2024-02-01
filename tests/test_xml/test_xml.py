@@ -6,20 +6,19 @@ import lxml.etree as et
 
 
 class TestXML(unittest.TestCase):
+    DEFAULT_TAGS = {}
+
     def assertEqualTree(self, expected: et.ElementTree, actual: et.ElementTree, msg: str) -> None:
         try:
             self.assertEqual(expected.tag, actual.tag, "Not same tag")
-            # scope = document is same as None
+            # Add default values:
             exp_attributes = deepcopy(expected.attrib)
-            if "scope" not in exp_attributes:
-                exp_attributes["scope"] = "document"
-            if "{http://www.w3.org/XML/1998/namespace}lang" not in exp_attributes:
-                exp_attributes["{http://www.w3.org/XML/1998/namespace}lang"] = "eng"
             actual_attributes = deepcopy(actual.attrib)
-            if "scope" not in actual_attributes:
-                actual_attributes["scope"] = "document"
-            if "{http://www.w3.org/XML/1998/namespace}lang" not in actual_attributes:
-                actual_attributes["{http://www.w3.org/XML/1998/namespace}lang"] = "eng"
+            for key, value in self.DEFAULT_TAGS.items():
+                if key not in exp_attributes:
+                    exp_attributes[key] = value
+                if key not in actual_attributes:
+                    actual_attributes[key] = value
             self.assertEqual(exp_attributes, actual_attributes, "Not same attributes")
             expected_tags = set([child.tag for child in expected])
             actual_tags = set([child.tag for child in actual])
