@@ -8,6 +8,12 @@ from test_xml.test_xml import TestXML
 
 
 class TestResponsibleParty(TestXML):
+    DEFAULT_TAGS = {
+        "{http://www.w3.org/XML/1998/namespace}lang": "eng",
+        "scope": "document",
+        "phonetype": "voice",
+    }
+
     def setUp(self) -> None:
         logging.getLogger().setLevel(logging.DEBUG)
         with open(os.path.join(os.pardir, "example_data", "eml.xml"), "r", encoding="utf-8") as file:
@@ -21,10 +27,10 @@ class TestResponsibleParty(TestXML):
         xml = self.dataset_xml.find("creator", namespaces=self.nmap)
         text = et.tostring(xml, pretty_print=True).decode("utf-8")
         resp_party = ResponsibleParty.from_string(text)
-        self.assertEqual("Rees, T. (compiler)", resp_party.organization_name, "Error on parsing organization name")
-        self.assertEqual("info@irmng.org", resp_party.mail[0], "Error on parsing electronic mail address")
+        self.assertEqual("Creator Organization", resp_party.organization_name, "Error on parsing organization name")
+        self.assertEqual("info@creator.org", resp_party.mail[0], "Error on parsing electronic mail address")
         self.assertEqual(EMLAddress(country="", city=""), resp_party.address[0], "Error on parsing address")
-        self.assertEqual("https://www.irmng.org", resp_party.url[0], "Error on parsing online url")
+        self.assertEqual("https://example.creator.org", resp_party.url[0], "Error on parsing online url")
         self.assertRaises(
             RuntimeError,
             resp_party.to_element
@@ -37,17 +43,22 @@ class TestResponsibleParty(TestXML):
         text = et.tostring(xml, pretty_print=True).decode("utf-8")
         resp_party = ResponsibleParty.from_string(text)
         self.assertEqual(
-            "WoRMS Data Management Team (DMT)",
+            "Metadata Provider Organization",
             resp_party.organization_name,
             "Error on parsing organization name"
         )
-        self.assertEqual("info@irmng.org", resp_party.mail[0], "Error on parsing electronic mail address")
         self.assertEqual(
-            EMLAddress(city="Ostend", postal_code="8400", country="BE"),
+            "Metadata Manager",
+            resp_party.position_name,
+            "Error on parsing position name"
+        )
+        self.assertEqual("info@metadata.org", resp_party.mail[0], "Error on parsing electronic mail address")
+        self.assertEqual(
+            EMLAddress(city="Ostend", postal_code="4568", country="BE"),
             resp_party.address[0],
             "Error on parsing address"
         )
-        self.assertEqual("https://www.irmng.org", resp_party.url[0], "Error on parsing online url")
+        self.assertEqual("https://example.metadata.org", resp_party.url[0], "Error on parsing online url")
         resp_party.set_tag("metadataProvider")
         self.assertEqualTree(et.fromstring(text), resp_party.to_element(), "Metadata Provider error on to element")
 
@@ -55,14 +66,18 @@ class TestResponsibleParty(TestXML):
         xml = self.dataset_xml.find("associatedParty", namespaces=self.nmap)
         text = et.tostring(xml, pretty_print=True).decode("utf-8")
         resp_party = ResponsibleParty.from_string(text)
-        self.assertEqual("Vandepitte, L.", str(resp_party.individual_name), "Error on parsing individual name")
+        self.assertEqual("Doe, J.", str(resp_party.individual_name), "Error on parsing individual name")
         self.assertEqual(
-            "Vlaams Instituut voor de Zee",
+            "Custodian Steward",
             resp_party.organization_name,
             "Error on parsing organization name"
         )
-        self.assertEqual("leen.vandepitte@vliz.be", resp_party.mail[0], "Error on parsing electronic mail address")
+        self.assertEqual("info@custodian.org", resp_party.mail[0], "Error on parsing electronic mail address")
         self.assertEqual(EMLAddress(country="Belgium"), resp_party.address[0], "Error on parsing address")
+        self.assertEqual("486554390", resp_party.phone[0], "Error on parsing phone")
+        resp_party.set_tag("associatedParty")
+        text = text.replace("<role>custodianSteward</role>", "")
+        self.assertEqualTree(et.fromstring(text), resp_party.to_element(), "Wrong to element")
 
     def test_reference_resp_party(self):
         reference_xml = """
