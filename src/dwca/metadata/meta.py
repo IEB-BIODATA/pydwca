@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List, Dict
 
-import lxml.etree as et
+from lxml import etree as et
 
 from dwca.metadata import Core, Extension
 from dwca.xml import XMLObject

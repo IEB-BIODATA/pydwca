@@ -84,6 +84,22 @@ eml.types.responsible\_party module
    :undoc-members:
    :show-inheritance:
 
+eml.types.section module
+------------------------
+
+.. automodule:: eml.types.section
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+eml.types.text\_type module
+---------------------------
+
+.. automodule:: eml.types.text_type
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

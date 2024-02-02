@@ -1,5 +1,5 @@
 import unittest
-import lxml.etree as et
+from lxml import etree as et
 
 from dwca.utils import Language
 from eml.types import I18nString, ExtensionString

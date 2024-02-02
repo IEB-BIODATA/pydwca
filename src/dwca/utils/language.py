@@ -7,6 +7,16 @@ from dwca.xml import XMLObject
 
 
 class Language(Enum):
+    """
+    The language of the resource.
+
+    Attributes
+    ----------
+    ESP : str
+        Spanish language
+    ENG : str
+        English language
+    """
     ESP = "Spanish"
     ENG = "English"
 

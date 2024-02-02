@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from typing import Dict, Union, List
 
-import lxml.etree as et
+from lxml import etree as et
+import datetime as dt
 
 from dwca.utils import Language
-from eml.types import Scope
-from eml.resources import Resource
-from eml.types import ExtensionString, I18nString
+from eml.resources import Resource, EMLKeywordSet, EMLLicense
+from eml.types import ExtensionString, I18nString, EMLTextType
+from eml.types import Scope, ResponsibleParty
 
 
 class EMLDataset(Resource):
@@ -16,43 +17,66 @@ class EMLDataset(Resource):
 
     Parameters
     ----------
+    titles : List[I18nString or str]
+        A brief description of the resource. At least one must be given.
+    creators : List[ResponsibleParty]
+        The people or organizations who created this resource. At least one must be given.
     _id : str, optional
         Identifier of the dataset.
     system : str, optional
         The data management system within which an identifier is in scope and therefore unique.
     scope : str, optional
         The scope of the identifier.
-    title : I18nString
-        A brief description of the resource.
-    creator : Placeholder
-        The people or organizations who created this resource.
-    short_name : str, optional
-        A short name that describes the resource, sometimes a filename.
-    alternative_identifier : List[ExtendedString], ExtendedString, optional
-        An or a list of secondary identifier for this entity.
-    other_titles : List[I18nString]
-        Others brief description of the resource.
-    other_creators : List[Placeholder]
-        Others creators of this resource.
     referencing : bool, optional, default=False
         Whether the resource is referencing another or is being defined.
     references_system : str, optional
         System attribute of reference.
+    alternative_identifier : List[ExtendedString], ExtendedString, optional
+        An or a list of secondary identifier for this entity.
+    short_name : str, optional
+        A short name that describes the resource, sometimes a filename.
+    metadata_providers : List[ResponsibleParty], optional
+        The people or organizations who created provided documentation and other metadata for this resource.
+    associated_parties : List[ResponsibleParty], optional
+        Other people or organizations who should be associated with this resource.
+    publication_date : date, optional
+        The publication date of the resource.
+    language : Language or str, optional
+        The language in which the resource is written.
+    series : str, optional
+        The series from which the resource came.
+    abstract : EMLTextType, optional
+        A brief overview of the resource.
+    keyword_set : List[EMLKeywordSet], optional
+        Keyword information that describes the resource.
+    additional_info: List[EMLTextType], optional
+        Any extra information pertinent to the resource.
+    intellectual_rights : EMLTextType, optional
+        Intellectual property rights regarding usage and licensing of this resource.
     """
     PRINCIPAL_TAG = "dataset"
     """str: Principal tag `dataset`"""
 
     def __init__(
-            self, _id: str = None, scope: Scope = Scope.DOCUMENT, system: str = None, title: I18nString = None,
-            short_name: str = None, alternative_identifier: Union[List[ExtensionString], ExtensionString] = None,
-            other_titles: List[I18nString] = None, referencing: bool = False, references_system: str = None
+            self, titles: List[Union[I18nString, str]], creators: List[ResponsibleParty],
+            _id: str = None, scope: Scope = Scope.DOCUMENT, system: str = None,
+            referencing: bool = False, references_system: str = None,
+            alternative_identifier: Union[List[ExtensionString], ExtensionString] = None,
+            short_name: str = None, metadata_providers: List[ResponsibleParty] = None,
+            associated_parties: List[ResponsibleParty] = None, publication_date: dt.date = None,
+            language: Union[Language, str] = Language.ENG, series: str = None,
+            abstract: str = EMLTextType, keyword_set: List[EMLKeywordSet] = None,
+            additional_info: List[EMLTextType] = None, intellectual_rights: EMLTextType = None,
+            licence: List[EMLLicense] = None,
     ) -> None:
         super().__init__(_id, scope, system, referencing, references_system)
         self.__system__ = system
         self.__scope__ = scope
         self.__short_name__ = short_name
-        self.__title__ = title
-        self.__creator__ = None
+        self.__titles__: List[I18nString] = list()
+        for title in titles:
+            self.__titles__.append(I18nString(title))
+        self.__creators__: List[ResponsibleParty] = creators
         self.__metadata_provider__ = None
         self.__alternative_identifier__: List[ExtensionString] = list()
         if alternative_identifier is not None:
@@ -61,15 +85,12 @@ class EMLDataset(Resource):
             else:
                 self.__alternative_identifier__.append(alternative_identifier)
         self.__extra_titles__ = list()
-        if other_titles is not None:
-            for other_title in other_titles:
-                self.__extra_titles__.append(other_title)
         return
 
     @property
     def title(self) -> I18nString:
         """I18nString: A brief description of the resource"""
-        return self.__title__
+        return self.__titles__[0]
 
     @property
     def short_name(self) -> str:
@@ -149,10 +170,9 @@ class EMLDataset(Resource):
             element.get("id", None),
             element.get("system", None),
             element.get("scope", None),
-            title=the_title,
+            titles=[the_title],
             short_name=short_name,
             alternative_identifier=alternative_identifier,
-            other_titles=extra_titles,
         )
 
     def to_element(self) -> et.Element:

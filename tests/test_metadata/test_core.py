@@ -1,7 +1,7 @@
 import os.path
 import unittest
 
-import lxml.etree as et
+from lxml import etree as et
 
 from dwca.metadata import Core
 from test_xml.test_xml import TestXML

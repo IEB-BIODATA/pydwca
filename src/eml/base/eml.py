@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Dict
 
-import lxml.etree as et
+from lxml import etree as et
 
 from dwca.utils import Language
 from dwca.xml import XMLObject

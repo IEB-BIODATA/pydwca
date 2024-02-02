@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import Dict
 
-import lxml.etree as et
+from lxml import etree as et
 
 from dwca.xml import XMLObject
 
