@@ -7,12 +7,19 @@ from eml.types import ResponsibleParty, EMLAddress
 from test_xml.test_xml import TestXML
 
 
-class TestResponsibleParty(TestXML):
+class TestDistribution(TestXML):
     DEFAULT_TAGS = {
         "{http://www.w3.org/XML/1998/namespace}lang": "eng",
-        "scope": "document",
         "phonetype": "voice",
     }
+    TEXT_XML = """
+<distribution id="1" scope="document">
+    <online>{1,1}</online>
+    <offline>{1,1}</offline>
+    <inline>{1,1}</inline>
+    <references system="">{1,1}</references>
+</distribution>
+    """
 
     def setUp(self) -> None:
         logging.getLogger().setLevel(logging.DEBUG)

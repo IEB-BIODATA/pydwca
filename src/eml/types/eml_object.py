@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 
-import lxml.etree as et
+from lxml import etree as et
 from enum import Enum
 
 from dwca.xml import XMLObject
