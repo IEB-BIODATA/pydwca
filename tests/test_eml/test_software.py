@@ -1,6 +1,6 @@
 import unittest
 
-from eml.software import EMLSoftware
+from eml.resources import EMLSoftware
 from test_xml.test_xml import TestXML
 
 

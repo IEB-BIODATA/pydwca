@@ -3,13 +3,15 @@ import unittest
 from lxml import etree as et
 
 from dwca.utils import Language
-from eml.dataset import EMLDataset
+from eml.resources import EMLDataset
 from test_xml.test_xml import TestXML
+
+PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestEMLDataset(TestXML):
     def setUp(self) -> None:
-        with open(os.path.join(os.pardir, "example_data", "eml.xml"), "r", encoding="utf-8") as file:
+        with open(os.path.join(PATH, os.pardir, "example_data", "eml.xml"), "r", encoding="utf-8") as file:
             content = file.read()
         base_file = et.fromstring(content)
         self.dataset_xml = base_file.find("dataset", namespaces=base_file.nsmap)

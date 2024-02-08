@@ -4,81 +4,115 @@ from typing import Dict
 
 from lxml import etree as et
 
-from eml.types import EMLObject
+from eml.resources.distribution import EMLOnline, EMLOffline, EMLInline
+from eml.types import EMLObject, Scope
 
 
 class EMLDistribution(EMLObject):
     """
-    Information identifying a well-known license for the metadata and data.
+    Information on how the resource is distributed online and offline.
 
     Parameters
     ----------
-    name : str
-        The official name of the license.
-    url : str, optional
-        The persistent URL for the license.
-    identifier : str, optional
-        License Identifier.
+    _id : str, optional
+        Unique identifier within the scope.
+    scope : Scope, default DOCUMENT
+        The scope of the identifier.
+    system : str, optional
+        The data management system within which an identifier is in scope and therefore unique.
+    referencing : bool, optional, default=False
+        Whether the resource is referencing another or is being defined.
+    references_system : str, optional
+        System attribute of reference.
+    online : EMLOnline, optional
+        Online distribution information.
+    offline : EMLOffline, optional
+        Data are available offline.
+    inline : EMLInline, optional
+        Data distributed inline in the metadata.
     """
-    PRINCIPAL_TAG = "licensed"
-    """str: Principal tag `licensed`"""
+    PRINCIPAL_TAG = "distribution"
+    """str: Principal tag `distribution`"""
 
-    def __init__(self, name: str, url: str = None, identifier: str = None) -> None:
-        super().__init__()
-        self.__name__ = name
-        self.__url__ = url
-        self.__id__ = identifier
+    def __init__(self, _id: str = None, scope: Scope = Scope.DOCUMENT, system: str = None, referencing: bool = False,
+                 references_system: str = None, online: EMLOnline = None, offline: EMLOffline = None,
+                 inline: EMLInline = None) -> None:
+        super().__init__(_id, scope, system, referencing, references_system)
+        self.__online__ = online
+        self.__offline__ = offline
+        self.__inline__ = inline
         return
 
     @property
-    def name(self) -> str:
-        """str: The official name of the license."""
-        return self.__name__
+    def online(self) -> EMLOnline:
+        """EMLOnline: Online distribution information."""
+        return self.__online__
 
     @property
-    def url(self) -> str:
-        """str: The persistent URL for the license."""
-        return self.__url__
+    def offline(self) -> EMLOffline:
+        """EMLOffline: Data are available offline."""
+        return self.__offline__
 
     @property
-    def id(self) -> str:
-        """str: License Identifier."""
-        return self.__id__
+    def inline(self) -> EMLInline:
+        """EMLInline: Data distributed inline in the metadata."""
+        return self.__inline__
 
     @classmethod
-    def parse(cls, element: et.Element, nmap: Dict) -> EMLDistribution | None:
+    def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLDistribution:
         """
-        Generate an EMLDistribution object from a given XML element.
+        Generate an EML Distribution referencing another EML Distribution.
 
         Parameters
         ----------
         element : lxml.etree.Element
-            XML element to parse
+            XML element to parse with references object.
         nmap : Dict
-            Namespace
+            Namespace.
 
         Returns
         -------
         EMLDistribution
-            Parsed object
+            Object parsed that reference another.
         """
-        if element is None:
-            return None
-        name_elem = element.find("licenseName", nmap)
-        name = name_elem.text if name_elem.text is not None else ""
-        url_elem = element.find("url", nmap)
-        if url_elem is not None:
-            url = url_elem.text if url_elem.text is not None else ""
-        else:
-            url = None
-        id_elem = element.find("identifier", nmap)
-        if id_elem is not None:
-            identifier = id_elem.text if id_elem.text is not None else ""
-        else:
-            identifier = None
-        licence = EMLDistribution(name, url=url, identifier=identifier)
-        licence.__namespace__ = nmap
-        return licence
+        references = element.find("references", nmap)
+        return EMLDistribution(
+            _id=references.text,
+            scope=cls.get_scope(element),
+            system=element.get("system", None),
+            referencing=True,
+            references_system=references.get("system", None)
+        )
+
+    @classmethod
+    def get_no_referrer(cls, element: et.Element, nmap: Dict) -> EMLDistribution:
+        """
+        Generate an EML Distribution that do not reference another.
+
+        Parameters
+        ----------
+        element : lxml.etree.Element
+            XML element to parse.
+        nmap : Dict
+            Namespace.
+
+        Returns
+        -------
+        EMLObject
+            Object parsed.
+        """
+        online = EMLOnline.parse(element.find("online", nmap), nmap)
+        offline = EMLOffline.parse(element.find("offline", nmap), nmap)
+        inline = EMLInline.parse(element.find("inline", nmap), nmap)
+        return EMLDistribution(
+            _id=element.get("id", None),
+            scope=cls.get_scope(element),
+            system=element.get("system", None),
+            referencing=False,
+            online=online,
+            offline=offline,
+            inline=inline,
+        )
 
     def to_element(self) -> et.Element:
         """
@@ -89,16 +123,12 @@ class EMLDistribution(EMLObject):
         lxml.etree.Element
             XML element object
         """
-        license_elem = super().to_element()
-        license_name = self.object_to_element("licenseName")
-        license_name.text = self.name
-        license_elem.append(license_name)
-        if self.url is not None:
-            url = self.object_to_element("url")
-            url.text = self.url
-            license_elem.append(url)
-        if self.id is not None:
-            identifier = self.object_to_element("identifier")
-            identifier.text = self.id
-            license_elem.append(identifier)
-        return license_elem
+        dist_elem = super().to_element()
+        dist_elem = self._to_element_(dist_elem)
+        if self.online is not None:
+            dist_elem.append(self.online.to_element())
+        if self.offline is not None:
+            dist_elem.append(self.offline.to_element())
+        if self.inline is not None:
+            dist_elem.append(self.inline.to_element())
+        return dist_elem

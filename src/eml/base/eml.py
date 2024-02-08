@@ -7,11 +7,7 @@ from lxml import etree as et
 from dwca.utils import Language
 from dwca.xml import XMLObject
 from eml.base import EMLMetadata
-from eml.citation import EMLCitation
-from eml.dataset import EMLDataset
-from eml.protocol import EMLProtocol
-from eml.software import EMLSoftware
-from eml.resources import EMLResource
+from eml.resources import EMLResource, EMLDataset, EMLCitation, EMLProtocol, EMLSoftware
 
 
 class EML(XMLObject):

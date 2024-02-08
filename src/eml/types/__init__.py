@@ -1,5 +1,6 @@
 from eml.types.no_tag_object import _NoTagObject
 from eml.types.extension_string import ExtensionString
+from eml.types.extension_uri import ExtensionURI
 from eml.types.eml_object import EMLObject, Scope
 from eml.types.i18n_string import I18nString
 from eml.types.organization_name import OrganizationName
@@ -10,3 +11,4 @@ from eml.types.phone import EMLPhone
 from eml.types.responsible_party import ResponsibleParty
 from eml.types.section import EMLSection
 from eml.types.text_type import EMLTextType
+from eml.types.semantic_annotation import SemanticAnnotation

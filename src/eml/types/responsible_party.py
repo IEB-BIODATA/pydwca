@@ -140,7 +140,7 @@ class ResponsibleParty(EMLObject, _NoTagObject):
     @classmethod
     def get_no_referrer(cls, element: et.Element, nmap: Dict) -> ResponsibleParty:
         """
-        Generate a Responsible Party that not reference another.
+        Generate a Responsible Party that do not reference another.
 
         Parameters
         ----------

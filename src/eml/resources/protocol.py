@@ -9,10 +9,14 @@ from eml.resources import Resource
 
 class EMLProtocol(Resource):
     """
-    EML Protocol Resource
+    EML Protocol Resource.
+
+    Other Parameters
+    ----------------
     """
-    def __init__(self) -> None:
-        super().__init__("None")
+    def __init__(self, **kwargs) -> None:
+        # To avoid initialization
+        super().__init__(referencing=True, **kwargs)
         raise NotImplementedError("Protocol EML class not implemented yet")
 
     @classmethod
@@ -37,7 +41,7 @@ class EMLProtocol(Resource):
     @classmethod
     def get_no_referrer(cls, element: et.Element, nmap: Dict) -> EMLProtocol:
         """
-        Generate an EML protocol that not reference another protocol.
+        Generate an EML protocol that do not reference another protocol.
 
         Parameters
         ----------
