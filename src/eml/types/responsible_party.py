@@ -1,11 +1,70 @@
 from __future__ import annotations
 
+from enum import Enum
 from typing import Dict, List, Union
 
 from lxml import etree as et
 
 from eml.types import EMLObject, _NoTagObject, Scope, IndividualName, OrganizationName, PositionName, EMLAddress, \
     EMLPhone, I18nString
+
+
+class Role(Enum):
+    """
+    The role the party played with respect to the resource.
+    """
+    AUTHOR = 0
+    CONTENT_PROVIDER = 1
+    CUSTODIAN_STEWARD = 2
+    DISTRIBUTOR = 3
+    EDITOR = 4
+    METADATA_PROVIDER = 5
+    ORIGINATOR = 6
+    POINT_OF_CONTACT = 7
+    PRINCIPAL_INVESTIGATOR = 8
+    PROCESSOR = 9
+    PUBLISHER = 10
+    USER = 11
+
+    def to_camel_case(self):
+        """
+        Converts name to camel case (eg: camelCase).
+
+        Returns
+        -------
+        str
+            Name of role in camel case.
+        """
+        words = self.name.split("_")
+        return "".join([
+            word.lower() if i == 0 else word.lower().capitalize()
+            for i, word in enumerate(words)
+        ])
+
+    @classmethod
+    def get_role(cls, value: str) -> Role:
+        """
+        Obtain the Role from the string with the role in camel case.
+
+        Parameters
+        ----------
+        value : str
+            Camel case value of a role.
+
+        Returns
+        -------
+        Role
+            Instance of Role.
+
+        Raises
+        ------
+        ValueError
+            Not a valid role.
+        """
+        for role in Role:
+            if role.to_camel_case() == value:
+                return role
+        raise ValueError(f"{value} not a valid Role.")
 
 
 class ResponsibleParty(EMLObject, _NoTagObject):
@@ -204,3 +263,23 @@ class ResponsibleParty(EMLObject, _NoTagObject):
                 url_elem.text = url
                 resp_party.append(url_elem)
         return resp_party
+
+    @classmethod
+    def get_role(cls, element: et.Element, nmap: Dict) -> Role:
+        """
+        Get role for an XML element.
+
+        Parameters
+        ----------
+        element : lxml.etree.Element
+            XML element with role on it.
+        nmap : Dict
+            Namespace.
+
+        Returns
+        -------
+        Role
+            Value of the role inside the XML element.
+        """
+        role_elem = element.find("role", nmap)
+        return Role.get_role(role_elem.text)

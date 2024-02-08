@@ -13,6 +13,8 @@ class EMLSoftware(Resource):
 
     Other Parameters
     ----------------
+    **kwargs : :class:`eml.resources.resource.Resource` parameters.
+        The parameters of every type of Resource.
     """
     def __init__(self, **kwargs) -> None:
         # To avoid initialization

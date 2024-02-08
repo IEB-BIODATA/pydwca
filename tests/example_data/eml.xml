@@ -52,7 +52,7 @@
         <country></country>
       </address>
       <electronicMailAddress></electronicMailAddress>
-      <role>owner</role>
+      <role>originator</role>
     </associatedParty>
     <associatedParty>
       <individualName>
@@ -66,9 +66,7 @@
       <electronicMailAddress></electronicMailAddress>
       <role>author</role>
     </associatedParty>
-    <pubDate>
-        2023-05-19
-    </pubDate>
+    <pubDate>2023-05-19</pubDate>
     <language>eng</language>
     <abstract>
       <para>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vitae diam nec eros interdum posuere. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam vel dui dignissim, aliquet felis ut, varius ligula. Ut condimentum sapien in felis posuere, eu aliquam enim lobortis. Vivamus sodales tortor at augue gravida feugiat. Aenean faucibus felis id aliquet euismod egestas.</para>
@@ -116,8 +114,14 @@
         </boundingCoordinates>
       </geographicCoverage>
       <temporalCoverage>
-        <beginDate><calendarDate>1758</calendarDate></beginDate>
-        <endDate><calendarDate>2023-05-19</calendarDate></endDate>
+        <rangeOfDates>
+          <beginDate>
+            <calendarDate>1758</calendarDate>
+          </beginDate>
+          <endDate>
+            <calendarDate>2023-05-19</calendarDate>
+          </endDate>
+        </rangeOfDates>
       </temporalCoverage>
     </coverage>
     <contact>

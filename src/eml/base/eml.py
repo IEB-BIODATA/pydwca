@@ -8,6 +8,7 @@ from dwca.utils import Language
 from dwca.xml import XMLObject
 from eml.base import EMLMetadata
 from eml.resources import EMLResource, EMLDataset, EMLCitation, EMLProtocol, EMLSoftware
+from eml.types import Scope
 
 
 class EML(XMLObject):
@@ -18,10 +19,12 @@ class EML(XMLObject):
     ----------
     package_id : str
         A globally unique identifier for the data package described by this EML that can be used to cite it elsewhere.
-    system : str
-        The data management system within which an identifier is in scope and therefore unique.
     scope : str, optional
         The scope of the identifier.
+    system : str
+        The data management system within which an identifier is in scope and therefore unique.
+    resource_type : EMLResource
+        Type of the resource: `dataset`, `citation`, `protocol` or `software.`
     language: str
         Language abbreviation to be used, defaults to `"eng"`
     """
@@ -33,9 +36,9 @@ class EML(XMLObject):
     def __init__(
             self,
             package_id: str,
+            scope: Scope,
             system: str,
             resource_type: EMLResource,
-            scope: str = None,
             language: str = "eng"
     ) -> None:
         super().__init__()
@@ -64,26 +67,46 @@ class EML(XMLObject):
 
     @property
     def package_id(self) -> str:
+        """str: A globally unique identifier for the data package described by this EML that can be used to cite it."""
         return self.__package__
 
     @property
     def system(self) -> str:
+        """str: The data management system within which an identifier is in scope and therefore unique."""
         return self.__system__
 
     @property
-    def scope(self) -> str:
+    def scope(self) -> Scope:
+        """Scope: The scope of the identifier."""
         return self.__scope__
 
     @property
     def language(self) -> Language:
+        """Language: The language of the resource."""
         return self.__lang__
 
     @property
     def resource_type(self) -> EMLResource:
+        """EMLResource: The type of the resource."""
         return self.__resource_type__
 
     @classmethod
-    def parse(cls, element: et.Element, nsmap: Dict) -> EML:
+    def parse(cls, element: et.Element, nmap: Dict) -> EML:
+        """
+        Generate an EML instance object using an XML element.
+
+        Parameters
+        ----------
+        element : lxml.etree.Element
+            XML element to parse.
+        nmap : Dict
+            Namespace.
+
+        Returns
+        -------
+        EML
+            EML instance.
+        """
         assert element.get("packageId", None) is not None, "`packageId` attribute is not present in document"
         found = False
         resource_found = EMLResource.DATASET
@@ -105,18 +128,26 @@ class EML(XMLObject):
         print(resource_found)
         eml = EML(
             element.get("packageId"),
+            element.get("scope", Scope.DOCUMENT),
             element.get("system"),
             resource_found,
-            element.get("scope", None),
-            element.get(f"{{{nsmap['xml']}}}lang", "eng")
+            element.get(f"{{{nmap['xml']}}}lang", "eng")
         )
-        for add_metadata in element.findall("additionalMetadata", nsmap):
-            eml_metadata = EMLMetadata.parse(add_metadata.find("metadata"), nsmap)
-            eml_metadata.__namespace__ = nsmap
+        for add_metadata in element.findall("additionalMetadata", nmap):
+            eml_metadata = EMLMetadata.parse(add_metadata.find("metadata"), nmap)
+            eml_metadata.__namespace__ = nmap
             eml.__additional__.append(eml_metadata)
         return eml
 
     def to_element(self) -> et.Element:
+        """
+        Generate an XML element instance using the EML information.
+
+        Returns
+        -------
+        :class:`lxml.etree.Element`
+            XML element instance.
+        """
         root = et.Element(self.get_principal_tag())
         root.set("packageId", self.__package__)
         root.set(f"{{{self.NAMESPACES['xsi']}}}schemaLocation", self.__schema_location__)
