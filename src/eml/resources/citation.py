@@ -13,6 +13,8 @@ class EMLCitation(Resource):
 
     Other Parameters
     ----------------
+    **kwargs : :class:`eml.resources.resource.Resource` parameters.
+        The parameters of every type of Resource.
     """
     PRINCIPAL_TAG = "citation"
     """str: Principal tag `citation`."""

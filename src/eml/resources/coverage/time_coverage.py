@@ -323,22 +323,23 @@ class TemporalCoverage(EMLObject):
             return TemporalCoverage.AlternativeTimeScale.parse(alternative_elem, nmap)
         time_elem = element.find("time")
         calendar_elem = element.find("calendarDate")
+        try:
+            calendar_date = dt.datetime.strptime(calendar_elem.text, "%Y-%m-%d").date()
+        except ValueError:
+            calendar_date = dt.datetime.strptime(calendar_elem.text, "%Y").date()
         if time_elem is not None:
             try:
                 return dt.datetime.strptime(
-                    f"{calendar_elem.text} {time_elem.text}",
+                    f"{calendar_date.strftime('%Y-%m-%d')} {time_elem.text}",
                     "%Y-%m-%d %H:%M:%SZ"
                 )
             except ValueError:
                 return dt.datetime.strptime(
-                    f"{calendar_elem.text} {time_elem.text}",
+                    f"{calendar_date.strftime('%Y-%m-%d')} {time_elem.text}",
                     "%Y-%m-%d %H:%M:%S%z"
                 )
         else:
-            return dt.datetime.strptime(
-                f"{calendar_elem.text} 00:00:00",
-                "%Y-%m-%d %H:%M:%S"
-            ).date()
+            return calendar_date
 
     @staticmethod
     def datetime_to_xml(datetime: Union[dt.date, dt.datetime, TemporalCoverage.AlternativeTimeScale]) -> et.Element:

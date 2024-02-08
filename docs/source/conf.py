@@ -24,10 +24,9 @@ release = '0.0.5'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
-    'numpydoc'
+    'sphinx.ext.inheritance_diagram',
+    'numpydoc',
 ]
-
-numpydoc_show_class_members = False
 
 templates_path = ['_templates']
 exclude_patterns = []

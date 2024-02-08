@@ -8,7 +8,7 @@ from eml.types.position_name import PositionName
 from eml.types.individual_name import IndividualName
 from eml.types.address import EMLAddress
 from eml.types.phone import EMLPhone
-from eml.types.responsible_party import ResponsibleParty
+from eml.types.responsible_party import ResponsibleParty, Role
 from eml.types.section import EMLSection
 from eml.types.text_type import EMLTextType
 from eml.types.semantic_annotation import SemanticAnnotation
