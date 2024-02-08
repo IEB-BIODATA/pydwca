@@ -6,6 +6,8 @@ from lxml import etree as et
 from eml.types import ResponsibleParty, EMLAddress
 from test_xml.test_xml import TestXML
 
+PATH = os.path.abspath(os.path.dirname(__file__))
+
 
 class TestResponsibleParty(TestXML):
     DEFAULT_TAGS = {
@@ -16,7 +18,7 @@ class TestResponsibleParty(TestXML):
 
     def setUp(self) -> None:
         logging.getLogger().setLevel(logging.DEBUG)
-        with open(os.path.join(os.pardir, "example_data", "eml.xml"), "r", encoding="utf-8") as file:
+        with open(os.path.join(PATH, os.pardir, "example_data", "eml.xml"), "r", encoding="utf-8") as file:
             content = file.read()
         base_file = et.fromstring(content)
         self.nmap = base_file.nsmap

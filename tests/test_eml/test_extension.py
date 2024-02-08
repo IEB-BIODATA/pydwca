@@ -62,12 +62,13 @@ class TestExtensionString(TestXML):
 
     def test_equal(self):
         variable = ExtensionString("My variable")
+        self.assertEqual("My variable", variable, "Error on equal implementation")
         self.assertEqual(ExtensionString("My variable"), variable, "Error on equal implementation")
 
     def test_not_equal(self):
         variable = ExtensionString("My variable")
-        self.assertNotEquals(ExtensionString("Another variable"), variable, "Error on equal implementation")
-        self.assertNotEquals(30, variable, "Error on equal implementation")
+        self.assertNotEqual(ExtensionString("Another variable"), variable, "Error on equal implementation")
+        self.assertNotEqual(30, variable, "Error on equal implementation")
 
 
 if __name__ == '__main__':

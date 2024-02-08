@@ -1,6 +1,6 @@
 import unittest
 
-from eml.protocol import EMLProtocol
+from eml.resources import EMLProtocol
 from test_xml.test_xml import TestXML
 
 

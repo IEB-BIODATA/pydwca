@@ -6,7 +6,7 @@ from dwca.metadata import Metadata
 from test_xml.test_xml import TestXML
 
 
-class MyTestCase(TestXML):
+class TestMeta(TestXML):
     def setUp(self) -> None:
         with open(os.path.join("example_data", "meta.xml"), "r", encoding="utf-8") as file:
             content = file.read()

@@ -28,6 +28,14 @@ eml.types.extension\_string module
    :undoc-members:
    :show-inheritance:
 
+eml.types.extension\_uri module
+-------------------------------
+
+.. automodule:: eml.types.extension_uri
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 eml.types.i18n\_string module
 -----------------------------
 
@@ -88,6 +96,14 @@ eml.types.section module
 ------------------------
 
 .. automodule:: eml.types.section
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+eml.types.semantic\_annotation module
+-------------------------------------
+
+.. automodule:: eml.types.semantic_annotation
    :members:
    :undoc-members:
    :show-inheritance:

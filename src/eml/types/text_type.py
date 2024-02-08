@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Any
 
 from lxml import etree as et
 
@@ -118,3 +118,13 @@ class EMLTextType(_NoTagObject):
             mark_elem.text = markdown
             text_type.append(mark_elem)
         return text_type
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, EMLTextType):
+            return (
+                self.sections == other.sections and
+                self.paragraphs == other.paragraphs and
+                self.markdowns == other.markdowns
+            )
+        else:
+            return False
