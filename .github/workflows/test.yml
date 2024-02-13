@@ -13,6 +13,8 @@ jobs:
         python-version: '3.11'
     - name: Install requirements
       run: pip install -r requirements.txt
+    - name: Add code to path
+      run: export PYTHONPATH=src:PYTHONPATH
     - name: Run tests and collect coverage
       run: |
         pip install coverage
