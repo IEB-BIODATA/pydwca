@@ -13,6 +13,10 @@ jobs:
         python-version: '3.11'
     - name: Install requirements
       run: pip install -r requirements.txt
+    - name: Where I am
+      run: |
+        pwd
+        ls -al
     - name: Run tests and collect coverage
       run: |
         pip install coverage
