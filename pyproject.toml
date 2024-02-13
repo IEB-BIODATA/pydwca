@@ -78,7 +78,9 @@ omit = [
 ]
 
 [tool.coverage.paths]
-dwca = ["src/dwca", "*/dwca/src/dwca"]
+source = ["src"]
+dwca = ["src/dwca"]
+eml = ["src/eml"]
 tests = ["tests", "*/dwca/tests"]
 
 [tool.coverage.report]
