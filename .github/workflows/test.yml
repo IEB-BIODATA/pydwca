@@ -16,7 +16,7 @@ jobs:
     - name: Run tests and collect coverage
       run: |
         pip install coverage
-        coverage run --source src/dwca src/eml -m unittest discover -s tests -t tests
+        coverage run --source src/dwca,src/eml -m unittest discover -s tests -t tests
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
