@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 
-import lxml.etree as et
+from lxml import etree as et
 from enum import Enum
 
 from dwca.xml import XMLObject
@@ -128,7 +128,7 @@ See https://eml.ecoinformatics.org/validation-and-content-references#id-and-scop
     @abstractmethod
     def get_no_referrer(cls, element: et.Element, nmap: Dict) -> EMLObject:
         """
-        Generate an EML Object that not reference another.
+        Generate an EML Object that do not reference another.
 
         Parameters
         ----------

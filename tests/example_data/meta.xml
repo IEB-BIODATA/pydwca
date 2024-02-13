@@ -35,7 +35,7 @@
     <field index="28" default="Jane, D." term="http://purl.org/dc/terms/rightsHolder"/>
     <field index="29" default="Example Darwin Core Archive" term="http://rs.tdwg.org/dwc/terms/datasetName"/>
     <field index="30" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>
-  </core>}
+  </core>
   <extension encoding="UTF-8" linesTerminatedBy="\r\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/SpeciesProfile">
     <files>
       <location>speciesprofile.txt</location>

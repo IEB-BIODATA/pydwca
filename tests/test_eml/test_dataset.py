@@ -1,15 +1,24 @@
 import os
 import unittest
-import lxml.etree as et
+from lxml import etree as et
 
 from dwca.utils import Language
-from eml.dataset import EMLDataset
+from eml.resources import EMLDataset
+from eml.types import Scope
 from test_xml.test_xml import TestXML
+
+PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 class TestEMLDataset(TestXML):
+    DEFAULT_TAGS = {
+        "scope": "document",
+        "{http://www.w3.org/XML/1998/namespace}lang": "eng",
+        "phonetype": "voice",
+    }
+
     def setUp(self) -> None:
-        with open(os.path.join(os.pardir, "example_data", "eml.xml"), "r", encoding="utf-8") as file:
+        with open(os.path.join(PATH, os.pardir, "example_data", "eml.xml"), "r", encoding="utf-8") as file:
             content = file.read()
         base_file = et.fromstring(content)
         self.dataset_xml = base_file.find("dataset", namespaces=base_file.nsmap)
@@ -20,9 +29,9 @@ class TestEMLDataset(TestXML):
         dataset = EMLDataset.from_string(self.text)
         self.assertIsNone(dataset.id, "Id from nothing")
         self.assertIsNone(dataset.system, "System from nothing")
-        self.assertIsNone(dataset.scope, "Scope from nothing")
+        self.assertEqual(Scope.DOCUMENT, dataset.scope, "Not given different than default")
         self.assertFalse(dataset.referencing, "Reference from nothing")
-        self.assertEqual([], dataset.extra_titles, "Extra titles from nowhere")
+        self.assertEqual(1, len(dataset.titles), "Extra titles from nowhere")
         self.assertEqualTree(self.dataset_xml, dataset.to_element(), "Wrong element generated")
         return
 
@@ -45,14 +54,20 @@ class TestEMLDataset(TestXML):
     <title>A Title</title>
     <title xml:lang="esp">Un Título</title>
     <title xml:lang="esp">Un Título Diferente</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
     <alternativeIdentifier system="http://gbif.org">VCR3465</alternativeIdentifier>
     <shortName>A short description</shortName>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
 </dataset>
         """
         eml_dataset = EMLDataset.from_string(dataset_xml)
         self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order")
         self.assertEqual("A Title", eml_dataset.title, "Title not set")
-        self.assertEqual("Un Título Diferente", eml_dataset.extra_titles[1], "Extra titles set in wrong order")
+        self.assertEqual("Un Título Diferente", eml_dataset.titles[2], "Extra titles set in wrong order")
         self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language")
         self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element")
 
@@ -60,8 +75,14 @@ class TestEMLDataset(TestXML):
         dataset_xml = """
 <dataset>
     <title xml:lang="eng">Test Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
     <alternativeIdentifier system="http://gbif.org">VCR3465</alternativeIdentifier>
     <shortName>A short description</shortName>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
 </dataset>
         """
         eml_dataset = EMLDataset.from_string(dataset_xml)
@@ -80,8 +101,14 @@ class TestEMLDataset(TestXML):
         dataset_xml = """
 <dataset>
     <title>Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
     <alternativeIdentifier system="http://gbif.org">VCR3465</alternativeIdentifier>
     <alternativeIdentifier>VCR3465</alternativeIdentifier>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
 </dataset>
         """
         eml_dataset = EMLDataset.from_string(dataset_xml)
