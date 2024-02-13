@@ -78,10 +78,9 @@ omit = [
 ]
 
 [tool.coverage.paths]
-source = ["src"]
-dwca = ["src/dwca"]
-eml = ["src/eml"]
-tests = ["tests", "*/dwca/tests"]
+dwca = ["src/dwca", "*/pydwca/src/dwca"]
+eml = ["src/eml", "*/pydwca/src/eml"]
+tests = ["tests", "*/pydwca/tests"]
 
 [tool.coverage.report]
 exclude_lines = [
