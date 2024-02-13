@@ -17,10 +17,14 @@ jobs:
       run: |
         pwd
         ls -al
+    - name: Set up Pythonpath
+      run: |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/src
+        echo $PYTHONPATH
     - name: Run tests and collect coverage
       run: |
         pip install coverage
-        coverage run --source=src -m unittest discover -s tests -t tests
+        coverage run -m unittest discover -s tests -t tests
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
