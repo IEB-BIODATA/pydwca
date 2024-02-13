@@ -9,10 +9,16 @@ from eml.resources import Resource
 
 class EMLSoftware(Resource):
     """
-    EML Software Resource
+    EML Software Resource.
+
+    Other Parameters
+    ----------------
+    **kwargs : :class:`eml.resources.resource.Resource` parameters.
+        The parameters of every type of Resource.
     """
-    def __init__(self) -> None:
-        super().__init__("None")
+    def __init__(self, **kwargs) -> None:
+        # To avoid initialization
+        super().__init__(referencing=True, **kwargs)
         raise NotImplementedError("Software EML class not implemented yet")
 
     @classmethod
@@ -37,7 +43,7 @@ class EMLSoftware(Resource):
     @classmethod
     def get_no_referrer(cls, element: et.Element, nmap: Dict) -> EMLSoftware:
         """
-        Generate an EML software that not reference another software.
+        Generate an EML software that do not reference another software.
 
         Parameters
         ----------

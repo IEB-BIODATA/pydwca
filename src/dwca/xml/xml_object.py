@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Dict, Union
 
-import lxml.etree as et
+from lxml import etree as et
 
 
 class XMLObject(ABC):

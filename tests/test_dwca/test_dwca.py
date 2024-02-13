@@ -3,11 +3,11 @@ import tempfile
 import unittest
 import zipfile
 
-from dwca.base import DarwinCoreArchive
+from dwca import DarwinCoreArchive
 from dwca.utils import Language
 
 
-class MyTestCase(unittest.TestCase):
+class TestDWCA(unittest.TestCase):
     def setUp(self) -> None:
         self.object = DarwinCoreArchive.from_archive(os.path.join("example_data", "IRMNG_genera_DwCA.zip"))
         return

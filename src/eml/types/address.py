@@ -137,7 +137,7 @@ class EMLAddress(EMLObject):
     @classmethod
     def get_no_referrer(cls, element: et.Element, nmap: Dict) -> EMLAddress:
         """
-        Generate an EML Object that not reference another.
+        Generate an EML Object that do not reference another.
 
         Parameters
         ----------

@@ -9,11 +9,21 @@ from eml.resources import Resource
 
 class EMLCitation(Resource):
     """
-    EML Citation Resource
+    EML Citation Resource.
+
+    Other Parameters
+    ----------------
+    **kwargs : :class:`eml.resources.resource.Resource` parameters.
+        The parameters of every type of Resource.
     """
-    def __init__(self) -> None:
-        super().__init__("None")
-        raise NotImplementedError("Citation EML class not implemented yet")
+    PRINCIPAL_TAG = "citation"
+    """str: Principal tag `citation`."""
+
+    def __init__(
+            self, **kwargs
+    ) -> None:
+        super().__init__(**kwargs)
+        return
 
     @classmethod
     def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLCitation:
@@ -32,12 +42,19 @@ class EMLCitation(Resource):
         EMLCitation
             Object parsed that reference another citation.
         """
-        pass
+        references = element.find("references", nmap)
+        return EMLCitation(
+            _id=references.text,
+            scope=cls.get_scope(element),
+            system=element.get("system", None),
+            referencing=True,
+            references_system=references.get("system", None)
+        )
 
     @classmethod
     def get_no_referrer(cls, element: et.Element, nmap: Dict) -> EMLCitation:
         """
-        Generate an EML citation that not reference another citation.
+        Generate an EML citation that do not reference another citation.
 
         Parameters
         ----------
@@ -61,10 +78,7 @@ class EMLCitation(Resource):
         -------
         lxml.etree.Element
             XML `Element` from this object
-
-        Raises
-        ------
-        NotImplementedError
-            Citation functionality not implemented yet
         """
-        raise NotImplementedError("Citation functionality not implemented yet")
+        cite_elem = super().to_element()
+        cite_elem = self._to_element_(cite_elem)
+        return cite_elem

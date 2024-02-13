@@ -1,5 +1,5 @@
 import unittest
-import lxml.etree as et
+from lxml import etree as et
 
 from eml.types import EMLPhone
 from test_xml.test_xml import TestXML
@@ -20,8 +20,8 @@ class TestEMLPhone(TestXML):
     def test_equal(self):
         variable = EMLPhone("805-555-2500")
         self.assertEqual(EMLPhone("805-555-2500"), variable, "Phones not equal")
-        self.assertNotEquals(8055552500, variable, "Phones equal to other type")
-        self.assertNotEquals(EMLPhone("8055552500"), variable, "Phones equal to different phone")
+        self.assertNotEqual(8055552500, variable, "Phones equal to other type")
+        self.assertNotEqual(EMLPhone("8055552500"), variable, "Phones equal to different phone")
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ import logging
 import unittest
 from copy import deepcopy
 
-import lxml.etree as et
+from lxml import etree as et
 
 
 class TestXML(unittest.TestCase):

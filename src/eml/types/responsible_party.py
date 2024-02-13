@@ -1,11 +1,31 @@
 from __future__ import annotations
 
+from enum import Enum
 from typing import Dict, List, Union
 
 from lxml import etree as et
 
+from dwca.utils import CamelCaseEnum
 from eml.types import EMLObject, _NoTagObject, Scope, IndividualName, OrganizationName, PositionName, EMLAddress, \
     EMLPhone, I18nString
+
+
+class Role(CamelCaseEnum):
+    """
+    The role the party played with respect to the resource.
+    """
+    AUTHOR = 0
+    CONTENT_PROVIDER = 1
+    CUSTODIAN_STEWARD = 2
+    DISTRIBUTOR = 3
+    EDITOR = 4
+    METADATA_PROVIDER = 5
+    ORIGINATOR = 6
+    POINT_OF_CONTACT = 7
+    PRINCIPAL_INVESTIGATOR = 8
+    PROCESSOR = 9
+    PUBLISHER = 10
+    USER = 11
 
 
 class ResponsibleParty(EMLObject, _NoTagObject):
@@ -140,7 +160,7 @@ class ResponsibleParty(EMLObject, _NoTagObject):
     @classmethod
     def get_no_referrer(cls, element: et.Element, nmap: Dict) -> ResponsibleParty:
         """
-        Generate a Responsible Party that not reference another.
+        Generate a Responsible Party that do not reference another.
 
         Parameters
         ----------
@@ -204,3 +224,23 @@ class ResponsibleParty(EMLObject, _NoTagObject):
                 url_elem.text = url
                 resp_party.append(url_elem)
         return resp_party
+
+    @classmethod
+    def get_role(cls, element: et.Element, nmap: Dict) -> Role:
+        """
+        Get role for an XML element.
+
+        Parameters
+        ----------
+        element : lxml.etree.Element
+            XML element with role on it.
+        nmap : Dict
+            Namespace.
+
+        Returns
+        -------
+        Role
+            Value of the role inside the XML element.
+        """
+        role_elem = element.find("role", nmap)
+        return Role.get_enum(role_elem.text)

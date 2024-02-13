@@ -1,5 +1,5 @@
 import unittest
-import lxml.etree as et
+from lxml import etree as et
 
 from dwca.utils import Language
 from eml.types import I18nString, ExtensionString
@@ -49,7 +49,7 @@ class TestI18nString(TestXML):
     def test_equal(self):
         variable = I18nString("My variable")
         self.assertEqual(I18nString("My variable"), variable, "Error on equal implementation")
-        self.assertNotEquals(
+        self.assertNotEqual(
             I18nString("My variable", lang=Language.ESP),
             variable,
             "Error on equal implementation"
@@ -57,9 +57,9 @@ class TestI18nString(TestXML):
 
     def test_not_equal(self):
         variable = I18nString("My variable")
-        self.assertNotEquals(ExtensionString("My variable"), variable, "Error on equal implementation")
-        self.assertNotEquals(I18nString("Another variable"), variable, "Error on equal implementation")
-        self.assertNotEquals(30, variable, "Error on equal implementation")
+        self.assertNotEqual(ExtensionString("My variable"), variable, "Error on equal implementation")
+        self.assertNotEqual(I18nString("Another variable"), variable, "Error on equal implementation")
+        self.assertNotEqual(30, variable, "Error on equal implementation")
 
     def test_wrong_language(self):
         self.assertRaises(

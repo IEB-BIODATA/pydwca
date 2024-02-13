@@ -1,53 +1,50 @@
 dwca.metadata package
 =====================
 
-Submodules
-----------
+Module contents
+---------------
 
-dwca.metadata.core module
--------------------------
-
-.. automodule:: dwca.metadata.core
+.. automodule:: dwca.metadata
    :members:
    :undoc-members:
    :show-inheritance:
 
-dwca.metadata.data\_file module
--------------------------------
-
-.. automodule:: dwca.metadata.data_file
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-dwca.metadata.extension module
-------------------------------
-
-.. automodule:: dwca.metadata.extension
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-dwca.metadata.field module
---------------------------
-
-.. automodule:: dwca.metadata.field
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-dwca.metadata.meta module
--------------------------
+Metadata Class
+~~~~~~~~~~~~~~
 
 .. automodule:: dwca.metadata.meta
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+DataFile Base Class
+~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: dwca.metadata
+.. automodule:: dwca.metadata.data_file
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Field Class
+~~~~~~~~~~~
+
+.. automodule:: dwca.metadata.field
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Core Class
+~~~~~~~~~~
+
+.. automodule:: dwca.metadata.core
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Extension Class
+~~~~~~~~~~~~~~~
+
+.. automodule:: dwca.metadata.extension
    :members:
    :undoc-members:
    :show-inheritance:

@@ -6,7 +6,7 @@ from typing import List
 
 from dwca.metadata import Metadata, Core, Extension
 from dwca.utils import Language
-from eml import EML
+from eml.base import EML
 
 
 class DarwinCoreArchive:
