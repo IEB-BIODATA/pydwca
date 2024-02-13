@@ -13,12 +13,10 @@ jobs:
         python-version: '3.11'
     - name: Install requirements
       run: pip install -r requirements.txt
-    - name: Add code to path
-      run: export PYTHONPATH=src:PYTHONPATH
     - name: Run tests and collect coverage
       run: |
         pip install coverage
-        coverage run -m unittest discover -s tests -t tests
+        coverage run -m unittest discover --source src -t tests
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
