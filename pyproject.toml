@@ -70,7 +70,7 @@ dependencies = [
 check = "mypy --install-types --non-interactive {args:src/dwca tests}"
 
 [tool.coverage.run]
-source_pkgs = ["dwca", "tests"]
+source_pkgs = ["src", "tests"]
 branch = true
 parallel = true
 omit = [
