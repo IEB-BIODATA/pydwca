@@ -5,11 +5,12 @@ from typing import Dict, List, Union
 
 from lxml import etree as et
 
+from dwca.utils import CamelCaseEnum
 from eml.types import EMLObject, _NoTagObject, Scope, IndividualName, OrganizationName, PositionName, EMLAddress, \
     EMLPhone, I18nString
 
 
-class Role(Enum):
+class Role(CamelCaseEnum):
     """
     The role the party played with respect to the resource.
     """
@@ -25,46 +26,6 @@ class Role(Enum):
     PROCESSOR = 9
     PUBLISHER = 10
     USER = 11
-
-    def to_camel_case(self):
-        """
-        Converts name to camel case (eg: camelCase).
-
-        Returns
-        -------
-        str
-            Name of role in camel case.
-        """
-        words = self.name.split("_")
-        return "".join([
-            word.lower() if i == 0 else word.lower().capitalize()
-            for i, word in enumerate(words)
-        ])
-
-    @classmethod
-    def get_role(cls, value: str) -> Role:
-        """
-        Obtain the Role from the string with the role in camel case.
-
-        Parameters
-        ----------
-        value : str
-            Camel case value of a role.
-
-        Returns
-        -------
-        Role
-            Instance of Role.
-
-        Raises
-        ------
-        ValueError
-            Not a valid role.
-        """
-        for role in Role:
-            if role.to_camel_case() == value:
-                return role
-        raise ValueError(f"{value} not a valid Role.")
 
 
 class ResponsibleParty(EMLObject, _NoTagObject):
@@ -282,4 +243,4 @@ class ResponsibleParty(EMLObject, _NoTagObject):
             Value of the role inside the XML element.
         """
         role_elem = element.find("role", nmap)
-        return Role.get_role(role_elem.text)
+        return Role.get_enum(role_elem.text)

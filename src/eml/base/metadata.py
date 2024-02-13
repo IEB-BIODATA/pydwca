@@ -1,76 +1,155 @@
 from __future__ import annotations
 
-import datetime as dt
-from typing import Dict
+from typing import Dict, List, Union
 
 from lxml import etree as et
 
 from dwca.xml import XMLObject
 
 
-class EMLGbifMetadata(XMLObject):
-    def __init__(self) -> None:
-        super().__init__()
-        self.__date_stamp__ = None
-        self.__hierarchy_level__ = None
-        self.__citation__ = None
-        self.__resource_logo_url__ = None
-
-    def to_element(self) -> et.Element:
-        root = et.Element("gbif")
-        if self.__date_stamp__ is not None:
-            date_stamp = et.SubElement(root, "dateStamp")
-            date_stamp.text = self.__date_stamp__.isoformat()
-            root.append(date_stamp)
-        if self.__hierarchy_level__ is not None:
-            hierarchy_level = et.SubElement(root, "hierarchyLevel")
-            hierarchy_level.text = self.__hierarchy_level__
-        if self.__citation__ is not None:
-            citation = et.SubElement(root, "citation")
-            citation.text = self.__citation__
-        if self.__resource_logo_url__ is not None:
-            resource_logo = et.SubElement(root, "resourceLogoUrl")
-            resource_logo.text = self.__resource_logo_url__
-        return root
-
-    @classmethod
-    def parse(cls, element: et.Element, nsmap: Dict) -> EMLGbifMetadata:
-        assert element.tag == 'gbif', "GBIF tag not included"
-        gbif_metadata = EMLGbifMetadata()
-        date_stamp = element.find("dateStamp")
-        if date_stamp is not None:
-            gbif_metadata.__date_stamp__ = dt.datetime.fromisoformat(date_stamp.text)
-        hierarchy_level = element.find("hierarchyLevel")
-        if hierarchy_level is not None:
-            gbif_metadata.__hierarchy_level__ = hierarchy_level.text
-        citation = element.find("citation")
-        if citation is not None:
-            gbif_metadata.__citation__ = citation.text
-        resource_logo = element.find("resourceLogoUrl")
-        if resource_logo is not None:
-            gbif_metadata.__resource_logo_url__ = resource_logo.text
-        return gbif_metadata
-
-
 class EMLMetadata(XMLObject):
-    def __init__(self) -> None:
+    """
+    This element contains the additional metadata that is to be included in the document.
+
+    Parameters
+    ----------
+    xml: lxml.etree.Element or str, optional
+        An XML element instance or string representing a XML well define file.
+    """
+    PRINCIPAL_TAG = "metadata"
+    """str: Principal tag `metadata`."""
+    def __init__(
+            self,
+            xml: Union[et.Element, str] = None
+    ) -> None:
         super().__init__()
-        self.__gbif__ = None
+        if isinstance(xml, str):
+            self.__content__ = et.fromstring(xml)
+        else:
+            self.__content__ = xml
         return
 
     @classmethod
-    def parse(cls, element: et.Element, nsmap: Dict) -> EMLMetadata:
-        assert element.tag == "metadata", "Metadata tag not included"
-        metadata = EMLMetadata()
-        gbif_metadata = element.find("gbif")
-        if gbif_metadata is not None:
-            metadata.__gbif__ = EMLGbifMetadata.parse(gbif_metadata, nsmap)
+    def parse(cls, element: et.Element, nmap: Dict) -> EMLMetadata | None:
+        """
+        Generate a EMLMetadata from an XML element instance.
+
+        Parameters
+        ----------
+        element : lxml.etree.Element
+            An XML element instance.
+        nmap : Dict
+            Namespace.
+
+        Returns
+        -------
+        EMLMetadata
+            An EMLMetadata object.
+        """
+        if element is None:
+            return None
+        metadata = EMLMetadata(xml=element)
+        metadata.__namespace__ = nmap
         return metadata
 
     def to_element(self) -> et.Element:
+        """
+        Generate an XML element instance from this EMLMetadata object.
+
+        Returns
+        -------
+        lxml.etree.Element
+            An XML element instance.
+        """
+        return self.__content__
+
+
+class EMLAdditionalMetadata(XMLObject):
+    """
+    A flexible field for including any other relevant metadata that pertains to the resource being described.
+
+    Parameters
+    ----------
+    metadata: EMLMetadata
+        This element contains the additional metadata that is to be included in the document.
+    _id: str, optional
+        Unique identifier for the additional metadata.
+    describes: List[str], optional
+        A pointer to the id attribute for the sub-portion of the resource that is described by this additional metadata.
+    """
+    PRINCIPAL_TAG = "additionalMetadata"
+    """str: Principal tag `additionalMetadata`."""
+
+    def __init__(self, metadata: EMLMetadata, _id: str = None, describes: List[str] = None) -> None:
+        super().__init__()
+        self.__metadata__ = metadata
+        self.__id__ = _id
+        self.__describes__ = list()
+        if describes is not None:
+            self.__describes__.extend(describes)
+        return
+
+    @property
+    def id(self) -> str:
+        """str: Unique identifier for the additional metadata."""
+        return self.__id__
+
+
+    @property
+    def metadata(self) -> EMLMetadata:
+        """EMLMetadata: This element contains the additional metadata that is to be included in the document."""
+        return self.__metadata__
+
+    @property
+    def describes(self) -> List[str]:
+        """List[str]: A pointer to the id attribute for the sub-portion of the resource."""
+        return self.__describes__
+
+    @classmethod
+    def parse(cls, element: et.Element, nmap: Dict) -> EMLAdditionalMetadata | None:
+        """
+        Generate an EMLAdditionalMetadata object from an XML element instance.
+
+        Parameters
+        ----------
+        element : lxml.etree.Element
+            An XML element instance.
+        nmap : Dict
+            Namespace.
+
+        Returns
+        -------
+        EMLAdditionalMetadata
+            An EMLAdditionalMetadata object.
+        """
+        if element is None:
+            return None
+        describes = list()
+        for describe_elem in element.findall("describes", nmap):
+            describes.append(describe_elem.text)
+        metadata = EMLAdditionalMetadata(
+            metadata=EMLMetadata.parse(element.find("metadata", nmap), nmap),
+            _id=element.get("id", None),
+            describes=describes,
+        )
+        metadata.__namespace__ = nmap
+        return metadata
+
+    def to_element(self) -> et.Element:
+        """
+        Generate an XML element instance from the AdditionalMetadata object.
+
+        Returns
+        -------
+        lxml.etree.Element
+            An XML element instance.
+        """
         root = et.Element("additionalMetadata")
-        actual_root = et.Element("metadata")
-        root.append(actual_root)
-        if self.__gbif__ is not None:
-            actual_root.append(self.__gbif__.to_element())
+        root.append(self.metadata.to_element())
+        if self.id is not None:
+            root.set("id", self.id)
+        for describe in self.describes:
+            describe_elem = self.object_to_element("describes")
+            describe_elem.text = describe
+            root.append(describe_elem)
         return root

@@ -12,3 +12,4 @@ from eml.types.responsible_party import ResponsibleParty, Role
 from eml.types.section import EMLSection
 from eml.types.text_type import EMLTextType
 from eml.types.semantic_annotation import SemanticAnnotation
+from eml.types.access_type import AccessType, AccessRole, AccessPermission

@@ -1,37 +1,34 @@
 dwca.utils package
 ==================
 
-Submodules
-----------
+Module contents
+---------------
 
-dwca.utils.gpolygon module
---------------------------
-
-.. automodule:: dwca.utils.gpolygon
+.. automodule:: dwca.utils
    :members:
    :undoc-members:
    :show-inheritance:
 
-dwca.utils.language module
---------------------------
+Language Type
+~~~~~~~~~~~~~
 
 .. automodule:: dwca.utils.language
    :members:
    :undoc-members:
    :show-inheritance:
 
-dwca.utils.length\_unit module
-------------------------------
+Length Unit Type
+~~~~~~~~~~~~~~~~
 
 .. automodule:: dwca.utils.length_unit
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+GPolygon Class
+~~~~~~~~~~~~~~
 
-.. automodule:: dwca.utils
+.. automodule:: dwca.utils.gpolygon
    :members:
    :undoc-members:
    :show-inheritance:

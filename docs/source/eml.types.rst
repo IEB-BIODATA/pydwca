@@ -1,125 +1,125 @@
 eml.types package
 =================
 
-Submodules
-----------
+Module contents
+---------------
 
-eml.types.address module
-------------------------
-
-.. automodule:: eml.types.address
+.. automodule:: eml.types
    :members:
    :undoc-members:
    :show-inheritance:
 
-eml.types.eml\_object module
-----------------------------
+Classes with no predefine Principal Tag
+---------------------------------------
 
-.. automodule:: eml.types.eml_object
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.types.extension\_string module
-----------------------------------
-
-.. automodule:: eml.types.extension_string
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.types.extension\_uri module
--------------------------------
-
-.. automodule:: eml.types.extension_uri
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.types.i18n\_string module
------------------------------
-
-.. automodule:: eml.types.i18n_string
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.types.individual\_name module
----------------------------------
-
-.. automodule:: eml.types.individual_name
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.types.no\_tag\_object module
---------------------------------
+_NoTagObject Base Class
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: eml.types.no_tag_object
    :members:
    :undoc-members:
    :show-inheritance:
 
-eml.types.organization\_name module
------------------------------------
-
-.. automodule:: eml.types.organization_name
+.. autoclass:: eml.types.no_tag_object._NoTagObject
    :members:
    :undoc-members:
    :show-inheritance:
 
-eml.types.phone module
-----------------------
+Extension String Class
+~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: eml.types.phone
+.. automodule:: eml.types.extension_string
    :members:
    :undoc-members:
    :show-inheritance:
 
-eml.types.position\_name module
--------------------------------
+Extension URI Class
+~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: eml.types.position_name
+.. automodule:: eml.types.extension_uri
    :members:
    :undoc-members:
    :show-inheritance:
 
-eml.types.responsible\_party module
------------------------------------
+i18n String Class
+~~~~~~~~~~~~~~~~~
 
-.. automodule:: eml.types.responsible_party
+.. automodule:: eml.types.i18n_string
    :members:
    :undoc-members:
    :show-inheritance:
 
-eml.types.section module
-------------------------
-
-.. automodule:: eml.types.section
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.types.semantic\_annotation module
--------------------------------------
-
-.. automodule:: eml.types.semantic_annotation
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.types.text\_type module
----------------------------
+TextType Class
+~~~~~~~~~~~~~~
 
 .. automodule:: eml.types.text_type
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+Responsible Party Class
+~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: eml.types
+.. automodule:: eml.types.responsible_party
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Semantic Annotation Class
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.types.semantic_annotation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Classes with predefine Principal Tag
+------------------------------------
+
+Section Class
+~~~~~~~~~~~~~
+
+.. automodule:: eml.types.section
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Individual Name Class
+~~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.types.individual_name
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Organization Name Class
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.types.organization_name
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Position Name Class
+~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.types.position_name
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Address Class
+~~~~~~~~~~~~~
+
+.. automodule:: eml.types.address
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Phone Class
+~~~~~~~~~~~
+
+.. automodule:: eml.types.phone
    :members:
    :undoc-members:
    :show-inheritance:

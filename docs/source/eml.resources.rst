@@ -10,77 +10,74 @@ Subpackages
    eml.resources.coverage
    eml.resources.distribution
 
-Submodules
-----------
+Module contents
+---------------
 
-eml.resources.citation module
------------------------------
-
-.. automodule:: eml.resources.citation
+.. automodule:: eml.resources
    :members:
    :undoc-members:
    :show-inheritance:
 
-eml.resources.dataset module
-----------------------------
-
-.. automodule:: eml.resources.dataset
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.resources.keyword\_set module
----------------------------------
-
-.. automodule:: eml.resources.keyword_set
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.resources.licence module
-----------------------------
-
-.. automodule:: eml.resources.licence
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.resources.protocol module
------------------------------
-
-.. automodule:: eml.resources.protocol
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.resources.resource module
------------------------------
-
-.. automodule:: eml.resources.resource
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.resources.resources module
-------------------------------
+Resource Type
+~~~~~~~~~~~~~
 
 .. automodule:: eml.resources.resources
    :members:
    :undoc-members:
    :show-inheritance:
 
-eml.resources.software module
------------------------------
+Resource Base Class
+~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: eml.resources.software
+.. automodule:: eml.resources.resource
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+KeywordSet Class
+~~~~~~~~~~~~~~~~
 
-.. automodule:: eml.resources
+.. automodule:: eml.resources.keyword_set
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+License Class
+~~~~~~~~~~~~~
+
+.. automodule:: eml.resources.licence
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Citation Resource
+~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.resources.citation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Dataset Resource
+~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.resources.dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Protocol Resource
+~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.resources.protocol
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Software Resource
+~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.resources.software
    :members:
    :undoc-members:
    :show-inheritance:
