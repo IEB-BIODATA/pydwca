@@ -3,7 +3,7 @@ import tempfile
 import unittest
 import zipfile
 
-from dwca.base import DarwinCoreArchive
+from dwca import DarwinCoreArchive
 from dwca.utils import Language
 
 

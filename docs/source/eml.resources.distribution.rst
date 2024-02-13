@@ -1,45 +1,42 @@
 eml.resources.distribution package
 ==================================
 
-Submodules
-----------
+Module contents
+---------------
 
-eml.resources.distribution.distribution module
-----------------------------------------------
+.. automodule:: eml.resources.distribution
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Distribution Class
+~~~~~~~~~~~~~~~~~~
 
 .. automodule:: eml.resources.distribution.distribution
    :members:
    :undoc-members:
    :show-inheritance:
 
-eml.resources.distribution.inline module
-----------------------------------------
-
-.. automodule:: eml.resources.distribution.inline
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.resources.distribution.offline module
------------------------------------------
-
-.. automodule:: eml.resources.distribution.offline
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-eml.resources.distribution.online module
-----------------------------------------
+Distribution Online Class
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: eml.resources.distribution.online
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+Distribution Offline Class
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. automodule:: eml.resources.distribution
+.. automodule:: eml.resources.distribution.offline
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Distribution Inline Class
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.resources.distribution.inline
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,7 +1,7 @@
-from enum import Enum
+from dwca.utils import CamelCaseEnum
 
 
-class LengthUnit(Enum):
+class LengthUnit(CamelCaseEnum):
     """
     The list of units which are of length type, or have a parentSI of meter SI.
 
@@ -88,10 +88,4 @@ class LengthUnit(Enum):
         str
             Name of the unit.
         """
-        lower_name = self.name.lower()
-        if "_" in lower_name:
-            words = lower_name.split("_")
-            lower_name = "_".join(
-                word.capitalize() for word in words
-            )
-        return lower_name
+        return super().to_camel_case().capitalize()

@@ -28,6 +28,9 @@ extensions = [
     'numpydoc',
 ]
 
+autosummary_generate = True
+numpydoc_show_class_members = False
+
 templates_path = ['_templates']
 exclude_patterns = []
 
@@ -41,6 +44,14 @@ html_static_path = ['_static',]
 html_js_files = [
     '_js/pypi-icon.js',
 ]
+
+html_title = "Python Darwin Core Archive"
+
+html_sidebars = {
+    "index": [],
+    "install": [],
+    "usage": [],
+}
 
 html_theme_options = {
     "icon_links": [
