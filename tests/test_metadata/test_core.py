@@ -6,10 +6,12 @@ from lxml import etree as et
 from dwca.metadata import Core
 from test_xml.test_xml import TestXML
 
+PATH = os.path.abspath(os.path.dirname(__file__))
+
 
 class TestCore(TestXML):
     def setUp(self) -> None:
-        with open(os.path.join("example_data", "meta.xml"), "r", encoding="utf-8") as file:
+        with open(os.path.join(PATH, os.pardir, "example_data", "meta.xml"), "r", encoding="utf-8") as file:
             content = file.read()
         base_file = et.fromstring(content)
         self.core_xml = base_file.find("core", namespaces=base_file.nsmap)
