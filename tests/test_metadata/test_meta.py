@@ -5,10 +5,12 @@ from lxml import etree as et
 from dwca.metadata import Metadata
 from test_xml.test_xml import TestXML
 
+PATH = os.path.abspath(os.path.dirname(__file__))
+
 
 class TestMeta(TestXML):
     def setUp(self) -> None:
-        with open(os.path.join("example_data", "meta.xml"), "r", encoding="utf-8") as file:
+        with open(os.path.join(PATH, os.pardir, "example_data", "meta.xml"), "r", encoding="utf-8") as file:
             content = file.read()
         self.metadata = et.fromstring(content)
         self.text = et.tostring(self.metadata, pretty_print=True).decode("utf-8")
