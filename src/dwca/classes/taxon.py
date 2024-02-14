@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import List, Union, Dict
 
 from lxml import etree as et
-from typing_extensions import Union
 
 from dwca.classes import DataFile
 from dwca.terms import Field
-from dwca.xml import XMLObject
 
 
 class Taxon(DataFile):
