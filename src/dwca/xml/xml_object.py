@@ -62,14 +62,14 @@ class XMLObject(ABC):
             Object parsed from the string.
         """
         root = et.fromstring(text)
-        nsmap = dict()
+        nmap = dict()
         for prefix, uri in cls.NAMESPACES.items():
-            nsmap[prefix] = uri
+            nmap[prefix] = uri
         for prefix, uri in root.nsmap.items():
-            nsmap[prefix] = uri
-        cls.check_principal_tag(root.tag, nsmap)
-        xml_object = cls.parse(root, nsmap)
-        xml_object.__namespace__ = nsmap
+            nmap[prefix] = uri
+        cls.check_principal_tag(root.tag, nmap)
+        xml_object = cls.parse(root, nmap)
+        xml_object.__namespace__ = nmap
         return xml_object
 
     @classmethod
