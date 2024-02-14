@@ -1,16 +1,16 @@
 import unittest
 
 from lxml import etree as et
-from dwca.metadata import Field
+from dwca.terms import Field
 
 
 class TestField(unittest.TestCase):
     def test_parse(self):
         field = Field.from_string('<field index="1" term="http://rs.tdwg.org/dwc/terms/scientificNameID"/>')
-        self.assertEqual(1, field.__index__, "Wrong parse index")
+        self.assertEqual(1, field.index, "Wrong parse index")
         self.assertEqual("http://rs.tdwg.org/dwc/terms/scientificNameID", field.__term__, "Wrong parse term")
-        self.assertIsNone(field.__default__, "Wrong parse default value")
-        self.assertIsNone(field.__vocabulary__, "Wrong parse vocabulary value")
+        self.assertIsNone(field.default, "Wrong parse default value")
+        self.assertIsNone(field.vocabulary, "Wrong parse vocabulary value")
 
     def test_parse_invalid(self):
         self.assertRaises(

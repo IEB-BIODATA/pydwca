@@ -2,7 +2,7 @@ import os
 import unittest
 from lxml import etree as et
 
-from dwca.metadata import Metadata
+from dwca.base import DarwinCoreArchive
 from test_xml.test_xml import TestXML
 
 PATH = os.path.abspath(os.path.dirname(__file__))
@@ -17,13 +17,13 @@ class TestMeta(TestXML):
         return
 
     def test_parse(self):
-        meta = Metadata.from_string(self.text)
+        meta = DarwinCoreArchive.Metadata.from_string(self.text)
         self.assertEqual("eml.xml", meta.metadata_filename,"Metadata not found in file")
         self.assertEqual(0, meta.core.id, "Core not found")
         self.assertEqual(3, len(meta.extensions), "Extensions not found")
-        self.assertEqual(0, meta.extensions[0].core_id, "First extension not found")
-        self.assertEqual(0, meta.extensions[1].core_id, "Second extension not found")
-        self.assertEqual(0, meta.extensions[2].core_id, "Third extension not found")
+        self.assertEqual(0, meta.extensions[0].id, "First extension not found")
+        self.assertEqual(0, meta.extensions[1].id, "Second extension not found")
+        self.assertEqual(0, meta.extensions[2].id, "Third extension not found")
         self.assertEqualTree(self.metadata, meta.to_element(), "Not same tree generated")
 
 
