@@ -52,27 +52,27 @@ class Metadata(XMLObject):
         return self.__metadata__
 
     @classmethod
-    def parse(cls, element: et.Element, nsmap: Dict) -> Metadata:
+    def parse(cls, element: et.Element, nmap: Dict) -> Metadata:
         """
-        Parses an `lxml.etree.Element` in a Metadata instance
+        Parses an `lxml.etree.Element` in a Metadata instance.
 
         Parameters
         ----------
         element : `lxml.etree.Element`
-            XML element to be parsed
-        nsmap : Dict
-            Namespace prefix:uri
+            XML element to be parsed.
+        nmap : Dict
+            Namespace prefix:uri.
 
         Returns
         -------
         Metadata
-            New Metadata instance with the data from the element
+            New Metadata instance with the data from the element.
         """
         metadata = Metadata(element.get("metadata", None))
-        core = Core.parse(element.find(f"{{{nsmap[None]}}}core"), nsmap=nsmap)
+        core = Core.parse(element.find(f"{{{nmap[None]}}}core"), nmap=nmap)
         metadata.__core__ = core
-        for extension in element.findall(f"{{{nsmap[None]}}}extension"):
-            metadata.__extensions__.append(Extension.parse(extension, nsmap=nsmap))
+        for extension in element.findall(f"{{{nmap[None]}}}extension"):
+            metadata.__extensions__.append(Extension.parse(extension, nmap=nmap))
         return metadata
 
     def to_element(self) -> et.Element:
@@ -89,4 +89,8 @@ class Metadata(XMLObject):
         element = super().to_element()
         if self.__metadata__ is not None:
             element.set("metadata", self.__metadata__)
+        if self.core is not None:
+            element.append(self.core.to_element())
+        for extension in self.extensions:
+            element.append(extension.to_element())
         return element

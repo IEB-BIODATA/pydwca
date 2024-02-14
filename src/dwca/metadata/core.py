@@ -62,7 +62,7 @@ class Core(DataFile):
         return self.__id__
 
     @classmethod
-    def parse(cls, element: et.Element, nsmap: Dict) -> Core | None:
+    def parse(cls, element: et.Element, nmap: Dict) -> Core | None:
         """
         Parse an `lxml.etree.Element` into a Core instance.
 
@@ -70,7 +70,7 @@ class Core(DataFile):
         ----------
         element : `lxml.etree.Element`
             An XML `Element`.
-        nsmap : Dict
+        nmap : Dict
             Dictionary of prefix:uri.
 
         Returns
@@ -81,23 +81,23 @@ class Core(DataFile):
         if element is None:
             return None
         fields = list()
-        for field_tree in element.findall("field", namespaces=nsmap):
-            field = Field.parse(field_tree, nsmap=nsmap)
-            field.__namespace__ = nsmap
+        for field_tree in element.findall("field", namespaces=nmap):
+            field = Field.parse(field_tree, nsmap=nmap)
+            field.__namespace__ = nmap
             fields.append(field)
         assert len(fields) >= 1, "Core must contain at least one field"
         core = Core(
             element.get("rowType"),
-            element.find("files", namespaces=nsmap).find("location", namespaces=nsmap).text,
+            element.find("files", namespaces=nmap).find("location", namespaces=nmap).text,
             fields,
-            element.find("id", namespaces=nsmap).get("index", None),
+            element.find("id", namespaces=nmap).get("index", None),
             element.get("encoding", "utf-8"),
             element.get("linesTerminatedBy", "\n"),
             element.get("fieldsTerminatedBy", ","),
             element.get("fieldsEnclosedBy", ""),
             element.get("ignoreHeaderLines", 0)
         )
-        core.__namespace__ = nsmap
+        core.__namespace__ = nmap
         return core
 
     def to_element(self) -> et.Element:

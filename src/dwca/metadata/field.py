@@ -31,12 +31,7 @@ class Field(XMLObject):
             element.get("vocabulary", None)
         )
         field.__namespace__ = nsmap
-        return Field(
-            element.get("term"),
-            element.get("index", None),
-            element.get("default", None),
-            element.get("vocabulary", None)
-        )
+        return field
 
     def to_element(self) -> et.Element:
         element = super().to_element()
