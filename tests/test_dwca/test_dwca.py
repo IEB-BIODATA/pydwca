@@ -20,9 +20,8 @@ class TestDWCA(unittest.TestCase):
         self.assertIsNotNone(self.object.metadata, "Doesn't have metadata")
         self.assertEqual(3, len(self.object.extensions), "Missing or wrong number of extensions")
         self.assertEqual("taxon.txt", self.object.core.filename, "Wrong filename in Core")
-        print([(type(field), field) for field in self.object.core.__fields__])
         self.assertCountEqual(
-            ["speciesprofile.txt", "reference.txt", "identifier.txt"],
+            ["speciesprofile.txt", "reference.txt", "identification.txt"],
             [extension.filename for extension in self.object.extensions],
             "Extension not read"
         )
