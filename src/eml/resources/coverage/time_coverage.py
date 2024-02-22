@@ -31,7 +31,6 @@ class TemporalCoverage(EMLObject):
         Means of encoding a range of dates and times.
     """
     PRINCIPAL_TAG = "temporalCoverage"
-    """str: Principal tag `temporalCoverage`"""
 
     class AlternativeTimeScale(XMLObject):
         """
@@ -51,7 +50,6 @@ class TemporalCoverage(EMLObject):
             Citation for works providing detailed information about any element of the timescale age.
         """
         PRINCIPAL_TAG = "alternativeTimeScale"
-        """str: Principal tag `alternativeTimeScale`."""
 
         def __init__(
                 self, name: str,

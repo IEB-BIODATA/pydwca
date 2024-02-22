@@ -17,7 +17,6 @@ class EMLCitation(Resource):
         The parameters of every type of Resource.
     """
     PRINCIPAL_TAG = "citation"
-    """str: Principal tag `citation`."""
 
     def __init__(
             self, **kwargs

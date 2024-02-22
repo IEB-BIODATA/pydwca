@@ -32,7 +32,6 @@ class EMLCoverage(EMLObject):
         System attribute of reference.
     """
     PRINCIPAL_TAG = "coverage"
-    """str: Principal tag `coverage`."""
 
     def __init__(
             self,

@@ -27,7 +27,6 @@ class EMLOnline(XMLObject):
         The definition of a connection that will be used in another location in the EML document.
     """
     PRINCIPAL_TAG = "online"
-    """str: Principal tag `online`."""
     class FunctionType(Enum):
         """
         Function of the URL.
@@ -340,7 +339,6 @@ class EMLOnline(XMLObject):
             A parameter to be used to make this connection.
         """
         PRINCIPAL_TAG = "connection"
-        """str: Principal tag `connection`."""
 
         def __init__(
                 self, _id: str = None,

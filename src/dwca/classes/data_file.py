@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import List, Union, Dict
+from typing import List, Union, Dict, Type
+from warnings import warn
 
 from lxml import etree as et
 
-from dwca.terms import Field
+from dwca.terms import Field, DWCType, DWCModified, DWCLanguage, DWCLicense, DWCRightsHolder, DWCAccessRights, \
+    DWCBibliographicCitation, DWCReferences, DWCInstitution, DWCCollection, DWCDataset, DWCInstitutionCode, \
+    DWCCollectionCode, DWCDatasetName, DWCOwnerInstitutionCode, DWCBasisOfRecord, DWCInformationWithheld, \
+    DWCDataGeneralizations, DWCDynamicProperties, OutsideTerm
 from dwca.xml import XMLObject
 
 
@@ -34,6 +38,15 @@ class DataFile(XMLObject, ABC):
     """
     URI = "http://rs.tdwg.org/dwc/terms/"
     """str: Unified Resource Identifier (URI) for the term identifying the class of data."""
+    __field_class__ = [
+        DWCType, DWCModified, DWCLanguage, DWCLicense, DWCRightsHolder,
+        DWCAccessRights, DWCBibliographicCitation, DWCReferences,
+        DWCInstitution, DWCCollection, DWCDataset, DWCInstitutionCode,
+        DWCCollectionCode, DWCDatasetName, DWCOwnerInstitutionCode,
+        DWCBasisOfRecord, DWCInformationWithheld, DWCDataGeneralizations,
+        DWCDynamicProperties,
+    ]
+
     def __init__(
             self, _id: int, files: str,
             fields: List[Field],
@@ -91,6 +104,28 @@ class DataFile(XMLObject, ABC):
         return
 
     @classmethod
+    def get_term_class(cls, element: et.Element) -> Type[Field]:
+        """
+        Extract the Python ``class`` term from an XML element instance.
+
+        Parameters
+        ----------
+        element : lxml.etree.Element
+            XML element instance.
+
+        Returns
+        -------
+        Type[Field]
+            The Python ``class`` representing the term name.
+        """
+        for field_class in cls.__field_class__:
+            if element.get("term") == field_class.URI:
+                return field_class
+        warn(f"{element.get('term')} not in expected namespace. "
+             f"Some functionalities may not be available.")
+        return OutsideTerm
+
+    @classmethod
     def parse_kwargs(cls, element: et.Element, nmap: Dict) -> Dict:
         """
         Parse an `lxml.etree.Element` into the DataFile parameters.
@@ -107,13 +142,9 @@ class DataFile(XMLObject, ABC):
         Dict
             The Parameters of any DataFile.
         """
-        if element is None:
-            return dict()
         fields = list()
         for field_tree in element.findall("field", namespaces=nmap):
-            field = Field.parse(field_tree, nmap=nmap)
-            field.__namespace__ = nmap
-            fields.append(field)
+            fields.append(cls.get_term_class(field_tree).parse(field_tree, nmap))
         assert len(fields) >= 1, "A Data File must contain at least one field"
         element_id = element.find("id", nmap)
         try:
@@ -131,6 +162,30 @@ class DataFile(XMLObject, ABC):
             "fields_enclosed_by": element.get("fieldsEnclosedBy", ""),
             "ignore_header_lines": element.get("ignoreHeaderLines", 0),
         }
+
+    @classmethod
+    def parse(cls, element: et.Element, nmap: Dict) -> DataFile | None:
+        """
+        Parse an `lxml.etree.Element` into a concrete DataFile object.
+
+        Parameters
+        ----------
+        element : `lxml.etree.Element`
+            An XML `Element`.
+        nmap : Dict
+            Dictionary of prefix:uri.
+
+        Returns
+        -------
+        DataFile
+            An instance of a concrete DataFile class.
+        """
+        if element is None:
+            return None
+        kwargs = cls.parse_kwargs(element, nmap)
+        data_file = cls(**kwargs)
+        data_file.__namespace__ = nmap
+        return data_file
 
     def to_element(self) -> et.Element:
         """

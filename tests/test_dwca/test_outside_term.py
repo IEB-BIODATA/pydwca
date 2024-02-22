@@ -1,36 +1,36 @@
 import unittest
 
 from lxml import etree as et
-from dwca.terms import Field
+from dwca.terms import OutsideTerm
 
 
 class TestField(unittest.TestCase):
     def test_parse(self):
-        field = Field.from_string('<field index="1" term="http://rs.tdwg.org/dwc/terms/scientificNameID"/>')
+        field = OutsideTerm.from_string('<field index="1" term="http://rs.tdwg.org/dwc/terms/scientificNameID"/>')
         self.assertEqual(1, field.index, "Wrong parse index")
-        self.assertEqual("http://rs.tdwg.org/dwc/terms/scientificNameID", field.__term__, "Wrong parse term")
+        self.assertEqual("http://rs.tdwg.org/dwc/terms/scientificNameID", field.uri, "Wrong parse term")
         self.assertIsNone(field.default, "Wrong parse default value")
         self.assertIsNone(field.vocabulary, "Wrong parse vocabulary value")
 
     def test_parse_invalid(self):
         self.assertRaises(
             ValueError,
-            Field.from_string,
+            OutsideTerm.from_string,
             '<field index="OK" term="http://rs.tdwg.org/dwc/terms/scientificNameID"/>'
         )
         self.assertRaises(
             AssertionError,
-            Field.from_string,
+            OutsideTerm.from_string,
             '<archive index="0" term="Valid Term"/>'
         )
         self.assertRaises(
             TypeError,
-            Field.from_string,
+            OutsideTerm.from_string,
             '<field index="2"/>'
         )
 
     def test_xml(self):
-        field = Field("http://rs.tdwg.org/dwc/terms/scientificNameID", index=1)
+        field = OutsideTerm(index=1, uri="http://rs.tdwg.org/dwc/terms/scientificNameID")
         expected = et.Element("field")
         expected.set("term", "http://rs.tdwg.org/dwc/terms/scientificNameID")
         expected.set("index", "1")

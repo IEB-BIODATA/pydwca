@@ -36,7 +36,6 @@ class EML(EMLObject):
         A list of precisely-defined semantic statements about this resource.
     """
     PRINCIPAL_TAG = "eml"
-    """str: Principal tag `eml`"""
     NAMESPACE_TAG = "eml"
     """str: Namespace tag `eml`, to be replace for `{uri}tag`"""
 

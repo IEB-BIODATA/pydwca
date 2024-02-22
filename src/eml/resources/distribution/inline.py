@@ -11,7 +11,6 @@ class EMLInline(XMLObject):
     Inline distribution.
     """
     PRINCIPAL_TAG = "inline"
-    """str: Principal tag `inline`"""
 
     def __init__(self) -> None:
         super().__init__()

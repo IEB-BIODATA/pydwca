@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from abc import ABC
 from typing import Any, Dict
 
 from lxml import etree as et
@@ -6,7 +8,7 @@ from lxml import etree as et
 from dwca.xml import XMLObject
 
 
-class Field(XMLObject):
+class Field(XMLObject, ABC):
     """
     Element use to specify the location and content of data within a :class:`dwca.classes.data_file.DataFile`.
 
@@ -14,17 +16,19 @@ class Field(XMLObject):
     ----------
     index : int
         Specifies the position of the column in the row.
-    default: Any, optional
+    default: TYPE, optional
         Specifies a value to use if one is not supplied.
     vocabulary: str, optional
         An URI for a vocabulary that the source values for this Field are based on.
     """
     PRINCIPAL_TAG = "field"
-    """str: Principal tag `field`"""
+    URI = "http://rs.tdwg.org/dwc/terms/"
+    """str: URI for the term represented by this field."""
+    TYPE = Any
+    """type: Type of the field."""
 
-    def __init__(self, term: str, index: int | str = None, default: Any = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__()
-        self.__term__ = term
         self.__index__ = int(index)
         self.__default__ = default
         self.__vocabulary__ = vocabulary
@@ -44,6 +48,11 @@ class Field(XMLObject):
     def vocabulary(self) -> str:
         """str: An URI for a vocabulary that the source values for this Field are based on."""
         return self.__vocabulary__
+
+    @property
+    def uri(self) -> str:
+        """str: An URI for the term represented by this field"""
+        return self.URI
 
     @classmethod
     def parse(cls, element: et.Element, nmap: Dict) -> Field | None:
@@ -66,11 +75,10 @@ class Field(XMLObject):
             return None
         if "term" not in element.attrib:
             raise TypeError("Field must have a term")
-        field = Field(
-            element.get("term"),
-            element.get("index", None),
-            element.get("default", None),
-            element.get("vocabulary", None)
+        field = cls(
+            index=element.get("index", None),
+            default=element.get("default", None),
+            vocabulary=element.get("vocabulary", None)
         )
         field.__namespace__ = nmap
         return field
@@ -85,7 +93,7 @@ class Field(XMLObject):
             An XML element instance.
         """
         element = super().to_element()
-        element.set("term", self.__term__)
+        element.set("term", self.uri)
         if self.__index__ is not None:
             element.set("index", str(self.__index__))
         if self.__default__ is not None:
@@ -95,4 +103,4 @@ class Field(XMLObject):
         return element
 
     def __repr__(self) -> str:
-        return f"<Field [term={self.__term__}]>"
+        return f"<Field [term={self.uri}]>"

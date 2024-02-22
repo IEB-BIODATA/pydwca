@@ -17,7 +17,6 @@ class EMLMetadata(XMLObject):
         An XML element instance or string representing a XML well define file.
     """
     PRINCIPAL_TAG = "metadata"
-    """str: Principal tag `metadata`."""
     def __init__(
             self,
             xml: Union[et.Element, str] = None
@@ -78,7 +77,6 @@ class EMLAdditionalMetadata(XMLObject):
         A pointer to the id attribute for the sub-portion of the resource that is described by this additional metadata.
     """
     PRINCIPAL_TAG = "additionalMetadata"
-    """str: Principal tag `additionalMetadata`."""
 
     def __init__(self, metadata: EMLMetadata, _id: str = None, describes: List[str] = None) -> None:
         super().__init__()

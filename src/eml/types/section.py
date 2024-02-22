@@ -28,7 +28,6 @@ class EMLSection(XMLObject):
         Language of section. Default `"ENG"`
     """
     PRINCIPAL_TAG = "section"
-    """str: Principal tag `section`"""
 
     def __init__(
             self, title: Union[I18nString, str] = None,

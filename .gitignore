@@ -191,3 +191,4 @@ Temporary Items
 # Data for testing purpose
 /tests/example_data/example_archive.zip
 /tests/example_data/*.txt
+/tests/example_data/*.tsv

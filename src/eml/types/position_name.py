@@ -11,7 +11,6 @@ class PositionName(I18nString):
     The name of the title or position associated with the resource.
     """
     PRINCIPAL_TAG = "positionName"
-    """str: Principal tag `positionName`"""
 
     @classmethod
     def parse(cls, element: et.Element, nmap: Dict) -> PositionName | None:

@@ -138,7 +138,6 @@ class TaxonomicCoverage(EMLObject):
             A description of any modifications or exceptions made to the classification system or authority used.
         """
         PRINCIPAL_TAG = "taxonomicSystem"
-        """str: Principal tag `taxonomicSystem`."""
 
         def __init__(
                 self, procedures: str,
@@ -344,7 +343,6 @@ class TaxonomicCoverage(EMLObject):
             Taxonomic Classification field is self-referencing to allow for an arbitrary depth of rank, down to species.
         """
         PRINCIPAL_TAG = "taxonomicClassification"
-        """str: Principal tag `taxonomicClassification`."""
 
         def __init__(
                 self, _id: str = None,
@@ -483,7 +481,6 @@ class TaxonomicCoverage(EMLObject):
             return element
 
     PRINCIPAL_TAG = "taxonomicCoverage"
-    """str: Principal tag `taxonomicCoverage`."""
 
     def __init__(
             self, _id: str = None,

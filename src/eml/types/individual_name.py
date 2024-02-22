@@ -24,7 +24,6 @@ class IndividualName(XMLObject):
         In case of given, the language of all the parameters given
     """
     PRINCIPAL_TAG = "individualName"
-    """str: Principal tag `individualName`"""
 
     def __init__(
             self, last_name: Union[str, I18nString],
