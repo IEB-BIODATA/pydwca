@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import io
 import zipfile
-from typing import List, Dict
+from typing import List, Dict, Type
+from warnings import warn
 
 from lxml import etree as et
 
 from dwca.base import DarwinCore
-from dwca.classes import DataFile, get_dwc_class
+from dwca.classes import DataFile, Occurrence, Organism, MaterialEntity, MaterialSample, Event, Location, \
+    GeologicalContext, Identification, Taxon, ResourceRelationship, MeasurementOrFact, ChronometricAge, OutsideClass
+from dwca.utils import Language
 from dwca.xml import XMLObject
 from eml.base import EML
 from eml.resources import EMLResource
@@ -33,12 +36,41 @@ class DarwinCoreArchive(DarwinCore):
         """
         PRINCIPAL_TAG = "archive"
         """str : Require tag of the metadata"""
+        __classes__ = [
+            Occurrence, Organism, MaterialEntity, MaterialSample,
+            Event, Location, GeologicalContext, Identification,
+            Taxon, ResourceRelationship, MeasurementOrFact,
+            ChronometricAge,
+        ]
+
         def __init__(self, metadata: str = None) -> None:
             super().__init__()
             self.__metadata__ = metadata
             self.__core__ = None
             self.__extensions__: List[DataFile] = list()
             return
+
+        @classmethod
+        def get_dwc_class(cls, element: et.Element) -> Type[DataFile]:
+            """
+            Extract the row type from an XML element instance.
+
+            Parameters
+            ----------
+            element : lxml.etree.Element
+                XML element instance.
+
+            Returns
+            -------
+            Type[DataFile]
+                The Python ``class`` representing the class term.
+            """
+            for dwc_class in cls.__classes__:
+                if element.get("rowType") == dwc_class.URI:
+                    return dwc_class
+            warn(f"{element.get('rowType')} not in expected namespace. "
+                 f"Some functionalities may not be available.")
+            return OutsideClass
 
         @property
         def core(self) -> DataFile:
@@ -81,13 +113,13 @@ class DarwinCoreArchive(DarwinCore):
             metadata = element.get("metadata", None)
             core_element = element.find(f"{{{nmap[None]}}}core")
             assert core_element.find("id", nmap).get("index") is not None, "Core must have an id"
-            core = get_dwc_class(core_element).parse(core_element, nmap=nmap)
+            core = cls.get_dwc_class(core_element).parse(core_element, nmap=nmap)
             core.set_tag("core")
             meta = DarwinCoreArchive.Metadata(metadata)
             meta.__core__ = core
             for extension_elem in element.findall(f"{{{nmap[None]}}}extension"):
                 assert extension_elem.find("coreid", nmap).get("index") is not None, "Extension must have a coreid"
-                extension = get_dwc_class(extension_elem).parse(extension_elem, nmap)
+                extension = cls.get_dwc_class(extension_elem).parse(extension_elem, nmap)
                 extension.set_tag("extension")
                 meta.__extensions__.append(extension)
             meta.__namespace__ = nmap
@@ -142,6 +174,11 @@ class DarwinCoreArchive(DarwinCore):
         """
         return self.__metadata__
 
+    @property
+    def language(self) -> Language:
+        """Language: Language of the Darwin Core Archive register on metadata."""
+        return self.metadata.language
+
     def generate_eml(self, filename: str = "eml.xml") -> None:
         """
         Generate an EML file on the archive
@@ -178,7 +215,7 @@ class DarwinCoreArchive(DarwinCore):
         archive = zipfile.ZipFile(path_to_archive, "r")
         index_file = archive.read("meta.xml")
         metadata = DarwinCoreArchive.Metadata.from_string(index_file.decode(encoding="utf-8"))
-        if metadata.metadata_file is not None:
+        if metadata.metadata_filename is not None:
             eml = EML.from_string(archive.read(metadata.metadata_filename).decode(encoding="utf-8"))
             darwin_core = DarwinCoreArchive(_id=eml.package_id)
         else:

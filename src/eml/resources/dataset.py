@@ -23,7 +23,6 @@ class EMLDataset(Resource):
         The parameters of every type of Resource.
     """
     PRINCIPAL_TAG = "dataset"
-    """str: Principal tag `dataset`"""
 
     def __init__(
             self,

@@ -11,13 +11,13 @@ class XMLObject(ABC):
     Abstract class for XML Object, to be parsed on the read of the Darwin Core Archive file.
     """
     PRINCIPAL_TAG = "placeholder"
-    """str : The principal tag of the XML document """
+    """str : The principal tag of the XML document."""
     NAMESPACE_TAG = None
-    """str : If the principal tag has a namespace attribute, this must be used"""
+    """str : If the principal tag has a namespace attribute, this must be used."""
     NAMESPACES = {
         "xml": "http://www.w3.org/XML/1998/namespace"
     }
-    """Dict[str, str] : Namespaces to use on the particular XML portion that represent the object"""
+    """Dict[str, str] : Namespaces to use on the particular XML portion that represent the object."""
 
     def __init__(self) -> None:
         self.__namespace__ = dict()

@@ -129,7 +129,6 @@ class AccessType(EMLObject):
         A rule that revokes a permission type. Mandatory if AccessType is not a reference.
     """
     PRINCIPAL_TAG = "access"
-    """str: Principal tag `access`."""
 
     def __init__(
             self, auth_system: str,

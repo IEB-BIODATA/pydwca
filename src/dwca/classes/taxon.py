@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from typing import List, Union, Dict
-
-from lxml import etree as et
+from typing import List, Union
 
 from dwca.classes import DataFile
-from dwca.terms import Field
+from dwca.terms import Field, TaxonID, ScientificNameID, AcceptedNameUsageID, ParentNameUsageID, OriginalNameUsageID, \
+    NameAccordingToID, NamePublishedInID, TaxonConceptID, ScientificName, AcceptedNameUsage, ParentNameUsage, \
+    OriginalNameUsage, NameAccordingTo, NamePublishedIn, NamePublishedInYear, HigherClassification, Kingdom, Phylum, \
+    DWCClass, Order, Superfamily, Family, Subfamily, Tribe, Subtribe, Genus, GenericName, Subgenus, \
+    InfragenericEpithet, SpecificEpithet, InfraspecificEpithet, CultivarEpithet, TaxonRank, VerbatimTaxonRank, \
+    ScientificNameAuthorship, VernacularName, NomenclaturalCode, TaxonomicStatus, NomenclaturalStatus, TaxonRemarks
 
 
 class Taxon(DataFile):
@@ -32,6 +35,21 @@ class Taxon(DataFile):
         Ignore headers at the start of document, can be one line or a list of them, default 0 (first line).
     """
     URI = DataFile.URI + "Taxon"
+    __field_class__ = DataFile.__field_class__ + [
+        TaxonID, ScientificNameID, AcceptedNameUsageID,
+        ParentNameUsageID, OriginalNameUsageID,
+        NameAccordingToID, NamePublishedInID, TaxonConceptID,
+        ScientificName, AcceptedNameUsage, ParentNameUsage,
+        OriginalNameUsage, NameAccordingTo, NamePublishedIn,
+        NamePublishedInYear, HigherClassification, Kingdom,
+        Phylum, DWCClass, Order, Superfamily, Family,
+        Subfamily, Tribe, Subtribe, Genus, GenericName,
+        Subgenus, InfragenericEpithet, SpecificEpithet,
+        InfraspecificEpithet, CultivarEpithet, TaxonRank,
+        VerbatimTaxonRank, ScientificNameAuthorship,
+        VernacularName, NomenclaturalCode, TaxonomicStatus,
+        NomenclaturalStatus, TaxonRemarks,
+    ]
 
     def __init__(
             self, _id: int, files: str,
@@ -49,26 +67,3 @@ class Taxon(DataFile):
             ignore_header_lines, _principal_tag
         )
         return
-
-    @classmethod
-    def parse(cls, element: et.Element, nmap: Dict) -> Taxon | None:
-        """
-        Parse an `lxml.etree.Element` into a Taxon object.
-
-        Parameters
-        ----------
-        element : `lxml.etree.Element`
-            An XML `Element`.
-        nmap : Dict
-            Dictionary of prefix:uri.
-
-        Returns
-        -------
-        Taxon
-            An instance of Taxon.
-        """
-        if element is None:
-            return None
-        taxon = Taxon(**super().parse_kwargs(element, nmap))
-        taxon.__namespace__ = nmap
-        return taxon

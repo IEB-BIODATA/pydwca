@@ -18,7 +18,6 @@ class EMLPhone(XMLObject):
         The type of the phone to which this number applies. Default "voice".
     """
     PRINCIPAL_TAG = "phone"
-    """str: Principal tag `phone`"""
 
     def __init__(self, phone: str, phone_type: str = "voice") -> None:
         super().__init__()

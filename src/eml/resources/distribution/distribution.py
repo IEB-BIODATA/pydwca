@@ -32,7 +32,6 @@ class EMLDistribution(EMLObject):
         Data distributed inline in the metadata.
     """
     PRINCIPAL_TAG = "distribution"
-    """str: Principal tag `distribution`"""
 
     def __init__(self, _id: str = None, scope: Scope = Scope.DOCUMENT, system: str = None, referencing: bool = False,
                  references_system: str = None, online: EMLOnline = None, offline: EMLOffline = None,

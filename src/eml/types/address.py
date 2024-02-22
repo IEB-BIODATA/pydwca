@@ -37,7 +37,6 @@ class EMLAddress(EMLObject):
         The name of the country for the contact's address.
     """
     PRINCIPAL_TAG = "address"
-    """str: Principal tag `address`"""
 
     def __init__(
             self, _id: str = None,

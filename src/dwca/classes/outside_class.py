@@ -10,7 +10,7 @@ from dwca.terms import Field
 
 class OutsideClass(DataFile):
     """
-    Classes defined outside the Darwin Core specification.
+    Classes defined outside the Darwin Core specifications.
 
     Parameters
     ----------
@@ -71,8 +71,8 @@ class OutsideClass(DataFile):
         """
         if element is None:
             return None
-        kwargs = super().parse_kwargs(element, nmap)
-        uri = element.get("rowType")
-        outside_class = OutsideClass(uri=uri, **kwargs)
-        outside_class.__namespace__ = nmap
-        return outside_class
+        kwargs = cls.parse_kwargs(element, nmap)
+        kwargs["uri"] = element.get("rowType")
+        outside = OutsideClass(**kwargs)
+        outside.__namespace__ = nmap
+        return outside

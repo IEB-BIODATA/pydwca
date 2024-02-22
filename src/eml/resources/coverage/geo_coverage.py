@@ -43,7 +43,6 @@ class GeographicCoverage(EMLObject):
         This construct creates a spatial ring with a hollow center.
     """
     PRINCIPAL_TAG = "geographicCoverage"
-    """str: Principal tag `geographicCoverage`"""
 
     def __init__(
             self,

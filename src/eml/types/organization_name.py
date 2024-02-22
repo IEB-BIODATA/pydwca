@@ -11,7 +11,6 @@ class OrganizationName(I18nString):
     The full name of the organization being described.
     """
     PRINCIPAL_TAG = "organizationName"
-    """str: Principal tag `organizationName`"""
 
     @classmethod
     def parse(cls, element: et.Element, nmap: Dict) -> OrganizationName | None:
