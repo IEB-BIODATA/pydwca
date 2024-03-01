@@ -28,7 +28,7 @@ class TestOutside(TestXML):
         self.assertEqual("", outside.__fields_enclosed__, "Field enclosed parse incorrectly")
         self.assertEqual([1], outside.__ignore_header__, "Ignore header parse incorrectly")
         self.assertEqual("http://rs.gbif.org/terms/1.0/SpeciesProfile", outside.uri, "Row type parse incorrectly")
-        self.assertEqual(5, len(outside.__fields__), "Fields parse incorrectly")
+        self.assertEqual(4, len(outside.__fields__), "Fields parse incorrectly")
         outside.set_tag("extension")
         self.assertEqualTree(self.outside_xml, outside.to_element(), "Error on element conversion")
 

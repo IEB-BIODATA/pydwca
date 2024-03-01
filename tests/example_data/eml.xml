@@ -119,7 +119,7 @@
             <calendarDate>1758</calendarDate>
           </beginDate>
           <endDate>
-            <calendarDate>2023-05-19</calendarDate>
+            <calendarDate>2024-02-01</calendarDate>
           </endDate>
         </rangeOfDates>
       </temporalCoverage>
@@ -134,7 +134,7 @@
       <gbif>
         <dateStamp>2024-01-30T02:02:09+02:00</dateStamp>
         <hierarchyLevel>dataset</hierarchyLevel>
-        <citation>&lt;b&gt;Jane, D.&lt;/b&gt; (2024). Darwin Core Archive Example. Available from https://example.download.org. Accessed 2024-02-01</citation>
+        <citation>&lt;b&gt;Jane, D.&lt;/b&gt; (2024). Darwin Core Archive Example. Available from https://example.download.org. Accessed 2024-02-11</citation>
         <resourceLogoUrl>https://www.python.org/static/community_logos/python-logo-master-v3-TM.png</resourceLogoUrl>
       </gbif>
     </metadata>
