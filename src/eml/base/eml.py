@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from typing import Dict, List, Tuple, Any
 
+import datetime as dt
 from lxml import etree as et
 
 from dwca.utils import Language
 from eml.base import EMLMetadata, EMLVersion
-from eml.resources import EMLResource, EMLDataset, EMLCitation, EMLProtocol, EMLSoftware, Resource
-from eml.types import Scope, SemanticAnnotation, AccessType, EMLObject
+from eml.resources import EMLResource, EMLDataset, EMLCitation, EMLProtocol, EMLSoftware, Resource, EMLKeywordSet, \
+    EMLLicense, EMLDistribution, EMLCoverage
+from eml.types import Scope, SemanticAnnotation, AccessType, EMLObject, I18nString, ResponsibleParty, ExtensionString, \
+    Role, EMLTextType
 
 
 class EML(EMLObject):
@@ -169,6 +172,319 @@ class EML(EMLObject):
         """Annotation: A list of precisely-defined semantic statements about this resource."""
         return self.__annotation__
 
+    def initialize_resource(
+            self,
+            titles: str | I18nString | List[str | I18nString],
+            creators: ResponsibleParty | List[ResponsibleParty],
+            **kwargs
+    ) -> None:
+        """
+        Initialize the resource instance of this EML.
+
+        Parameters
+        ----------
+        titles : str | I18nString | List[str | I18nString]
+            The titles to initialize the resource with.
+        creators : ResponsibleParty | List[ResponsibleParty]+
+            The creators to initialize the resource with.
+
+        Other Parameters
+        ----------------
+        **kwargs : Parameters given in :class:`eml.resources.resource.Resource` or any subclass.
+
+        Returns
+        -------
+        None
+        """
+        proper_titles = list()
+        if isinstance(titles, list):
+            for title in titles:
+                proper_titles.append(I18nString(title))
+        else:
+            proper_titles.append(I18nString(titles))
+        self.__resource__ = self.__resource_class__(
+            titles=proper_titles,
+            creators=creators if isinstance(creators, list) else [creators],
+            **kwargs
+        )
+        return
+
+    def add_title(self, title: str | I18nString, language: Language = Language.ENG) -> None:
+        """
+        Add a new title to the EML.
+
+        Parameters
+        ----------
+        title : str | I18nString
+            The title as string or with language already
+        language : Language, optional
+            The language of the title. If the title given is a I18nString, this argument is discarded.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__titles__.append(I18nString(title, language))
+        return
+
+    def add_creator(self, creator: ResponsibleParty) -> None:
+        """
+        Add a new creator to the EML.
+
+        Parameters
+        ----------
+        creator : ResponsibleParty
+            The creator to be added to the resource.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__creators__.append(creator)
+        return
+
+    def add_alternative_identifier(self, alternative_identifier: str | ExtensionString) -> None:
+        """
+        Add an alternative identifier to the EML.
+
+        Parameters
+        ----------
+        alternative_identifier : str | ExtensionString
+            An alternative identifier.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__alternative_identifier__.append(ExtensionString(alternative_identifier))
+        return
+
+    def set_short_name(self, short_name: str) -> None:
+        """
+        Set short name of Resource in the EML.
+
+        Parameters
+        ----------
+        short_name : str
+            A short name for the resource.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__short_name__ = short_name
+        return
+
+    def add_metadata_provider(self, metadata_provider: ResponsibleParty) -> None:
+        """
+        Add metadata provider to the EML.
+
+        Parameters
+        ----------
+        metadata_provider : ResponsibleParty
+            A Metadata Provider of the resource in the EML.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__metadata_provider__.append(metadata_provider)
+        return
+
+    def add_associated_party(self, associated_party: ResponsibleParty, role: Role) -> None:
+        """
+        Add metadata provider to the EML.
+
+        Parameters
+        ----------
+        associated_party : ResponsibleParty
+            An Associated Party of the resource in the EML.
+        role : Role
+            The role of the Associated Party.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__associated__.append((associated_party, role))
+        return
+
+    def set_pub_date(self, date: dt.date) -> None:
+        """
+        Set publication date of the resource in the EML.
+
+        Parameters
+        ----------
+        date : datetime.date
+            Publication date.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__pub_date__ = date
+        return
+
+    def set_language(self, language: Language) -> None:
+        """
+        Set language of the resource in the EML.
+
+        Parameters
+        ----------
+        language : Language
+            A Language enum instance.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__lang__ = language
+        return
+
+    def set_series(self, series: str) -> None:
+        """
+        Set series of the resource in the EML.
+
+        Parameters
+        ----------
+        series : str
+            The series from which the resource came.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__series__ = series
+        return
+
+    def set_abstract(self, abstract: EMLTextType) -> None:
+        """
+        Set abstract of the resource in the EML.
+
+        Parameters
+        ----------
+        abstract : EMLTextType
+            An abstract in the required :class:`eml.types.text_type.EMLTextType` instance format.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__abstract__ = abstract
+        return
+
+    def add_keyword_set(self, keyword_set: EMLKeywordSet) -> None:
+        """
+        Add keyword set to the resource in the EML.
+
+        Parameters
+        ----------
+        keyword_set : EMLKeywordSet
+            An instance of :class:`eml.resources.keyword_set.EMLKeywordSet`.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__keywords__.append(keyword_set)
+        return
+
+    def add_additional_info(self, additional_info: EMLTextType) -> None:
+        """
+        Add additional info to the resource in the EML.
+
+        Parameters
+        ----------
+        additional_info : EMLTextType
+            Additional info in the required :class:`eml.types.text_type.EMLTextType` instance format.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__add_info__.append(additional_info)
+        return
+
+    def set_intellectual_rights(self, intellectual_rights: EMLTextType) -> None:
+        """
+        Set intellectual rights of the resource in the EML.
+
+        Parameters
+        ----------
+        intellectual_rights : EMLTextType
+            The intellectual rights in the required :class:`eml.types.text_type.EMLTextType` instance format.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__int_rights__ = intellectual_rights
+        return
+
+    def add_licensed(self, licensed: EMLLicense) -> None:
+        """
+        Add licensed to the resource in the EML.
+
+        Parameters
+        ----------
+        licensed : EMLLicense
+            An license instance.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__licensed__.append(licensed)
+        return
+
+    def add_distribution(self, distribution: EMLDistribution) -> None:
+        """
+        Add distribution to the resource in the EML.
+
+        Parameters
+        ----------
+        distribution : EMLDistribution
+            An instance of :class:`eml.resources.distribution.distribution.EMLDistribution`.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__dist__.append(distribution)
+        return
+
+    def set_coverage(self, coverage: EMLCoverage) -> None:
+        """
+        Set coverage of the resource in the EML.
+
+        Parameters
+        ----------
+        coverage : EMLCoverage
+            An instance of :class:`eml.resources.coverage.coverage.EMLCoverage`.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__cover__ = coverage
+        return
+
+    def add_annotation(self, annotation: SemanticAnnotation) -> None:
+        """
+        Add annotation to the resource in the EML.
+
+        Parameters
+        ----------
+        annotation : SemanticAnnotation
+            An annotation in the :class:`eml.types.semantic_annotation.SemanticAnnotation` instance format.
+
+        Returns
+        -------
+        None
+        """
+        self.resource.__annotation__.append(annotation)
+        return
+
     @classmethod
     def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLObject:
         """
@@ -267,3 +583,6 @@ class EML(EMLObject):
                 annotations_elem.append(annotation_elem)
             root.append(annotations_elem)
         return root
+
+    def __str__(self) -> str:
+        return f"EML:\n\tResource Type: {self.resource_type.name}\n{self.resource}"

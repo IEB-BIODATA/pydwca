@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Any
 
 from lxml import etree as et
 
@@ -113,3 +113,11 @@ class SemanticAnnotation(EMLObject, _NoTagObject):
         self.value_uri.set_tag("valueURI")
         element.append(self.value_uri.to_element())
         return element
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, SemanticAnnotation):
+            return (super().__eq__(other) and
+                    self.property_uri == other.property_uri and
+                    self.value_uri == other.value_uri)
+        else:
+            return False

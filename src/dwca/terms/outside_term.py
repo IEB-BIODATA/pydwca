@@ -12,7 +12,7 @@ class OutsideTerm(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     uri : str
         URI of the term.
@@ -23,7 +23,7 @@ class OutsideTerm(Field):
     """
     TYPE = Any
 
-    def __init__(self, index: int | str = None, uri: str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, uri: str = None, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         self.URI = uri
         return
@@ -50,7 +50,7 @@ class OutsideTerm(Field):
         if "term" not in element.attrib:
             raise TypeError("Field must have a term")
         field = OutsideTerm(
-            element.get("index", None),
+            element.get("index"),
             element.get("term", None),
             element.get("default", None),
             element.get("vocabulary", None),

@@ -11,7 +11,7 @@ class DWCType(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -21,7 +21,7 @@ class DWCType(Field):
     URI = "http://purl.org/dc/elements/1.1/type"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -32,7 +32,7 @@ class DWCModified(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -42,7 +42,7 @@ class DWCModified(Field):
     URI = "	http://purl.org/dc/terms/modified"
     TYPE = dt.datetime
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -53,7 +53,7 @@ class DWCLanguage(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -63,7 +63,7 @@ class DWCLanguage(Field):
     URI = "http://purl.org/dc/elements/1.1/language"
     TYPE = Language
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -74,7 +74,7 @@ class DWCLicense(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -84,7 +84,7 @@ class DWCLicense(Field):
     URI = "http://purl.org/dc/terms/license"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -95,7 +95,7 @@ class DWCRightsHolder(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -105,7 +105,7 @@ class DWCRightsHolder(Field):
     URI = "http://purl.org/dc/terms/rightsHolder"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -116,7 +116,7 @@ class DWCAccessRights(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -126,7 +126,7 @@ class DWCAccessRights(Field):
     URI = "http://purl.org/dc/terms/accessRights"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -137,7 +137,7 @@ class DWCBibliographicCitation(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -147,7 +147,7 @@ class DWCBibliographicCitation(Field):
     URI = "http://purl.org/dc/terms/bibliographicCitation"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -158,7 +158,7 @@ class DWCReferences(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -168,7 +168,7 @@ class DWCReferences(Field):
     URI = "http://purl.org/dc/terms/references"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -179,7 +179,7 @@ class DWCInstitution(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -189,7 +189,7 @@ class DWCInstitution(Field):
     URI = "http://rs.tdwg.org/dwc/terms/institutionID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -200,7 +200,7 @@ class DWCCollection(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -210,7 +210,7 @@ class DWCCollection(Field):
     URI = "http://rs.tdwg.org/dwc/terms/collectionID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -221,7 +221,7 @@ class DWCDataset(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -231,7 +231,7 @@ class DWCDataset(Field):
     URI = "http://rs.tdwg.org/dwc/terms/datasetID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -242,7 +242,7 @@ class DWCInstitutionCode(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -252,7 +252,7 @@ class DWCInstitutionCode(Field):
     URI = "http://rs.tdwg.org/dwc/terms/institutionCode"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -263,7 +263,7 @@ class DWCCollectionCode(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -273,7 +273,7 @@ class DWCCollectionCode(Field):
     URI = "http://rs.tdwg.org/dwc/terms/collectionCode"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -284,7 +284,7 @@ class DWCDatasetName(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -294,7 +294,7 @@ class DWCDatasetName(Field):
     URI = "http://rs.tdwg.org/dwc/terms/datasetName"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -305,7 +305,7 @@ class DWCOwnerInstitutionCode(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -315,7 +315,7 @@ class DWCOwnerInstitutionCode(Field):
     URI = "http://rs.tdwg.org/dwc/terms/ownerInstitutionCode"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -326,7 +326,7 @@ class DWCBasisOfRecord(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -336,7 +336,7 @@ class DWCBasisOfRecord(Field):
     URI = "http://rs.tdwg.org/dwc/terms/basisOfRecord"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -347,7 +347,7 @@ class DWCInformationWithheld(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -357,7 +357,7 @@ class DWCInformationWithheld(Field):
     URI = "http://rs.tdwg.org/dwc/terms/informationWithheld"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -368,7 +368,7 @@ class DWCDataGeneralizations(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -378,7 +378,7 @@ class DWCDataGeneralizations(Field):
     URI = "http://rs.tdwg.org/dwc/terms/dataGeneralizations"
     TYPE = Any
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -389,7 +389,7 @@ class DWCDynamicProperties(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -399,6 +399,6 @@ class DWCDynamicProperties(Field):
     URI = "http://rs.tdwg.org/dwc/terms/dynamicProperties"
     TYPE = Dict[str, Any]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return

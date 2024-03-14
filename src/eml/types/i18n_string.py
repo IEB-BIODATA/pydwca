@@ -33,7 +33,10 @@ class I18nString(_NoTagObject):
             self.__lang__ = value.language
             self.__tag__ = value.__tag__
         else:
-            self.__value__ = value
+            if value is None:
+                self.__value__ = ""
+            else:
+                self.__value__ = value
             language = Language.ENG
             if lang is None:
                 pass

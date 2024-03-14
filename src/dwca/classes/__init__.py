@@ -1,4 +1,4 @@
-from dwca.classes.data_file import DataFile
+from dwca.classes.data_file import DataFile, DataFileType
 from dwca.classes.occurrence import Occurrence
 from dwca.classes.organism import Organism
 from dwca.classes.material_entity import MaterialEntity

@@ -10,7 +10,7 @@ class LocationID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -18,7 +18,7 @@ class LocationID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/locationID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -29,7 +29,7 @@ class HigherGeographyID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -39,7 +39,7 @@ class HigherGeographyID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/higherGeographyID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -50,7 +50,7 @@ class HigherGeography(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -58,7 +58,7 @@ class HigherGeography(Field):
     URI = "http://rs.tdwg.org/dwc/terms/higherGeography"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -69,7 +69,7 @@ class Continent(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -79,7 +79,7 @@ class Continent(Field):
     URI = "http://rs.tdwg.org/dwc/terms/continent"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -90,7 +90,7 @@ class WaterBody(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -100,7 +100,7 @@ class WaterBody(Field):
     URI = "http://rs.tdwg.org/dwc/terms/waterBody"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -111,7 +111,7 @@ class IslandGroup(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -121,7 +121,7 @@ class IslandGroup(Field):
     URI = "http://rs.tdwg.org/dwc/terms/islandGroup"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -132,7 +132,7 @@ class Island(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -142,7 +142,7 @@ class Island(Field):
     URI = "http://rs.tdwg.org/dwc/terms/island"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -153,7 +153,7 @@ class Country(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -163,7 +163,7 @@ class Country(Field):
     URI = "http://rs.tdwg.org/dwc/terms/country"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -174,7 +174,7 @@ class CountryCode(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -184,7 +184,7 @@ class CountryCode(Field):
     URI = "http://rs.tdwg.org/dwc/terms/countryCode"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -197,7 +197,7 @@ class StateProvince(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -207,7 +207,7 @@ class StateProvince(Field):
     URI = "http://rs.tdwg.org/dwc/terms/stateProvince"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -220,7 +220,7 @@ class County(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -230,7 +230,7 @@ class County(Field):
     URI = "http://rs.tdwg.org/dwc/terms/county"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -244,7 +244,7 @@ class Municipality(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -254,7 +254,7 @@ class Municipality(Field):
     URI = "http://rs.tdwg.org/dwc/terms/municipality"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -265,7 +265,7 @@ class DWCLocalityTerm(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -273,7 +273,7 @@ class DWCLocalityTerm(Field):
     URI = "http://rs.tdwg.org/dwc/terms/locality"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -284,7 +284,7 @@ class VerbatimLocality(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -292,7 +292,7 @@ class VerbatimLocality(Field):
     URI = "http://rs.tdwg.org/dwc/terms/verbatimLocality"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -303,7 +303,7 @@ class MinimumElevationInMeters(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -311,7 +311,7 @@ class MinimumElevationInMeters(Field):
     URI = "http://rs.tdwg.org/dwc/terms/minimumElevationInMeters"
     TYPE = int
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -322,7 +322,7 @@ class MaximumElevationInMeters(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -330,7 +330,7 @@ class MaximumElevationInMeters(Field):
     URI = "http://rs.tdwg.org/dwc/terms/maximumElevationInMeters"
     TYPE = int
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -341,7 +341,7 @@ class VerbatimElevation(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -349,7 +349,7 @@ class VerbatimElevation(Field):
     URI = "http://rs.tdwg.org/dwc/terms/verbatimElevation"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -360,7 +360,7 @@ class VerticalDatum(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -368,7 +368,7 @@ class VerticalDatum(Field):
     URI = "http://rs.tdwg.org/dwc/terms/verticalDatum"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -379,7 +379,7 @@ class MinimumDepthInMeters(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -387,7 +387,7 @@ class MinimumDepthInMeters(Field):
     URI = "http://rs.tdwg.org/dwc/terms/minimumDepthInMeters"
     TYPE = int
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -398,7 +398,7 @@ class MaximumDepthInMeters(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -406,7 +406,7 @@ class MaximumDepthInMeters(Field):
     URI = "http://rs.tdwg.org/dwc/terms/maximumDepthInMeters"
     TYPE = int
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -417,7 +417,7 @@ class VerbatimDepth(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -425,7 +425,7 @@ class VerbatimDepth(Field):
     URI = "http://rs.tdwg.org/dwc/terms/verbatimDepth"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -440,7 +440,7 @@ class MinimumDistanceAboveSurfaceInMeters(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -448,7 +448,7 @@ class MinimumDistanceAboveSurfaceInMeters(Field):
     URI = "http://rs.tdwg.org/dwc/terms/minimumDistanceAboveSurfaceInMeters"
     TYPE = int
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -464,7 +464,7 @@ class MaximumDistanceAboveSurfaceInMeters(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -472,7 +472,7 @@ class MaximumDistanceAboveSurfaceInMeters(Field):
     URI = "http://rs.tdwg.org/dwc/terms/maximumDistanceAboveSurfaceInMeters"
     TYPE = int
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -485,7 +485,7 @@ class LocationAccordingTo(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -493,7 +493,7 @@ class LocationAccordingTo(Field):
     URI = "http://rs.tdwg.org/dwc/terms/locationAccordingTo"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -504,7 +504,7 @@ class LocationRemarks(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -512,7 +512,7 @@ class LocationRemarks(Field):
     URI = "http://rs.tdwg.org/dwc/terms/locationRemarks"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -528,7 +528,7 @@ class DecimalLatitude(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -536,7 +536,7 @@ class DecimalLatitude(Field):
     URI = "http://rs.tdwg.org/dwc/terms/decimalLatitude"
     TYPE = float
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -552,7 +552,7 @@ class DecimalLongitude(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -560,7 +560,7 @@ class DecimalLongitude(Field):
     URI = "http://rs.tdwg.org/dwc/terms/decimalLongitude"
     TYPE = float
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -573,7 +573,7 @@ class GeodeticDatum(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -581,7 +581,7 @@ class GeodeticDatum(Field):
     URI = "http://rs.tdwg.org/dwc/terms/geodeticDatum"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -598,7 +598,7 @@ class CoordinateUncertaintyInMeters(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -606,7 +606,7 @@ class CoordinateUncertaintyInMeters(Field):
     URI = "http://rs.tdwg.org/dwc/terms/coordinateUncertaintyInMeters"
     TYPE = float
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -617,7 +617,7 @@ class CoordinatePrecision(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -625,7 +625,7 @@ class CoordinatePrecision(Field):
     URI = "http://rs.tdwg.org/dwc/terms/coordinatePrecision"
     TYPE = float
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -646,7 +646,7 @@ class PointRadiusSpatialFit(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -654,7 +654,7 @@ class PointRadiusSpatialFit(Field):
     URI = "http://rs.tdwg.org/dwc/terms/pointRadiusSpatialFit"
     TYPE = float
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -669,7 +669,7 @@ class VerbatimCoordinates(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -677,7 +677,7 @@ class VerbatimCoordinates(Field):
     URI = "http://rs.tdwg.org/dwc/terms/verbatimCoordinates"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -692,7 +692,7 @@ class VerbatimLatitude(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -700,7 +700,7 @@ class VerbatimLatitude(Field):
     URI = "http://rs.tdwg.org/dwc/terms/verbatimLatitude"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -715,7 +715,7 @@ class VerbatimLongitude(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -723,7 +723,7 @@ class VerbatimLongitude(Field):
     URI = "http://rs.tdwg.org/dwc/terms/verbatimLongitude"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -734,7 +734,7 @@ class VerbatimCoordinateSystem(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -742,7 +742,7 @@ class VerbatimCoordinateSystem(Field):
     URI = "http://rs.tdwg.org/dwc/terms/verbatimCoordinateSystem"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -755,7 +755,7 @@ class VerbatimSRS(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -763,7 +763,7 @@ class VerbatimSRS(Field):
     URI = "http://rs.tdwg.org/dwc/terms/verbatimSRS"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -777,7 +777,7 @@ class FootprintWKT(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -785,7 +785,7 @@ class FootprintWKT(Field):
     URI = "http://rs.tdwg.org/dwc/terms/footprintWKT"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -798,7 +798,7 @@ class FootprintSRS(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -806,7 +806,7 @@ class FootprintSRS(Field):
     URI = "http://rs.tdwg.org/dwc/terms/footprintSRS"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -828,7 +828,7 @@ class FootprintSpatialFit(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -836,7 +836,7 @@ class FootprintSpatialFit(Field):
     URI = "http://rs.tdwg.org/dwc/terms/footprintSpatialFit"
     TYPE = float
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -847,7 +847,7 @@ class GeoreferencedBy(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -855,7 +855,7 @@ class GeoreferencedBy(Field):
     URI = "http://rs.tdwg.org/dwc/terms/georeferencedBy"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -866,7 +866,7 @@ class GeoreferencedDate(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -874,7 +874,7 @@ class GeoreferencedDate(Field):
     URI = "http://rs.tdwg.org/dwc/terms/georeferencedDate"
     TYPE = Union[dt.datetime, Tuple[dt.datetime, dt.datetime]]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -885,7 +885,7 @@ class GeoreferenceProtocol(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -893,7 +893,7 @@ class GeoreferenceProtocol(Field):
     URI = "http://rs.tdwg.org/dwc/terms/georeferenceProtocol"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -907,7 +907,7 @@ class GeoreferenceSources(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -915,7 +915,7 @@ class GeoreferenceSources(Field):
     URI = "http://rs.tdwg.org/dwc/terms/georeferenceSources"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -930,7 +930,7 @@ class GeoreferenceRemarks(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -938,6 +938,6 @@ class GeoreferenceRemarks(Field):
     URI = "http://rs.tdwg.org/dwc/terms/georeferenceRemarks"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return

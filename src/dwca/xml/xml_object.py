@@ -177,7 +177,7 @@ class XMLObject(ABC):
         assert tag == expected, f"{tag} is not {expected}"
 
     def __str__(self) -> str:
-        return self.to_xml()
+        return repr(self)
 
     def __repr__(self) -> str:
         return f"<XMLObject tag={self.PRINCIPAL_TAG}>"

@@ -13,7 +13,7 @@ class MeasurementID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -21,7 +21,7 @@ class MeasurementID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/measurementID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -32,7 +32,7 @@ class ParentMeasurementID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -40,7 +40,7 @@ class ParentMeasurementID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/parentMeasurementID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -51,7 +51,7 @@ class MeasurementType(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -61,7 +61,7 @@ class MeasurementType(Field):
     URI = "http://rs.tdwg.org/dwc/terms/measurementType"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -72,7 +72,7 @@ class MeasurementValue(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -82,7 +82,7 @@ class MeasurementValue(Field):
     URI = "http://rs.tdwg.org/dwc/terms/measurementValue"
     TYPE = Any
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -93,7 +93,7 @@ class MeasurementAccuracy(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -101,7 +101,7 @@ class MeasurementAccuracy(Field):
     URI = "http://rs.tdwg.org/dwc/terms/measurementAccuracy"
     TYPE = Any
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -112,7 +112,7 @@ class MeasurementUnit(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -120,7 +120,7 @@ class MeasurementUnit(Field):
     URI = "http://rs.tdwg.org/dwc/terms/measurementUnit"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -131,7 +131,7 @@ class MeasurementDeterminedBy(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -141,7 +141,7 @@ class MeasurementDeterminedBy(Field):
     URI = "http://rs.tdwg.org/dwc/terms/measurementDeterminedBy"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -152,7 +152,7 @@ class MeasurementDeterminedDate(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -160,7 +160,7 @@ class MeasurementDeterminedDate(Field):
     URI = "http://rs.tdwg.org/dwc/terms/measurementDeterminedDate"
     TYPE = Union[dt.datetime, Tuple[dt.datetime, dt.datetime]]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -171,7 +171,7 @@ class MeasurementMethod(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -179,7 +179,7 @@ class MeasurementMethod(Field):
     URI = "http://rs.tdwg.org/dwc/terms/measurementMethod"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -190,7 +190,7 @@ class MeasurementRemarks(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -198,6 +198,6 @@ class MeasurementRemarks(Field):
     URI = "http://rs.tdwg.org/dwc/terms/measurementRemarks"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
