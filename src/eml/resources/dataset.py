@@ -43,6 +43,8 @@ class EMLDataset(Resource):
         """List[ResponsibleParty]: The contact for this dataset."""
         return self.__contact__
 
+    # TODO: Implement other attributes (https://eml.ecoinformatics.org/schema/eml_xsd#eml_dataset)
+
     @classmethod
     def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLDataset:
         """

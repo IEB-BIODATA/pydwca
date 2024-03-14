@@ -378,3 +378,16 @@ class Resource(EMLObject, ABC):
             annotation.set_tag("annotation")
             element.append(annotation.to_element())
         return element
+
+    def __str__(self) -> str:
+        creators = "\n\t\t".join([str(creator) for creator in self.creators])
+        creator_label = "Creator" if len(self.creators) <= 1 else "Creators"
+        metadata_provider = "\n\t\t".join([str(metadata_provider) for metadata_provider in self.metadata_provider])
+        associated_party = list()
+        for assoc, role in self.associated_party:
+            associated_party.append(f"\t{role}: {assoc}")
+        assoc_text = "\n".join(associated_party)
+        return (f"\tTitle: {self.title}\n"
+                f"\t{creator_label}: {creators}\n"
+                f"\tMetadataProvider: {metadata_provider}\n"
+                f"{assoc_text}")

@@ -10,7 +10,7 @@ class ChronometricAgeID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -18,7 +18,7 @@ class ChronometricAgeID(Field):
     URI = "http://rs.tdwg.org/chrono/terms/chronometricAgeID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -34,7 +34,7 @@ class VerbatimChronometricAge(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -42,7 +42,7 @@ class VerbatimChronometricAge(Field):
     URI = "http://rs.tdwg.org/chrono/terms/verbatimChronometricAge"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -53,7 +53,7 @@ class ChronometricAgeProtocol(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -61,7 +61,7 @@ class ChronometricAgeProtocol(Field):
     URI = "http://rs.tdwg.org/chrono/terms/chronometricAgeProtocol"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -72,7 +72,7 @@ class UncalibratedChronometricAge(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -80,7 +80,7 @@ class UncalibratedChronometricAge(Field):
     URI = "http://rs.tdwg.org/chrono/terms/uncalibratedChronometricAge"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -96,7 +96,7 @@ class ChronometricAgeConversionProtocol(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -104,7 +104,7 @@ class ChronometricAgeConversionProtocol(Field):
     URI = "http://rs.tdwg.org/chrono/terms/chronometricAgeConversionProtocol"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -118,7 +118,7 @@ class EarliestChronometricAge(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -126,7 +126,7 @@ class EarliestChronometricAge(Field):
     URI = "http://rs.tdwg.org/chrono/terms/earliestChronometricAge"
     TYPE = int
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -137,7 +137,7 @@ class EarliestChronometricAgeReferenceSystem(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -147,7 +147,7 @@ class EarliestChronometricAgeReferenceSystem(Field):
     URI = "http://rs.tdwg.org/chrono/terms/earliestChronometricAgeReferenceSystem"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -158,7 +158,7 @@ class LatestChronometricAge(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -166,7 +166,7 @@ class LatestChronometricAge(Field):
     URI = "http://rs.tdwg.org/chrono/terms/latestChronometricAge"
     TYPE = int
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -177,7 +177,7 @@ class LatestChronometricAgeReferenceSystem(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -187,7 +187,7 @@ class LatestChronometricAgeReferenceSystem(Field):
     URI = "http://rs.tdwg.org/chrono/terms/latestChronometricAgeReferenceSystem"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -203,7 +203,7 @@ class ChronometricAgeUncertaintyInYears(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -211,7 +211,7 @@ class ChronometricAgeUncertaintyInYears(Field):
     URI = "http://rs.tdwg.org/chrono/terms/chronometricAgeUncertaintyInYears"
     TYPE = int
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -222,7 +222,7 @@ class ChronometricAgeUncertaintyMethod(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -230,7 +230,7 @@ class ChronometricAgeUncertaintyMethod(Field):
     URI = "http://rs.tdwg.org/chrono/terms/chronometricAgeUncertaintyMethod"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -241,7 +241,7 @@ class MaterialDated(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -249,7 +249,7 @@ class MaterialDated(Field):
     URI = "http://rs.tdwg.org/chrono/terms/materialDated"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -260,7 +260,7 @@ class MaterialDatedID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -268,7 +268,7 @@ class MaterialDatedID(Field):
     URI = "http://rs.tdwg.org/chrono/terms/materialDatedID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -281,7 +281,7 @@ class MaterialDatedRelationship(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -291,7 +291,7 @@ class MaterialDatedRelationship(Field):
     URI = "http://rs.tdwg.org/chrono/terms/materialDatedRelationship"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -302,7 +302,7 @@ class ChronometricAgeDeterminedBy(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -310,7 +310,7 @@ class ChronometricAgeDeterminedBy(Field):
     URI = "http://rs.tdwg.org/chrono/terms/chronometricAgeDeterminedBy"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -321,7 +321,7 @@ class ChronometricAgeDeterminedDate(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -329,7 +329,7 @@ class ChronometricAgeDeterminedDate(Field):
     URI = "http://rs.tdwg.org/chrono/terms/chronometricAgeDeterminedDate"
     TYPE = dt.datetime
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -340,7 +340,7 @@ class ChronometricAgeReferences(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -348,7 +348,7 @@ class ChronometricAgeReferences(Field):
     URI = "http://rs.tdwg.org/chrono/terms/chronometricAgeReferences"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -359,7 +359,7 @@ class ChronometricAgeRemarks(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: Any, optional
         Specifies a value to use if one is not supplied.
@@ -367,6 +367,6 @@ class ChronometricAgeRemarks(Field):
     URI = "http://rs.tdwg.org/chrono/terms/chronometricAgeRemarks"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return

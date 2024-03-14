@@ -43,6 +43,8 @@ class EMLObject(XMLObject, ABC):
         self.__scope__ = scope
         self.__system = system
         self.__referencing__ = referencing
+        if self.__referencing__:
+            assert self.__id__ is not None, "Must give the id of the element being referenced."
         self.__references__ = ExtensionString(self.__id__, system=references_system)
         return
 
@@ -174,12 +176,12 @@ See https://eml.ecoinformatics.org/validation-and-content-references#id-and-scop
 
     def generate_references_element(self) -> et.Element:
         """
-        Generate the `<references>` element
+        Generate the `<references>` element.
 
         Returns
         -------
         xml.etree.Element
-            XML `Element` representing the references of referrer resource
+            XML `Element` representing the references of referrer resource.
         """
         if not self.referencing:
             return None

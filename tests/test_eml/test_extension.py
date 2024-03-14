@@ -64,6 +64,7 @@ class TestExtensionString(TestXML):
         variable = ExtensionString("My variable")
         self.assertEqual("My variable", variable, "Error on equal implementation")
         self.assertEqual(ExtensionString("My variable"), variable, "Error on equal implementation")
+        self.assertEqual(variable, ExtensionString(variable), "Error on equal with initialization parameter")
 
     def test_not_equal(self):
         variable = ExtensionString("My variable")

@@ -9,7 +9,7 @@ class MaterialEntityID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -17,7 +17,7 @@ class MaterialEntityID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/materialEntityID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -28,7 +28,7 @@ class Preparations(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -36,7 +36,7 @@ class Preparations(Field):
     URI = "http://rs.tdwg.org/dwc/terms/preparations"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -47,7 +47,7 @@ class Disposition(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -57,7 +57,7 @@ class Disposition(Field):
     URI = "http://rs.tdwg.org/dwc/terms/disposition"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -68,7 +68,7 @@ class VerbatimLabel(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -76,7 +76,7 @@ class VerbatimLabel(Field):
     URI = "http://rs.tdwg.org/dwc/terms/verbatimLabel"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -87,7 +87,7 @@ class AssociatedSequences(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -95,7 +95,7 @@ class AssociatedSequences(Field):
     URI = "http://rs.tdwg.org/dwc/terms/associatedSequences"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -106,7 +106,7 @@ class MaterialEntityRemarks(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -114,6 +114,6 @@ class MaterialEntityRemarks(Field):
     URI = "http://rs.tdwg.org/dwc/terms/materialEntityRemarks"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return

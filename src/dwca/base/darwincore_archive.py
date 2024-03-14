@@ -114,13 +114,11 @@ class DarwinCoreArchive(DarwinCore):
             core_element = element.find(f"{{{nmap[None]}}}core")
             assert core_element.find("id", nmap).get("index") is not None, "Core must have an id"
             core = cls.get_dwc_class(core_element).parse(core_element, nmap=nmap)
-            core.set_tag("core")
             meta = DarwinCoreArchive.Metadata(metadata)
             meta.__core__ = core
             for extension_elem in element.findall(f"{{{nmap[None]}}}extension"):
                 assert extension_elem.find("coreid", nmap).get("index") is not None, "Extension must have a coreid"
                 extension = cls.get_dwc_class(extension_elem).parse(extension_elem, nmap)
-                extension.set_tag("extension")
                 meta.__extensions__.append(extension)
             meta.__namespace__ = nmap
             return meta

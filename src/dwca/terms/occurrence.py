@@ -11,7 +11,7 @@ class OccurrenceID(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -19,7 +19,7 @@ class OccurrenceID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/occurrenceID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -30,7 +30,7 @@ class CatalogNumber(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -38,7 +38,7 @@ class CatalogNumber(Field):
     URI = "http://rs.tdwg.org/dwc/terms/catalogNumber"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -49,7 +49,7 @@ class RecordNumber(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -57,7 +57,7 @@ class RecordNumber(Field):
     URI = "http://rs.tdwg.org/dwc/terms/recordNumber"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -68,7 +68,7 @@ class RecordedBy(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -76,7 +76,7 @@ class RecordedBy(Field):
     URI = "http://rs.tdwg.org/dwc/terms/recordedBy"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -87,7 +87,7 @@ class RecordedByID(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -95,7 +95,7 @@ class RecordedByID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/recordedByID"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -106,7 +106,7 @@ class IndividualCount(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -114,7 +114,7 @@ class IndividualCount(Field):
     URI = "http://rs.tdwg.org/dwc/terms/individualCount"
     TYPE = int
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -125,7 +125,7 @@ class OrganismQuantity(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -133,7 +133,7 @@ class OrganismQuantity(Field):
     URI = "http://rs.tdwg.org/dwc/terms/organismQuantity"
     TYPE = Union[int, float, str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -144,7 +144,7 @@ class OrganismQuantityType(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -152,7 +152,7 @@ class OrganismQuantityType(Field):
     URI = "http://rs.tdwg.org/dwc/terms/organismQuantityType"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -163,7 +163,7 @@ class OccurrenceSex(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -173,7 +173,7 @@ class OccurrenceSex(Field):
     URI = "http://rs.tdwg.org/dwc/terms/sex"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -184,7 +184,7 @@ class LifeStage(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -194,7 +194,7 @@ class LifeStage(Field):
     URI = "http://rs.tdwg.org/dwc/terms/lifeStage"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -205,7 +205,7 @@ class ReproductiveCondition(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -215,7 +215,7 @@ class ReproductiveCondition(Field):
     URI = "http://rs.tdwg.org/dwc/terms/reproductiveCondition"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -226,7 +226,7 @@ class Caste(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -236,7 +236,7 @@ class Caste(Field):
     URI = "http://rs.tdwg.org/dwc/terms/caste"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -247,7 +247,7 @@ class Behavior(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -255,7 +255,7 @@ class Behavior(Field):
     URI = "http://rs.tdwg.org/dwc/terms/behavior"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -266,7 +266,7 @@ class Vitality(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -276,7 +276,7 @@ class Vitality(Field):
     URI = "http://rs.tdwg.org/dwc/terms/vitality"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -287,7 +287,7 @@ class DWCEstablishmentMeans(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -297,7 +297,7 @@ class DWCEstablishmentMeans(Field):
     URI = "http://rs.tdwg.org/dwc/terms/establishmentMeans"
     TYPE = Union[EstablishmentMeans, str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -308,7 +308,7 @@ class DWCDegreeOfEstablishment(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -318,7 +318,7 @@ class DWCDegreeOfEstablishment(Field):
     URI = "http://rs.tdwg.org/dwc/terms/degreeOfEstablishment"
     TYPE = str  # TODO: Create DOE Enum following https://dwc.tdwg.org/doe/
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -329,7 +329,7 @@ class Pathway(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -339,7 +339,7 @@ class Pathway(Field):
     URI = "http://rs.tdwg.org/dwc/terms/pathway"
     TYPE = str  # TODO: Create DOE Enum following  http://rs.tdwg.org/dwc/doc/pw/.
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -350,7 +350,7 @@ class GeoreferenceVerificationStatus(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -360,7 +360,7 @@ class GeoreferenceVerificationStatus(Field):
     URI = "http://rs.tdwg.org/dwc/terms/georeferenceVerificationStatus"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -371,7 +371,7 @@ class OccurrenceStatus(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -385,7 +385,7 @@ class OccurrenceStatus(Field):
     URI = "http://rs.tdwg.org/dwc/terms/occurrenceID"
     TYPE = DefaultStatus
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -396,7 +396,7 @@ class AssociatedMedia(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -404,7 +404,7 @@ class AssociatedMedia(Field):
     URI = "http://rs.tdwg.org/dwc/terms/associatedMedia"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -415,7 +415,7 @@ class AssociatedOccurrences(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -423,7 +423,7 @@ class AssociatedOccurrences(Field):
     URI = "http://rs.tdwg.org/dwc/terms/associatedOccurrences"
     TYPE = List[Tuple[str, str]]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -434,7 +434,7 @@ class AssociatedReferences(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -442,7 +442,7 @@ class AssociatedReferences(Field):
     URI = "http://rs.tdwg.org/dwc/terms/associatedReferences"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -453,7 +453,7 @@ class AssociatedTaxa(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -461,7 +461,7 @@ class AssociatedTaxa(Field):
     URI = "http://rs.tdwg.org/dwc/terms/associatedTaxa"
     TYPE = List[Tuple[str, str]]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -472,7 +472,7 @@ class OtherCatalogNumbers(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -480,7 +480,7 @@ class OtherCatalogNumbers(Field):
     URI = "http://rs.tdwg.org/dwc/terms/otherCatalogNumbers"
     TYPE = List[str]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -491,7 +491,7 @@ class OccurrenceRemarks(Field):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -499,6 +499,6 @@ class OccurrenceRemarks(Field):
     URI = "http://rs.tdwg.org/dwc/terms/occurrenceRemarks"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return

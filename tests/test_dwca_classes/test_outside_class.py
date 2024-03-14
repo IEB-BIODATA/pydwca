@@ -28,18 +28,63 @@ class TestOutside(TestXML):
         self.assertEqual("", outside.__fields_enclosed__, "Field enclosed parse incorrectly")
         self.assertEqual([1], outside.__ignore_header__, "Ignore header parse incorrectly")
         self.assertEqual("http://rs.gbif.org/terms/1.0/SpeciesProfile", outside.uri, "Row type parse incorrectly")
-        self.assertEqual(4, len(outside.__fields__), "Fields parse incorrectly")
-        outside.set_tag("extension")
+        self.assertEqual(5, len(outside.__fields__), "Fields parse incorrectly")
         self.assertEqualTree(self.outside_xml, outside.to_element(), "Error on element conversion")
 
     def test_none(self):
         self.assertIsNone(OutsideClass.parse(None, {}), "Object parsed from nothing")
+
+    def test_missing_field(self):
+        self.assertRaises(
+            AssertionError,
+            OutsideClass.from_string,
+            """
+<core>
+    <files>
+      <location>missing.txt</location>
+    </files>
+    <id index="0"/>
+    <field index="0" term=""/>
+    <field index="1" term=""/>
+    <field index="3" term=""/>
+</core>
+            """
+        )
+
+    def test_field_twice(self):
+        self.assertRaises(
+            AssertionError,
+            OutsideClass.from_string,
+            """
+<core>
+    <files>
+      <location>missing.txt</location>
+    </files>
+    <id index="0"/>
+    <field index="0" term=""/>
+    <field index="1" term=""/>
+    <field index="3" term=""/>
+    <field index="2" term=""/>
+    <field index="3" term=""/>
+    <field index="4" term=""/>
+</core>
+            """
+        )
 
     def test_parse_invalid(self):
         self.assertRaises(
             AssertionError,
             OutsideClass.from_string,
             '<extension />'
+        )
+        self.assertRaises(
+            KeyError,
+            OutsideClass.from_string,
+            """
+<core-id>
+    <field index="0" term=""/>
+</core-id>
+            """
         )
 
 

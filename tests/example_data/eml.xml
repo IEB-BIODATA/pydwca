@@ -85,7 +85,7 @@
     <keywordSet>
       <keyword>taxonomicAuthority</keyword>
       <keyword>globalSpeciesDataset</keyword>
-    <keyword>inventoryThematic</keyword>
+      <keyword>inventoryThematic</keyword>
       <keywordThesaurus>GBIF Dataset Subtype Vocabulary: http://rs.gbif.org/vocabulary/gbif/dataset_subtype.xml</keywordThesaurus>
     </keywordSet>
     <intellectualRights>

@@ -7,7 +7,7 @@ class MaterialSampleID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -15,6 +15,6 @@ class MaterialSampleID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/materialSampleID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return

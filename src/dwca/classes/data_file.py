@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from enum import Enum
 from typing import List, Union, Dict, Type
 from warnings import warn
 
@@ -11,6 +12,14 @@ from dwca.terms import Field, DWCType, DWCModified, DWCLanguage, DWCLicense, DWC
     DWCCollectionCode, DWCDatasetName, DWCOwnerInstitutionCode, DWCBasisOfRecord, DWCInformationWithheld, \
     DWCDataGeneralizations, DWCDynamicProperties, OutsideTerm
 from dwca.xml import XMLObject
+
+
+class DataFileType(Enum):
+    """
+    Type of data file in the Darwin Core Archive.
+    """
+    CORE = 0
+    EXTENSION = 1
 
 
 class DataFile(XMLObject, ABC):
@@ -25,6 +34,8 @@ class DataFile(XMLObject, ABC):
         File location, in the archive, this is inside the `zip` file.
     fields : List[Field]
         A list of the Field (columns) in the Core data entity.
+    data_file_type: DataFileType
+        The Data File Type in the Darwin Core Archive.
     encoding : str, optional
         Encoding of the file location (`files` parameter), default is "utf-8".
     lines_terminated_by : str, optional
@@ -50,17 +61,19 @@ class DataFile(XMLObject, ABC):
     def __init__(
             self, _id: int, files: str,
             fields: List[Field],
+            data_file_type: DataFileType = DataFileType.CORE,
             encoding: str = "utf-8",
             lines_terminated_by: str = "\n",
             fields_terminated_by: str = ",",
             fields_enclosed_by: str = "",
             ignore_header_lines: Union[List[Union[int, str]], int, str] = 0,
-            _principal_tag: str = "core",
     ) -> None:
         super().__init__()
         self.__id__ = _id
         self.__files__ = files
+        self.__type__ = data_file_type
         self.__fields__ = fields
+        self.__check_fields__()
         self.__encoding__ = encoding
         self.__lines_end__ = lines_terminated_by
         self.__fields_end__ = fields_terminated_by
@@ -69,7 +82,7 @@ class DataFile(XMLObject, ABC):
             self.__ignore_header_lines__ = [int(i) for i in ignore_header_lines]
         else:
             self.__ignore_header__ = [int(ignore_header_lines)]
-        self.PRINCIPAL_TAG = _principal_tag
+        self.PRINCIPAL_TAG = self.__type__.name.lower()
         return
 
     @property
@@ -86,22 +99,6 @@ class DataFile(XMLObject, ABC):
     def filename(self) -> str:
         """str: Filename of the Data File entity"""
         return self.__files__
-
-    def set_tag(self, tag: str) -> None:
-        """
-        Set tag for the XML element to generate.
-
-        Parameters
-        ----------
-        tag : str
-            The principal tag of the XML.
-
-        Returns
-        -------
-        None
-        """
-        self.PRINCIPAL_TAG = tag
-        return
 
     @classmethod
     def get_term_class(cls, element: et.Element) -> Type[Field]:
@@ -146,16 +143,17 @@ class DataFile(XMLObject, ABC):
         for field_tree in element.findall("field", namespaces=nmap):
             fields.append(cls.get_term_class(field_tree).parse(field_tree, nmap))
         assert len(fields) >= 1, "A Data File must contain at least one field"
-        element_id = element.find("id", nmap)
-        try:
-            _id = int(element_id.get("index"))
-        except AttributeError:
+        df_type = DataFileType[et.QName(element).localname.upper()]
+        if df_type == DataFileType.CORE:
+            element_id = element.find("id", nmap)
+        else:  # df_type == DataFileType.EXTENSION:
             element_id = element.find("coreid", nmap)
-            _id = int(element_id.get("index"))
+        _id = int(element_id.get("index"))
         return {
             "_id": _id,
             "files": element.find("files", namespaces=nmap).find("location", namespaces=nmap).text,
             "fields": fields,
+            "data_file_type": df_type,
             "encoding": element.get("encoding", "utf-8"),
             "lines_terminated_by": element.get("linesTerminatedBy", "\n"),
             "fields_terminated_by": element.get("fieldsTerminatedBy", ","),
@@ -203,9 +201,9 @@ class DataFile(XMLObject, ABC):
         element.set("fieldsTerminatedBy", self.__fields_end__)
         element.set("fieldsEnclosedBy", self.__fields_enclosed__)
         element.set("ignoreHeaderLines", ",".join([str(ignore) for ignore in self.__ignore_header__]))
-        if self.PRINCIPAL_TAG == "core":
+        if self.__type__ == DataFileType.CORE:
             element_id = self.object_to_element("id")
-        else:  # self.PRINCIPAL_TAG == "extension"
+        else:  # self.__type__ == DataFileType.EXTENSION:
             element_id = self.object_to_element("coreid")
         element_id.set("index", str(self.id))
         element.append(element_id)
@@ -214,6 +212,8 @@ class DataFile(XMLObject, ABC):
         files.append(location)
         element.append(files)
         for field in self.__fields__:
+            if self.__type__ == DataFileType.EXTENSION and field.index == self.id:
+                continue
             field_element = field.to_element()
             element.append(field_element)
         return element
@@ -235,3 +235,21 @@ class DataFile(XMLObject, ABC):
         None
         """
         pass
+
+    def __check_fields__(self) -> None:
+        extension = self.__type__ == DataFileType.EXTENSION
+        ordered_fields: List[Field] = [None] * (len(self.__fields__) + extension)
+        for field in self.__fields__:
+            try:
+                if ordered_fields[field.index] is not None:
+                    raise AssertionError(f'"index={field.index}" declared twice.')
+                ordered_fields[field.index] = field
+            except IndexError:
+                pass
+        if extension:
+            ordered_fields[self.id] = OutsideTerm(self.id, "")
+        nones = [str(i) for i, item in enumerate(ordered_fields) if item is None]
+        if len(nones) > 0:
+            raise AssertionError(f'Index {"".join(nones)} not declared.')
+        self.__fields__ = ordered_fields
+        return

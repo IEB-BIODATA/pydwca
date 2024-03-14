@@ -7,7 +7,7 @@ class GeologicalContextID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -15,7 +15,7 @@ class GeologicalContextID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/geologicalContextID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -31,7 +31,7 @@ class EarliestEonOrLowestEonothem(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -39,7 +39,7 @@ class EarliestEonOrLowestEonothem(Field):
     URI = "http://rs.tdwg.org/dwc/terms/earliestEonOrLowestEonothem"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -55,7 +55,7 @@ class LatestEonOrHighestEonothem(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -63,7 +63,7 @@ class LatestEonOrHighestEonothem(Field):
     URI = "http://rs.tdwg.org/dwc/terms/latestEonOrHighestEonothem"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -79,7 +79,7 @@ class EarliestEraOrLowestErathem(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -87,7 +87,7 @@ class EarliestEraOrLowestErathem(Field):
     URI = "http://rs.tdwg.org/dwc/terms/earliestEraOrLowestErathem"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -103,7 +103,7 @@ class LatestEraOrHighestErathem(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -111,7 +111,7 @@ class LatestEraOrHighestErathem(Field):
     URI = "http://rs.tdwg.org/dwc/terms/latestEraOrHighestErathem"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -127,7 +127,7 @@ class EarliestPeriodOrLowestSystem(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -135,7 +135,7 @@ class EarliestPeriodOrLowestSystem(Field):
     URI = "http://rs.tdwg.org/dwc/terms/earliestPeriodOrLowestSystem"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -151,7 +151,7 @@ class LatestPeriodOrHighestSystem(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -159,7 +159,7 @@ class LatestPeriodOrHighestSystem(Field):
     URI = "http://rs.tdwg.org/dwc/terms/latestPeriodOrHighestSystem"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -175,7 +175,7 @@ class EarliestEpochOrLowestSeries(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -183,7 +183,7 @@ class EarliestEpochOrLowestSeries(Field):
     URI = "http://rs.tdwg.org/dwc/terms/earliestEpochOrLowestSeries"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -199,7 +199,7 @@ class LatestEpochOrHighestSeries(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -207,7 +207,7 @@ class LatestEpochOrHighestSeries(Field):
     URI = "http://rs.tdwg.org/dwc/terms/latestEpochOrHighestSeries"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -223,7 +223,7 @@ class EarliestAgeOrLowestStage(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -231,7 +231,7 @@ class EarliestAgeOrLowestStage(Field):
     URI = "http://rs.tdwg.org/dwc/terms/earliestAgeOrLowestStage"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -247,7 +247,7 @@ class LatestAgeOrHighestStage(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -255,7 +255,7 @@ class LatestAgeOrHighestStage(Field):
     URI = "http://rs.tdwg.org/dwc/terms/latestAgeOrHighestStage"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -270,7 +270,7 @@ class LowestBiostratigraphicZone(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -278,7 +278,7 @@ class LowestBiostratigraphicZone(Field):
     URI = "http://rs.tdwg.org/dwc/terms/lowestBiostratigraphicZone"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -293,7 +293,7 @@ class HighestBiostratigraphicZone(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -301,7 +301,7 @@ class HighestBiostratigraphicZone(Field):
     URI = "http://rs.tdwg.org/dwc/terms/highestBiostratigraphicZone"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -315,7 +315,7 @@ class LithostratigraphicTerms(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -323,7 +323,7 @@ class LithostratigraphicTerms(Field):
     URI = "http://rs.tdwg.org/dwc/terms/lithostratigraphicTerms"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -334,7 +334,7 @@ class LithostratigraphicGroup(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -342,7 +342,7 @@ class LithostratigraphicGroup(Field):
     URI = "http://rs.tdwg.org/dwc/terms/group"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -353,7 +353,7 @@ class LithostratigraphicFormation(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -361,7 +361,7 @@ class LithostratigraphicFormation(Field):
     URI = "http://rs.tdwg.org/dwc/terms/formation"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -372,7 +372,7 @@ class LithostratigraphicMember(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -380,7 +380,7 @@ class LithostratigraphicMember(Field):
     URI = "http://rs.tdwg.org/dwc/terms/member"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -391,7 +391,7 @@ class LithostratigraphicBed(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -399,6 +399,6 @@ class LithostratigraphicBed(Field):
     URI = "http://rs.tdwg.org/dwc/terms/bed"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return

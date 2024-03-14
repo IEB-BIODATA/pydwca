@@ -13,15 +13,19 @@ class ExtensionString(_NoTagObject):
 
     Parameters
     ----------
-    value : str
-        Value of the string.
+    value : str | ExtensionString
+        Value of the string or another ExtensionString object.
     system : str, optional
         The data management system.
     """
-    def __init__(self, value: str, system: str = None) -> None:
+    def __init__(self, value: Union[str, ExtensionString], system: str = None) -> None:
         super().__init__()
-        self.__value__ = value
-        self.__system__ = system
+        if isinstance(value, ExtensionString):
+            self.__value__ = value
+            self.__system__ = system
+        else:
+            self.__value__ = value
+            self.__system__ = system
         return
 
     @property

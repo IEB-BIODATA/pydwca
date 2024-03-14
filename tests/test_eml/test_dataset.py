@@ -27,6 +27,16 @@ class TestEMLDataset(TestXML):
 
     def test_parse(self):
         dataset = EMLDataset.from_string(self.text)
+        self.assertEqual(
+            """\tTitle: Example for Darwin Core Archive
+\tCreator: Creator Organization
+\tMetadataProvider: Metadata Manager at Metadata Provider Organization
+\tCustodian Steward: Doe, J. (Custodian Steward)
+\tOriginator: Doe, J.
+\tAuthor: Example, J.""",
+            str(dataset),
+            "Error on parse to string"
+        )
         self.assertIsNone(dataset.id, "Id from nothing")
         self.assertIsNone(dataset.system, "System from nothing")
         self.assertEqual(Scope.DOCUMENT, dataset.scope, "Not given different than default")

@@ -21,6 +21,12 @@ class CamelCaseEnum(Enum):
             for i, word in enumerate(words)
         ])
 
+    def __str__(self) -> str:
+        words = self.name.split("_")
+        return " ".join([
+            word.capitalize() for word in words
+        ])
+
     @classmethod
     def get_enum(cls, name: str) -> CamelCaseEnum:
         """

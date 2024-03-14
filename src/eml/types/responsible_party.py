@@ -244,3 +244,19 @@ class ResponsibleParty(EMLObject, _NoTagObject):
         """
         role_elem = element.find("role", nmap)
         return Role.get_enum(role_elem.text)
+
+    def __str__(self) -> str:
+        position_name = "" if self.position_name is None else f"{self.position_name}"
+        if self.organization_name is None:
+            organization_name = position_name
+        else:
+            if len(position_name) == 0:
+                organization_name = f"{self.organization_name}"
+            else:
+                organization_name = f"{position_name} at {self.organization_name}"
+        if self.individual_name is None:
+            return organization_name
+        else:
+            if len(organization_name) > 0:
+                organization_name = f" ({organization_name})"
+            return f"{self.individual_name}{organization_name}"

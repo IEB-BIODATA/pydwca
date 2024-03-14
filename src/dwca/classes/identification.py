@@ -1,6 +1,6 @@
 from typing import List, Union
 
-from dwca.classes import DataFile
+from dwca.classes import DataFile, DataFileType
 from dwca.terms import IdentificationID, VerbatimIdentification, IdentificationQualifier, TypeStatus, IdentifiedBy, \
     IdentifiedByID, DateIdentified, IdentificationReferences, IdentificationVerificationStatus, IdentificationRemarks, \
     Field
@@ -18,6 +18,8 @@ class Identification(DataFile):
         File location, in the archive, this is inside the `zip` file.
     fields : List[Field]
         A list of the Field (columns) in the Core data entity.
+    data_file_type: DataFileType
+        The Data File Type in the Darwin Core Archive.
     encoding : str, optional
         Encoding of the file location (`files` parameter), default is "utf-8".
     lines_terminated_by : str, optional
@@ -42,16 +44,16 @@ class Identification(DataFile):
     def __init__(
             self, _id: int, files: str,
             fields: List[Field],
+            data_file_type: DataFileType = DataFileType.CORE,
             encoding: str = "utf-8",
             lines_terminated_by: str = "\n",
             fields_terminated_by: str = ",",
             fields_enclosed_by: str = "",
             ignore_header_lines: Union[List[Union[int, str]], int, str] = 0,
-            _principal_tag: str = "core"
     ) -> None:
         super().__init__(
-            _id, files, fields, encoding, lines_terminated_by,
-            fields_terminated_by, fields_enclosed_by,
-            ignore_header_lines, _principal_tag
+            _id, files, fields, data_file_type, encoding,
+            lines_terminated_by, fields_terminated_by,
+            fields_enclosed_by, ignore_header_lines,
         )
         return

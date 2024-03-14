@@ -24,6 +24,8 @@ class EMLCitation(Resource):
         super().__init__(**kwargs)
         return
 
+    # TODO: Implement citation attributes (https://eml.ecoinformatics.org/schema/eml_xsd#eml_citation)
+
     @classmethod
     def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLCitation:
         """

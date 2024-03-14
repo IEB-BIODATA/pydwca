@@ -10,7 +10,7 @@ class ResourceRelationshipID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -18,7 +18,7 @@ class ResourceRelationshipID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/resourceRelationshipID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -29,7 +29,7 @@ class ResourceID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -37,7 +37,7 @@ class ResourceID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/resourceID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -53,7 +53,7 @@ class RelationshipOfResourceID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -63,7 +63,7 @@ class RelationshipOfResourceID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/relationshipOfResourceID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -76,7 +76,7 @@ class RelatedResourceID(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -84,7 +84,7 @@ class RelatedResourceID(Field):
     URI = "http://rs.tdwg.org/dwc/terms/relatedResourceID"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -98,7 +98,7 @@ class RelationshipOfResource(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -108,7 +108,7 @@ class RelationshipOfResource(Field):
     URI = "http://rs.tdwg.org/dwc/terms/relationshipOfResource"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
 
@@ -119,7 +119,7 @@ class RelationshipAccordingTo(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -127,7 +127,7 @@ class RelationshipAccordingTo(Field):
     URI = "http://rs.tdwg.org/dwc/terms/relationshipAccordingTo"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -138,7 +138,7 @@ class RelationshipEstablishedDate(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -146,7 +146,7 @@ class RelationshipEstablishedDate(Field):
     URI = "http://rs.tdwg.org/dwc/terms/relationshipEstablishedDate"
     TYPE = Union[dt.datetime, Tuple[dt.datetime, dt.datetime]]
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return
 
@@ -157,7 +157,7 @@ class RelationshipRemarks(Field):
     
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -165,6 +165,6 @@ class RelationshipRemarks(Field):
     URI = "http://rs.tdwg.org/dwc/terms/relationshipRemarks"
     TYPE = str
 
-    def __init__(self, index: int | str = None, default: TYPE = None, **kwargs) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
         return

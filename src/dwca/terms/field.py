@@ -14,7 +14,7 @@ class Field(XMLObject, ABC):
 
     Parameters
     ----------
-    index : int
+    index : int | str
         Specifies the position of the column in the row.
     default: TYPE, optional
         Specifies a value to use if one is not supplied.
@@ -27,7 +27,7 @@ class Field(XMLObject, ABC):
     TYPE = Any
     """type: Type of the field."""
 
-    def __init__(self, index: int | str = None, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__()
         self.__index__ = int(index)
         self.__default__ = default
