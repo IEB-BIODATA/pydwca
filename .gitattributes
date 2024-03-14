@@ -1,2 +1,2 @@
-*.txt filter=lfs diff=lfs merge=lfs -text
+tests/example_data/*.txt filter=lfs diff=lfs merge=lfs -text
 *.zip filter=lfs diff=lfs merge=lfs -text
