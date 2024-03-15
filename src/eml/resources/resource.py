@@ -124,6 +124,8 @@ class Resource(EMLObject, ABC):
         self.__annotation__: List[SemanticAnnotation] = list()
         if annotation is not None:
             self.__annotation__.extend(annotation)
+        if len(self.__annotation__) > 0 and self.__id__ is None:
+            raise ValueError("If annotations are given, resource must have an id.")
         return
 
     @property
@@ -225,6 +227,29 @@ class Resource(EMLObject, ABC):
         """List[SemanticAnnotation]: A precisely-defined semantic statement about this resource."""
         return self.__annotation__
 
+    def annotate(self, annotation: SemanticAnnotation) -> None:
+        """
+        Annotate this resource.
+
+        Parameters
+        ----------
+        annotation : SemanticAnnotation
+            An annotation in the :class:`eml.types.semantic_annotation.SemanticAnnotation` instance format.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If the resource does not have a unique id, it cannot be annotated.
+        """
+        if self.__id__ is None:
+            raise ValueError("If annotations are given, resource must have an id.")
+        self.__annotation__.append(annotation)
+        return
+
     @classmethod
     def parse_kwargs(cls, element: et.Element, nmap: Dict) -> Dict:
         """
@@ -263,7 +288,7 @@ class Resource(EMLObject, ABC):
         for creator in element.findall("creator", nmap):
             kwargs["creators"].append(ResponsibleParty.parse(creator, nmap))
         kwargs["alternative_identifier"] = list()
-        for alt_id in element.findall("alternativeIdentifier", nmap):
+        for alt_id in element.findall("alternateIdentifier", nmap):
             kwargs["alternative_identifier"].append(ExtensionString.parse(alt_id, nmap))
         kwargs["metadata_providers"] = list()
         for meta_prov in element.findall("metadataProvider", nmap):
@@ -322,6 +347,9 @@ class Resource(EMLObject, ABC):
         element = self._to_element_(element)
         if self.referencing:
             return element
+        for alt_id in self.alternative_identifiers:
+            alt_id.set_tag("alternateIdentifier")
+            element.append(alt_id.to_element())
         if self.short_name is not None:
             short_elem = self.object_to_element("shortName")
             short_elem.text = self.short_name
@@ -332,9 +360,6 @@ class Resource(EMLObject, ABC):
         for creator in self.creators:
             creator.set_tag("creator")
             element.append(creator.to_element())
-        for alt_id in self.alternative_identifiers:
-            alt_id.set_tag("alternativeIdentifier")
-            element.append(alt_id.to_element())
         for meta_prov in self.metadata_provider:
             meta_prov.set_tag("metadataProvider")
             element.append(meta_prov.to_element())

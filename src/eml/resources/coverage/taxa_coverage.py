@@ -493,7 +493,7 @@ class TaxonomicCoverage(EMLObject):
             classification: List[TaxonomicCoverage.TaxonomicClassification] = None,
     ) -> None:
         super().__init__(_id, scope, system, referencing, references_system)
-        self.__system__ = taxonomic_system
+        self.__taxa_system__ = taxonomic_system
         self.__general__ = general_coverage
         self.__classification__ = list()
         if self.referencing:
@@ -506,7 +506,7 @@ class TaxonomicCoverage(EMLObject):
     @property
     def taxonomic_system(self) -> TaxonomicCoverage.TaxonomicSystem:
         """TaxonomicSystem: Documentation of taxonomic sources, procedures, and treatments."""
-        return self.__system__
+        return self.__taxa_system__
 
     @property
     def general_coverage(self) -> str:
@@ -521,7 +521,7 @@ class TaxonomicCoverage(EMLObject):
     @classmethod
     def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLObject:
         """
-        Generate an Taxonomic Coverage referencing another Taxonomic Coverage.
+        Generate a Taxonomic Coverage referencing another Taxonomic Coverage.
 
         Parameters
         ----------

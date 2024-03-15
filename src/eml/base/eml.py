@@ -27,8 +27,6 @@ class EML(EMLObject):
         Type of the resource: `dataset`, `citation`, `protocol` or `software.`
     version: EMLVersion, optional
         Version of the EML standard. Default: latest (2.2.0).
-    scope : Scope, optional
-        The scope of the identifier.
     language : Language, optional
         Language abbreviation to be used, defaults to `"eng"`
     access : AccessType, optional
@@ -85,17 +83,14 @@ class EML(EMLObject):
             system: str,
             resource_type: EMLResource,
             version: EMLVersion = EMLVersion.LATEST,
-            scope: Scope = Scope.DOCUMENT,
             language: Language = Language.ENG,
             access: AccessType = None,
             additional_metadata: List[Any] = None,
             annotation: List[Tuple[SemanticAnnotation, str]] = None
     ) -> None:
-        super().__init__()
+        super().__init__(None, Scope.SYSTEM, system, False)
         self.__schema_location__ = ""
         self.__package__ = package_id
-        self.__system__ = system
-        self.__scope__ = scope
         self.__lang__ = language
         self.__access__ = None
         self.__resource_type__ = resource_type
@@ -482,7 +477,7 @@ class EML(EMLObject):
         -------
         None
         """
-        self.resource.__annotation__.append(annotation)
+        self.resource.annotate(annotation)
         return
 
     @classmethod
@@ -539,7 +534,6 @@ class EML(EMLObject):
                 ))
         eml = EML(
             package_id=element.get("packageId"),
-            scope=cls.get_scope(element),
             system=element.get("system"),
             resource_type=EMLResource.get_resource_type(element),
             version=EMLVersion.get_version(element.get(f"{{{nmap['xsi']}}}schemaLocation", None)),
@@ -563,7 +557,12 @@ class EML(EMLObject):
         :class:`lxml.etree.Element`
             XML element instance.
         """
-        root = super().to_element()
+        try:
+            root = super().to_element()
+        except KeyError:
+            for key, value in self.__version__.get_namespace().items():
+                self.__namespace__[key] = value
+            root = super().to_element()
         root.set("packageId", self.package_id)
         root.set(f"{{{self.__namespace__['xsi']}}}schemaLocation", " ".join(self.__version__.schema_location()))
         root.set("system", self.system)
@@ -586,3 +585,5 @@ class EML(EMLObject):
 
     def __str__(self) -> str:
         return f"EML:\n\tResource Type: {self.resource_type.name}\n{self.resource}"
+
+    # TODO: Method to make sure elements added references existing ones.

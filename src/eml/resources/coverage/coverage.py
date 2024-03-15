@@ -48,11 +48,11 @@ class EMLCoverage(EMLObject):
         if self.referencing:
             return
         if (
-            geographic is None or
-            temporal is None or
+            geographic is None and
+            temporal is None and
             taxonomic is None
         ):
-            raise TypeError("EMLCoverage() required reference or geographic, temporal and taxonomic coverages")
+            raise TypeError("EMLCoverage() required at least one of geographic, temporal and taxonomic coverages")
         self.__geo__ = geographic
         self.__time__ = temporal
         self.__taxa__ = taxonomic
@@ -138,7 +138,7 @@ class EMLCoverage(EMLObject):
         element = super().to_element()
         element = self._to_element_(element)
         if not self.referencing:
-            element.append(self.geographic.to_element())
-            element.append(self.temporal.to_element())
-            element.append(self.taxonomic.to_element())
+            element.append(self.geographic.to_element()) if self.geographic is not None else None
+            element.append(self.temporal.to_element()) if self.temporal is not None else None
+            element.append(self.taxonomic.to_element()) if self.taxonomic is not None else None
         return element

@@ -4,7 +4,7 @@ from lxml import etree as et
 
 from dwca.utils import Language
 from eml.resources import EMLDataset
-from eml.types import Scope
+from eml.types import Scope, SemanticAnnotation
 from test_xml.test_xml import TestXML
 
 PATH = os.path.abspath(os.path.dirname(__file__))
@@ -48,7 +48,7 @@ class TestEMLDataset(TestXML):
     def test_missing_title(self):
         dataset_xml = """
 <dataset>
-    <alternativeIdentifier system="http://gbif.org">VCR3465</alternativeIdentifier>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
     <shortName>A short description</shortName>
 </dataset>
         """
@@ -67,7 +67,7 @@ class TestEMLDataset(TestXML):
     <creator>
         <organizationName>Organization Creator</organizationName>
     </creator>
-    <alternativeIdentifier system="http://gbif.org">VCR3465</alternativeIdentifier>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
     <shortName>A short description</shortName>
     <contact>
         <organizationName>Organization Contact</organizationName>
@@ -81,14 +81,14 @@ class TestEMLDataset(TestXML):
         self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language")
         self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element")
 
-    def test_alternative_identifier(self):
+    def test_alternate_identifier(self):
         dataset_xml = """
 <dataset>
     <title xml:lang="eng">Test Title</title>
     <creator>
         <organizationName>Organization Creator</organizationName>
     </creator>
-    <alternativeIdentifier system="http://gbif.org">VCR3465</alternativeIdentifier>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
     <shortName>A short description</shortName>
     <contact>
         <organizationName>Organization Contact</organizationName>
@@ -107,15 +107,15 @@ class TestEMLDataset(TestXML):
             "Wrong alternative identifier to element"
         )
 
-    def test_alternative_identifiers(self):
+    def test_alternate_identifiers(self):
         dataset_xml = """
 <dataset>
     <title>Title</title>
     <creator>
         <organizationName>Organization Creator</organizationName>
     </creator>
-    <alternativeIdentifier system="http://gbif.org">VCR3465</alternativeIdentifier>
-    <alternativeIdentifier>VCR3465</alternativeIdentifier>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
+    <alternateIdentifier>VCR3465</alternateIdentifier>
     <contact>
         <organizationName>Organization Contact</organizationName>
     </contact>
@@ -151,6 +151,39 @@ class TestEMLDataset(TestXML):
             eml_dataset.to_element(),
             "Wrong referrer to element"
         )
+
+    def test_annotate_invalid(self):
+        dataset = EMLDataset.from_string(self.text)
+        self.assertEqual(0, len(dataset.annotation), "Annotation from nowhere")
+        self.assertRaises(
+            ValueError,
+            dataset.annotate,
+            SemanticAnnotation(
+                (
+                    "http://ecoinformatics.org/oboe/oboe.1.2/oboe-characteristics.owl#ofCharacteristic",
+                    "has characteristic"
+                ),(
+                    "http://ecoinformatics.org/oboe/oboe.1.2/oboe-characteristics.owl#Mass",
+                    "Mass"
+                )
+            )
+        )
+
+    def test_annotate(self):
+        dataset = EMLDataset.from_string(self.text)
+        dataset.__id__ = "1"
+        self.assertEqual(0, len(dataset.annotation), "Annotation from nowhere")
+        annotation = SemanticAnnotation(
+            ("http://ecoinformatics.org/oboe/oboe.1.2/oboe-characteristics.owl#ofCharacteristic", "has characteristic"),
+            ("http://ecoinformatics.org/oboe/oboe.1.2/oboe-characteristics.owl#Mass", "Mass")
+        )
+        dataset.annotate(annotation)
+        self.assertEqual(1, len(dataset.annotation), "Annotation not set")
+        text_as_element = et.fromstring(self.text)
+        annotation.set_tag("annotation")
+        text_as_element.set("id", "1")
+        text_as_element.append(annotation.to_element())
+        self.assertEqualTree(text_as_element, dataset.to_element(), "Annotation not set in element tree")
 
     def test_reference_system(self):
         reference_dataset_xml = """

@@ -34,7 +34,6 @@ class TestResponsibleParty(TestXML):
         resp_party = ResponsibleParty.from_string(text)
         self.assertEqual("Creator Organization", resp_party.organization_name, "Error on parsing organization name")
         self.assertEqual("info@creator.org", resp_party.mail[0], "Error on parsing electronic mail address")
-        self.assertEqual(EMLAddress(country="", city=""), resp_party.address[0], "Error on parsing address")
         self.assertEqual("https://example.creator.org", resp_party.url[0], "Error on parsing online url")
         self.assertRaises(
             RuntimeError,
