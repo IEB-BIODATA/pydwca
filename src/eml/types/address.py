@@ -197,25 +197,11 @@ class EMLAddress(EMLObject):
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, EMLAddress):
-            if not super().__eq__(other):
-                logging.debug(f"EML principal attributes are not equal between `{repr(self)}` and `{repr(other)}`")
-                return False
-            elif sorted(self.delivery_point) != sorted(other.delivery_point):
-                logging.debug(f"Delivery points are not equal between `{repr(self)}` and `{repr(other)}`")
-                return False
-            elif self.city != other.city:
-                logging.debug(f"Cities are not equal between `{repr(self)}` and `{repr(other)}`")
-                return False
-            elif self.administrative_area != other.administrative_area:
-                logging.debug(f"Administrative areas are not equal between `{repr(self)}` and `{repr(other)}`")
-                return False
-            elif self.postal_code != other.postal_code:
-                logging.debug(f"Postal codes are not equal between `{repr(self)}` and `{repr(other)}`")
-                return False
-            elif self.country != other.country:
-                logging.debug(f"Countries are not equal between `{repr(self)}` and `{repr(other)}`")
-                return False
-            else:
-                return True
+            return (super().__eq__(other) and
+                    sorted(self.delivery_point) == sorted(other.delivery_point) and
+                    self.city == other.city and
+                    self.administrative_area == other.administrative_area and
+                    self.postal_code == other.postal_code and
+                    self.country == other.country)
         else:
             return False

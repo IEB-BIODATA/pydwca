@@ -1,10 +1,10 @@
 from __future__ import annotations
+
 from typing import Dict, Union
 
 from lxml import etree as et
 
 from dwca.utils import Language
-from dwca.xml import XMLObject
 from eml.types import _NoTagObject
 
 

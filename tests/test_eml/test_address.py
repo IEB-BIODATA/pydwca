@@ -175,6 +175,8 @@ class TestEMLAddress(TestXML):
             reference_xml
         )
 
+    # TODO: Test different ways to equal on Address
+
 
 if __name__ == '__main__':
     unittest.main()
