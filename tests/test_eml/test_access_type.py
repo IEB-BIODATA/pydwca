@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree as et
 
-from eml.types import AccessType, Scope, AccessPermission
+from eml.types import AccessType, Scope, AccessPermission, AccessRole
 from test_xml.test_xml import TestXML
 
 
@@ -64,6 +64,10 @@ class TestAccessType(TestXML):
         )
         self.assertEqualTree(et.fromstring(text_xml), access.to_element(), "Error on to element")
 
+    def test_parse_none(self):
+        self.assertIsNone(AccessType.parse(None, {}), "Element from nowhere")
+        self.assertIsNone(AccessRole.parse(None, {}), "Element from nowhere")
+
     def test_referencing(self):
         text_xml = """
 <access authSystem="ldap://ldap.ecoinformatics.org:389/dc=ecoinformatics,dc=org">
@@ -82,6 +86,13 @@ class TestAccessType(TestXML):
         self.assertTrue(access.referencing, "Error on parsing referencing")
         self.assertEqual("http://gbif.org", access.references.system, "Error on parsing references system")
         self.assertEqualTree(et.fromstring(text_xml), access.to_element(), "Error on to element")
+
+    def test_error_initialization(self):
+        self.assertRaises(TypeError, AccessType, "A system", order=45)
+
+    def test_error_role_initialization(self):
+        self.assertRaises(ValueError, AccessRole, [], [])
+        self.assertRaises(ValueError, AccessRole, ["Control"], [])
 
 
 if __name__ == '__main__':
