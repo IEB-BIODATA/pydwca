@@ -17,6 +17,7 @@ class EMLMetadata(XMLObject):
         An XML element instance or string representing a XML well define file.
     """
     PRINCIPAL_TAG = "metadata"
+
     def __init__(
             self,
             xml: Union[et.Element, str] = None

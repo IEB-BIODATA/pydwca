@@ -41,7 +41,7 @@ class EMLObject(XMLObject, ABC):
         super().__init__()
         self.__id__ = _id
         self.__scope__ = scope
-        self.__system = system
+        self.__system__ = system
         self.__referencing__ = referencing
         if self.__referencing__:
             assert self.__id__ is not None, "Must give the id of the element being referenced."
@@ -61,7 +61,7 @@ class EMLObject(XMLObject, ABC):
     @property
     def system(self) -> str:
         """str: The data management system within which an identifier is in scope and therefore unique."""
-        return self.__system
+        return self.__system__
 
     @property
     def referencing(self) -> bool:
@@ -199,14 +199,14 @@ See https://eml.ecoinformatics.org/validation-and-content-references#id-and-scop
             Object in the Element format.
         """
         references = self.generate_references_element()
-        element.set("scope", self.scope.name.lower())
-        if self.system is not None:
-            element.set("system", self.system)
         if references is not None:
             element.append(references)
         else:
             if self.id is not None:
                 element.set("id", self.id)
+        element.set("scope", self.scope.name.lower())
+        if self.system is not None:
+            element.set("system", self.system)
         return element
 
     def __eq__(self, other: Any) -> bool:

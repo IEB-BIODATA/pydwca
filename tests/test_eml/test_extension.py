@@ -26,9 +26,9 @@ class TestExtensionString(TestXML):
     def test_parse(self):
         self.assertIsNone(ExtensionString.parse(None, {}), "Parsing something")
         example_xml = """
-<alternativeIdentifier
+<alternateIdentifier
     system="http://gbif.org"
->My variable</alternativeIdentifier>
+>My variable</alternateIdentifier>
         """
         variable = ExtensionString.from_string(example_xml)
         self.assertEqual("My variable", variable, "Not equal to string")
@@ -37,7 +37,7 @@ class TestExtensionString(TestXML):
 
     def test_parse_no_system(self):
         example_xml = """
-<alternativeIdentifier>My variable</alternativeIdentifier>
+<alternateIdentifier>My variable</alternateIdentifier>
         """
         variable = ExtensionString.from_string(example_xml)
         self.assertEqual("My variable", variable, "Not equal to string")
@@ -46,16 +46,16 @@ class TestExtensionString(TestXML):
     def test_to_element(self):
         variable = ExtensionString("My variable")
         self.assertRaises(RuntimeError, variable.to_element)
-        variable.set_tag("alternativeIdentifier")
-        expected = et.Element("alternativeIdentifier")
+        variable.set_tag("alternateIdentifier")
+        expected = et.Element("alternateIdentifier")
         expected.text = "My variable"
         self.assertEqualTree(expected, variable.to_element(), "Error on element")
 
     def test_to_element_system(self):
         variable = ExtensionString("My variable", system="A system")
         self.assertRaises(RuntimeError, variable.to_element)
-        variable.set_tag("alternativeIdentifier")
-        expected = et.Element("alternativeIdentifier")
+        variable.set_tag("alternateIdentifier")
+        expected = et.Element("alternateIdentifier")
         expected.text = "My variable"
         expected.set("system", "A system")
         self.assertEqualTree(expected, variable.to_element(), "Error on element")

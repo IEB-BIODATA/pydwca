@@ -120,15 +120,15 @@ class IndividualName(XMLObject):
             Object in the Element format.
         """
         individual_name = super().to_element()
-        last_name = self.last_name
-        last_name.set_tag("surName")
-        individual_name.append(last_name.to_element())
-        for first_name in self.first_name:
-            first_name.set_tag("givenName")
-            individual_name.append(first_name.to_element())
         for salutation in self.salutation:
             salutation.set_tag("salutation")
             individual_name.append(salutation.to_element())
+        for first_name in self.first_name:
+            first_name.set_tag("givenName")
+            individual_name.append(first_name.to_element())
+        last_name = self.last_name
+        last_name.set_tag("surName")
+        individual_name.append(last_name.to_element())
         return individual_name
 
     def lang(self, language: Language) -> str:

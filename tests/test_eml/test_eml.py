@@ -1,11 +1,16 @@
 import datetime
 import os
 import unittest
+
+import requests
+import datetime as dt
 from lxml import etree as et
 
 from eml.base import EML, EMLVersion
 from dwca.utils import Language
 from eml.resources import EMLResource, EMLKeywordSet, EMLLicense, EMLDistribution, EMLCoverage
+from eml.resources.coverage import TemporalCoverage
+from eml.resources.distribution import EMLOnline, EMLOffline
 from eml.types import Scope, ResponsibleParty, IndividualName, OrganizationName, PositionName, Role, I18nString, \
     EMLTextType, SemanticAnnotation
 from test_xml.test_xml import TestXML
@@ -33,12 +38,53 @@ class TestEML(TestXML):
         )
         return
 
-    def initialize_resource(self):
+    def initialize_resource(self, **kwargs):
         self.empty_eml.initialize_resource(
             "Example Title",
             ResponsibleParty(individual_name=IndividualName(first_name="Joe", last_name="Doe")),
-            contact=[ResponsibleParty(position_name=PositionName("Contact"))]
+            contact=[ResponsibleParty(position_name=PositionName("Contact"))],
+            **kwargs
         )
+
+    @staticmethod
+    def check_online_test(text: str) -> bool:
+        try:
+            status = text.split(": ")[-1].lower().strip(".")
+            if status == "passed":
+                return True
+            elif status == "failed":
+                return False
+            else:
+                raise AssertionError(f"Unexpected status: {status}")
+        except Exception as e:
+            raise AssertionError("Error parsing response status" + str(e))
+
+    @staticmethod
+    def validate(eml: str):
+        url = "https://knb.ecoinformatics.org/emlparser/parse"
+        form_data = {
+            "action": "textparse",
+            "doctext": eml
+        }
+        response = requests.post(url, data=form_data)
+        if response.status_code == 200:
+            root = et.fromstring(response.content, parser=et.HTMLParser())
+            h4_elements = root.xpath('//h4')
+            # EML Test
+            eml_response = TestEML.check_online_test(h4_elements[0].text)
+            if not eml_response:
+                errors = "\n\t".join([error.text for error in h4_elements[0].getnext().getnext()])
+                raise AssertionError(f"Error on parsing EML specific test:\n\t{errors}")
+            # XML Test
+            xml_response = TestEML.check_online_test(h4_elements[1].text)
+            if not xml_response:
+                raise AssertionError(f"Error on parsing XML specific test: {h4_elements[1].getnext().getnext().text}")
+        else:
+            raise AssertionError("Request failed with status code:", response.status_code)
+
+    def test_simple_eml(self):
+        self.initialize_resource()
+        self.validate(self.empty_eml.to_xml())
 
     def test_parse(self):
         self.assertEqual("Example Package", self.eml.package_id, "Error on package id read")
@@ -57,12 +103,6 @@ class TestEML(TestXML):
             NotImplementedError,
             EMLVersion.get_version,
             "any_url another_url"
-        )
-        wrong_version = EMLVersion.LATEST
-        wrong_version._value_ = "wrong value"
-        self.assertRaises(
-            NotImplementedError,
-            wrong_version.schema_location
         )
 
     def test_str(self):
@@ -94,6 +134,7 @@ class TestEML(TestXML):
             self.empty_eml.resource.title.language,
             "Language did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_title_lang(self):
         self.initialize_resource()
@@ -108,6 +149,7 @@ class TestEML(TestXML):
             self.empty_eml.resource.titles[1].language,
             "Language did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_titles(self):
         self.empty_eml.initialize_resource(
@@ -135,6 +177,7 @@ class TestEML(TestXML):
             self.empty_eml.resource.titles[1].language,
             "Language did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_creator(self):
         self.initialize_resource()
@@ -143,6 +186,7 @@ class TestEML(TestXML):
             str(self.empty_eml.resource.creator),
             "First creator did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_add_creator(self):
         self.empty_eml.initialize_resource(
@@ -170,6 +214,7 @@ class TestEML(TestXML):
             str(self.empty_eml.resource.creators[2]),
             "Creator did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_alternative(self):
         self.initialize_resource()
@@ -183,8 +228,9 @@ class TestEML(TestXML):
             self.empty_eml.resource.alternative_identifiers[0],
             "Alternative identifier did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
-    def test_set_shor_name(self):
+    def test_set_short_name(self):
         self.initialize_resource()
         self.assertIsNone(self.empty_eml.resource.short_name)
         self.empty_eml.set_short_name("A short Name")
@@ -192,6 +238,7 @@ class TestEML(TestXML):
             "A short Name", self.empty_eml.resource.short_name,
             "Short Name did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_metadata_provider(self):
         self.initialize_resource()
@@ -215,6 +262,7 @@ class TestEML(TestXML):
             str(self.empty_eml.resource.metadata_provider[1]),
             "Metadata provider did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_associated_party(self):
         self.initialize_resource()
@@ -240,6 +288,7 @@ class TestEML(TestXML):
             "Doe, J.", str(self.empty_eml.resource.associated_party[1][0]),
             "Associated Party did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_pub_date(self):
         self.initialize_resource()
@@ -250,6 +299,7 @@ class TestEML(TestXML):
             date, self.empty_eml.resource.publication_date,
             "Publication date did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_language(self):
         self.initialize_resource()
@@ -259,6 +309,7 @@ class TestEML(TestXML):
             Language.ENG, self.empty_eml.resource.language,
             "Language did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_series(self):
         self.initialize_resource()
@@ -268,6 +319,7 @@ class TestEML(TestXML):
             "Volume 20", self.empty_eml.resource.series,
             "Series did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_abstract(self):
         abstract = ("Lorem ipsum dolor sit amet, consectetur "
@@ -287,6 +339,7 @@ class TestEML(TestXML):
             abstract, self.empty_eml.resource.abstract.paragraphs[0],
             "Abstract did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_keyword_set(self):
         self.initialize_resource()
@@ -301,6 +354,7 @@ class TestEML(TestXML):
             2, len(self.empty_eml.resource.keyword_set),
             "Keyword set did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_additional_info(self):
         self.initialize_resource()
@@ -315,6 +369,7 @@ class TestEML(TestXML):
             2, len(self.empty_eml.resource.additional_info),
             "Additional info did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_intellectual_rights(self):
         self.initialize_resource()
@@ -329,6 +384,7 @@ class TestEML(TestXML):
             "by-nc-nd", self.empty_eml.resource.intellectual_rights.paragraphs[0],
             "Intellectual rights did not overwrite"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_licensed(self):
         self.initialize_resource()
@@ -343,32 +399,38 @@ class TestEML(TestXML):
             2, len(self.empty_eml.resource.licensed),
             "Licensed did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_distribution(self):
         self.initialize_resource()
         self.assertEqual(0, len(self.empty_eml.resource.distribution), "Distribution from nowhere")
-        self.empty_eml.add_distribution(EMLDistribution())
+        self.empty_eml.add_distribution(EMLDistribution(online=EMLOnline(url="http://data.org/getdata?id=98332")))
         self.assertEqual(
             1, len(self.empty_eml.resource.distribution),
             "Distribution did not set"
         )
-        self.empty_eml.add_distribution(EMLDistribution())
+        self.validate(self.empty_eml.to_xml())
+        self.empty_eml.add_distribution(EMLDistribution(offline=EMLOffline("Tape, 3.5 inch Floppy Disk, hardcopy")))
         self.assertEqual(
             2, len(self.empty_eml.resource.distribution),
             "Distribution did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_coverage(self):
         self.initialize_resource()
         self.assertIsNone(self.empty_eml.resource.coverage, "Coverage from nowhere")
-        self.empty_eml.set_coverage(EMLCoverage(_id="0", referencing=True))
+        self.empty_eml.set_coverage(EMLCoverage(
+            temporal=TemporalCoverage(single_datetime=[dt.date.today()])
+        ))
         self.assertIsNotNone(
             self.empty_eml.resource.coverage,
             "Coverage did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
     def test_set_annotation(self):
-        self.initialize_resource()
+        self.initialize_resource(_id="1")
         self.assertEqual(0, len(self.empty_eml.resource.annotation), "Annotation from nowhere")
         self.empty_eml.add_annotation(SemanticAnnotation(
             ("http://example.org/height", "height"),
@@ -386,6 +448,7 @@ class TestEML(TestXML):
             2, len(self.empty_eml.resource.annotation),
             "Annotation did not set"
         )
+        self.validate(self.empty_eml.to_xml())
 
 
 if __name__ == '__main__':
