@@ -32,12 +32,17 @@ class EMLDistribution(EMLObject):
         Data distributed inline in the metadata.
     """
     PRINCIPAL_TAG = "distribution"
-    """str: Principal tag `distribution`"""
 
     def __init__(self, _id: str = None, scope: Scope = Scope.DOCUMENT, system: str = None, referencing: bool = False,
                  references_system: str = None, online: EMLOnline = None, offline: EMLOffline = None,
                  inline: EMLInline = None) -> None:
         super().__init__(_id, scope, system, referencing, references_system)
+        if not self.referencing:
+            declared = (online is not None) + (offline is not None) + (inline is not None)
+            if declared == 0:
+                raise TypeError("At least declare online, offline or inline distribution.")
+            if declared > 1:
+                raise TypeError("Declare only one of the following: online, offline or inline distribution.")
         self.__online__ = online
         self.__offline__ = offline
         self.__inline__ = inline
@@ -125,10 +130,7 @@ class EMLDistribution(EMLObject):
         """
         dist_elem = super().to_element()
         dist_elem = self._to_element_(dist_elem)
-        if self.online is not None:
-            dist_elem.append(self.online.to_element())
-        if self.offline is not None:
-            dist_elem.append(self.offline.to_element())
-        if self.inline is not None:
-            dist_elem.append(self.inline.to_element())
+        dist_elem.append(self.online.to_element()) if self.online is not None else None
+        dist_elem.append(self.offline.to_element()) if self.offline is not None else None
+        dist_elem.append(self.inline.to_element()) if self.inline is not None else None
         return dist_elem

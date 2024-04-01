@@ -23,7 +23,6 @@ class EMLDataset(Resource):
         The parameters of every type of Resource.
     """
     PRINCIPAL_TAG = "dataset"
-    """str: Principal tag `dataset`"""
 
     def __init__(
             self,
@@ -43,6 +42,8 @@ class EMLDataset(Resource):
     def contacts(self) -> List[ResponsibleParty]:
         """List[ResponsibleParty]: The contact for this dataset."""
         return self.__contact__
+
+    # TODO: Implement other attributes (https://eml.ecoinformatics.org/schema/eml_xsd#eml_dataset)
 
     @classmethod
     def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLDataset:

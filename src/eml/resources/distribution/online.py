@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple, Any
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 from eml.types import EMLObject, Scope, ExtensionString, EMLTextType
 
 
@@ -27,7 +27,7 @@ class EMLOnline(XMLObject):
         The definition of a connection that will be used in another location in the EML document.
     """
     PRINCIPAL_TAG = "online"
-    """str: Principal tag `online`."""
+
     class FunctionType(Enum):
         """
         Function of the URL.
@@ -340,7 +340,6 @@ class EMLOnline(XMLObject):
             A parameter to be used to make this connection.
         """
         PRINCIPAL_TAG = "connection"
-        """str: Principal tag `connection`."""
 
         def __init__(
                 self, _id: str = None,
@@ -497,7 +496,7 @@ class EMLOnline(XMLObject):
         else:
             self.__url_func__ = None
         if url_function is not None:
-            self.__url__func__ = url_function
+            self.__url_func__ = url_function
         self.__conn__ = connection
         self.__conn_def__ = connection_definition
         return
@@ -515,7 +514,7 @@ class EMLOnline(XMLObject):
     @property
     def url_function(self) -> EMLOnline.FunctionType:
         """EMLOnline.FunctionType: Function of the url."""
-        return self.__url__func__
+        return self.__url_func__
 
     @property
     def connection(self) -> EMLOnline.Connection:

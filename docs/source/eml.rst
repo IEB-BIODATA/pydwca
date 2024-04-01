@@ -9,7 +9,6 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   eml.base
    eml.resources
    eml.types
 

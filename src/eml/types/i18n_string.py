@@ -1,10 +1,10 @@
 from __future__ import annotations
+
 from typing import Dict, Union
 
 from lxml import etree as et
 
-from dwca.utils import Language
-from dwca.xml import XMLObject
+from xml_common.utils import Language
 from eml.types import _NoTagObject
 
 
@@ -33,7 +33,10 @@ class I18nString(_NoTagObject):
             self.__lang__ = value.language
             self.__tag__ = value.__tag__
         else:
-            self.__value__ = value
+            if value is None:
+                self.__value__ = ""
+            else:
+                self.__value__ = value
             language = Language.ENG
             if lang is None:
                 pass

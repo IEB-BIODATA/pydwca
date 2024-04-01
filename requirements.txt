@@ -1,1 +1,2 @@
+datetime-interval>=0.2
 lxml>=5.1.0

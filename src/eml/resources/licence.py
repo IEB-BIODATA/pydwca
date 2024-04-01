@@ -3,7 +3,7 @@ from typing import Dict
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 
 
 class EMLLicense(XMLObject):
@@ -20,7 +20,6 @@ class EMLLicense(XMLObject):
         License Identifier.
     """
     PRINCIPAL_TAG = "licensed"
-    """str: Principal tag `licensed`"""
 
     def __init__(self, name: str, url: str = None, identifier: str = None) -> None:
         super().__init__()

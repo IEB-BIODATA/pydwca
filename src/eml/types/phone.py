@@ -3,7 +3,7 @@ from typing import Dict, Union
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 
 
 class EMLPhone(XMLObject):
@@ -18,7 +18,6 @@ class EMLPhone(XMLObject):
         The type of the phone to which this number applies. Default "voice".
     """
     PRINCIPAL_TAG = "phone"
-    """str: Principal tag `phone`"""
 
     def __init__(self, phone: str, phone_type: str = "voice") -> None:
         super().__init__()

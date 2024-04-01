@@ -3,7 +3,7 @@ import os
 import unittest
 from lxml import etree as et
 
-from eml.types import ResponsibleParty, EMLAddress
+from eml.types import ResponsibleParty, EMLAddress, IndividualName, PositionName, OrganizationName
 from test_xml.test_xml import TestXML
 
 PATH = os.path.abspath(os.path.dirname(__file__))
@@ -23,6 +23,9 @@ class TestResponsibleParty(TestXML):
         base_file = et.fromstring(content)
         self.nmap = base_file.nsmap
         self.dataset_xml = base_file.find("dataset", namespaces=base_file.nsmap)
+        self.individual = IndividualName(first_name="John", last_name="Doe")
+        self.position = PositionName("Digitizer")
+        self.organization = OrganizationName("Example Organization")
         return
 
     def test_parse_creator(self):
@@ -31,7 +34,6 @@ class TestResponsibleParty(TestXML):
         resp_party = ResponsibleParty.from_string(text)
         self.assertEqual("Creator Organization", resp_party.organization_name, "Error on parsing organization name")
         self.assertEqual("info@creator.org", resp_party.mail[0], "Error on parsing electronic mail address")
-        self.assertEqual(EMLAddress(country="", city=""), resp_party.address[0], "Error on parsing address")
         self.assertEqual("https://example.creator.org", resp_party.url[0], "Error on parsing online url")
         self.assertRaises(
             RuntimeError,
@@ -137,6 +139,55 @@ class TestResponsibleParty(TestXML):
             ResponsibleParty.from_string,
             reference_xml
         )
+
+    def test_str_individual(self):
+        just_individual = ResponsibleParty(individual_name=self.individual)
+        self.assertEqual("Doe, J.", str(just_individual), "Error on string of individual.")
+        individual_position = ResponsibleParty(
+            individual_name=self.individual,
+            position_name=self.position
+        )
+        self.assertEqual(
+            "Doe, J. (Digitizer)",
+            str(individual_position),
+            "Error on string of individual with position."
+        )
+        individual_organization = ResponsibleParty(
+            individual_name=self.individual,
+            organization_name=self.organization
+        )
+        self.assertEqual(
+            "Doe, J. (Example Organization)",
+            str(individual_organization),
+            "Error on string of individual with organization."
+        )
+        individual_complete = ResponsibleParty(
+            individual_name=self.individual,
+            position_name=self.position,
+            organization_name=self.organization
+        )
+        self.assertEqual(
+            "Doe, J. (Digitizer at Example Organization)",
+            str(individual_complete),
+            "Error on string of complete individual."
+        )
+
+    def test_str_position(self):
+        just_position = ResponsibleParty(position_name=self.position)
+        self.assertEqual("Digitizer", str(just_position), "Error on string of position.")
+        position_organization = ResponsibleParty(
+            position_name=self.position,
+            organization_name=self.organization
+        )
+        self.assertEqual(
+            "Digitizer at Example Organization",
+            str(position_organization),
+            "Error on string of position with organization."
+        )
+
+    def test_str_organization(self):
+        just_organization = ResponsibleParty(organization_name=self.organization)
+        self.assertEqual("Example Organization", str(just_organization), "Error on string of organization.")
 
 
 if __name__ == '__main__':

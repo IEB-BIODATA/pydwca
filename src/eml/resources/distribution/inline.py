@@ -3,7 +3,7 @@ from typing import Dict
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 
 
 class EMLInline(XMLObject):
@@ -11,7 +11,6 @@ class EMLInline(XMLObject):
     Inline distribution.
     """
     PRINCIPAL_TAG = "inline"
-    """str: Principal tag `inline`"""
 
     def __init__(self) -> None:
         super().__init__()

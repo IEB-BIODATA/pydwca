@@ -187,7 +187,3 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-
-# Data for testing purpose
-/tests/example_data/example_archive.zip
-/tests/example_data/*.txt

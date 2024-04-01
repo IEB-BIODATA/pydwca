@@ -1,7 +1,7 @@
 import unittest
 from lxml import etree as et
 
-from dwca.utils import Language
+from xml_common.utils import Language
 from eml.types import I18nString, ExtensionString
 from test_xml.test_xml import TestXML
 
@@ -71,6 +71,22 @@ class TestI18nString(TestXML):
         self.assertRaises(
             NotImplementedError, I18nString, "My variable", "fr"
         )
+
+    def test_sort(self):
+        first_variable = I18nString("A variable", Language.ENG)
+        second_variable = I18nString("Mi variable", Language.ESP)
+        self.assertGreater(second_variable, first_variable, "'A' greater than 'M'")
+        self.assertGreaterEqual(second_variable, first_variable, "'A' greater equal than 'M'")
+        self.assertGreater(second_variable, "A variable", "'A' greater than 'M' (on I18nString and str)")
+        self.assertGreaterEqual(second_variable, "A variable", "'A' greater equal than 'M' (on I18nString and str)")
+        self.assertRaises(TypeError, first_variable.__lt__, 45)
+        self.assertRaises(TypeError, first_variable.__le__, 45)
+        self.assertLess(first_variable, second_variable, "'M' less than 'A'")
+        self.assertLessEqual(first_variable, second_variable, "'M' less equal than 'A'")
+        self.assertLess(first_variable, "Mi variable", "'M' less than 'A' (on I18nString and str)")
+        self.assertLessEqual(first_variable, "Mi variable", "'M' less equal than 'A' (on I18nString and str)")
+        self.assertRaises(TypeError, first_variable.__gt__, 45)
+        self.assertRaises(TypeError, first_variable.__ge__, 45)
 
 
 if __name__ == '__main__':

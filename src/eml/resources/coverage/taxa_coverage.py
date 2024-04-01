@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple, Any
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 from eml.types import EMLObject, Scope, ResponsibleParty
 
 
@@ -138,7 +138,6 @@ class TaxonomicCoverage(EMLObject):
             A description of any modifications or exceptions made to the classification system or authority used.
         """
         PRINCIPAL_TAG = "taxonomicSystem"
-        """str: Principal tag `taxonomicSystem`."""
 
         def __init__(
                 self, procedures: str,
@@ -337,14 +336,13 @@ class TaxonomicCoverage(EMLObject):
         rank_value : str, optional
             The taxonomic rank name being described.
         common_name: List[str], optional
-            Specification of applicable common names.
+            Specification of applicable xml_common names.
         taxon_id: List[Tuple[int, str]], optional
             Element holds an ID and ID-provider for this taxon.
         classification: List[TaxonClassification], optional
             Taxonomic Classification field is self-referencing to allow for an arbitrary depth of rank, down to species.
         """
         PRINCIPAL_TAG = "taxonomicClassification"
-        """str: Principal tag `taxonomicClassification`."""
 
         def __init__(
                 self, _id: str = None,
@@ -389,7 +387,7 @@ class TaxonomicCoverage(EMLObject):
 
         @property
         def common_name(self) -> List[str]:
-            """List[str]: Specification of applicable common names."""
+            """List[str]: Specification of applicable xml_common names."""
             return self.__common__
 
         @property
@@ -483,7 +481,6 @@ class TaxonomicCoverage(EMLObject):
             return element
 
     PRINCIPAL_TAG = "taxonomicCoverage"
-    """str: Principal tag `taxonomicCoverage`."""
 
     def __init__(
             self, _id: str = None,
@@ -496,7 +493,7 @@ class TaxonomicCoverage(EMLObject):
             classification: List[TaxonomicCoverage.TaxonomicClassification] = None,
     ) -> None:
         super().__init__(_id, scope, system, referencing, references_system)
-        self.__system__ = taxonomic_system
+        self.__taxa_system__ = taxonomic_system
         self.__general__ = general_coverage
         self.__classification__ = list()
         if self.referencing:
@@ -509,7 +506,7 @@ class TaxonomicCoverage(EMLObject):
     @property
     def taxonomic_system(self) -> TaxonomicCoverage.TaxonomicSystem:
         """TaxonomicSystem: Documentation of taxonomic sources, procedures, and treatments."""
-        return self.__system__
+        return self.__taxa_system__
 
     @property
     def general_coverage(self) -> str:
@@ -524,7 +521,7 @@ class TaxonomicCoverage(EMLObject):
     @classmethod
     def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLObject:
         """
-        Generate an Taxonomic Coverage referencing another Taxonomic Coverage.
+        Generate a Taxonomic Coverage referencing another Taxonomic Coverage.
 
         Parameters
         ----------

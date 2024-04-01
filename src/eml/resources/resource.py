@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from abc import ABC
 from typing import Union, List, Dict, Tuple
+from warnings import warn
 
 import datetime as dt
 
 from lxml import etree as et
 
-from dwca.utils import Language
+from xml_common.utils import Language, format_datetime
 from eml.resources import EMLKeywordSet, EMLLicense, EMLDistribution, EMLCoverage
 from eml.types import I18nString, EMLObject, Scope, ExtensionString, ResponsibleParty, EMLTextType, SemanticAnnotation, \
     Role
@@ -124,6 +125,8 @@ class Resource(EMLObject, ABC):
         self.__annotation__: List[SemanticAnnotation] = list()
         if annotation is not None:
             self.__annotation__.extend(annotation)
+        if len(self.__annotation__) > 0 and self.__id__ is None:
+            raise ValueError("If annotations are given, resource must have an id.")
         return
 
     @property
@@ -225,10 +228,33 @@ class Resource(EMLObject, ABC):
         """List[SemanticAnnotation]: A precisely-defined semantic statement about this resource."""
         return self.__annotation__
 
+    def annotate(self, annotation: SemanticAnnotation) -> None:
+        """
+        Annotate this resource.
+
+        Parameters
+        ----------
+        annotation : SemanticAnnotation
+            An annotation in the :class:`eml.types.semantic_annotation.SemanticAnnotation` instance format.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        ValueError
+            If the resource does not have a unique id, it cannot be annotated.
+        """
+        if self.__id__ is None:
+            raise ValueError("If annotations are given, resource must have an id.")
+        self.__annotation__.append(annotation)
+        return
+
     @classmethod
     def parse_kwargs(cls, element: et.Element, nmap: Dict) -> Dict:
         """
-        Parse an element to generate the common parameters of Resource classes.
+        Parse an element to generate the xml_common parameters of Resource classes.
 
         Parameters
         ----------
@@ -263,7 +289,7 @@ class Resource(EMLObject, ABC):
         for creator in element.findall("creator", nmap):
             kwargs["creators"].append(ResponsibleParty.parse(creator, nmap))
         kwargs["alternative_identifier"] = list()
-        for alt_id in element.findall("alternativeIdentifier", nmap):
+        for alt_id in element.findall("alternateIdentifier", nmap):
             kwargs["alternative_identifier"].append(ExtensionString.parse(alt_id, nmap))
         kwargs["metadata_providers"] = list()
         for meta_prov in element.findall("metadataProvider", nmap):
@@ -276,7 +302,7 @@ class Resource(EMLObject, ABC):
             ))
         pub_date_elem = element.find("pubDate", nmap)
         if pub_date_elem is not None:
-            kwargs["publication_date"] = dt.datetime.strptime(pub_date_elem.text, "%Y-%m-%d").date()
+            kwargs["publication_date"] = format_datetime(pub_date_elem.text).date()
         lang_elem = element.find("language", nmap)
         if lang_elem is not None:
             kwargs["language"] = lang_elem.text
@@ -288,7 +314,11 @@ class Resource(EMLObject, ABC):
             kwargs["abstract"] = EMLTextType.parse(abs_elem, nmap)
         kwargs["keyword_set"] = list()
         for keyword_elem in element.findall("keywordSet", nmap):
-            kwargs["keyword_set"].append(EMLKeywordSet.parse(keyword_elem, nmap))
+            try:
+                kwargs["keyword_set"].append(EMLKeywordSet.parse(keyword_elem, nmap))
+            except ValueError as e:
+                warn(str(e))
+                pass
         kwargs["additional_info"] = list()
         for add_info in element.findall("additionalInfo", nmap):
             kwargs["additional_info"].append(EMLTextType.parse(add_info, nmap))
@@ -303,7 +333,11 @@ class Resource(EMLObject, ABC):
             kwargs["distribution"].append(EMLDistribution.parse(dist_elem, nmap))
         cover_elem = element.find("coverage", nmap)
         if cover_elem is not None:
-            kwargs["coverage"] = EMLCoverage.parse(cover_elem, nmap)
+            try:
+                kwargs["coverage"] = EMLCoverage.parse(cover_elem, nmap)
+            except TypeError as e:
+                warn(str(e))
+                pass
         kwargs["annotation"] = list()
         for annotation_elem in element.findall("annotation", nmap):
             kwargs["annotation"].append(SemanticAnnotation.parse(annotation_elem, nmap))
@@ -322,6 +356,9 @@ class Resource(EMLObject, ABC):
         element = self._to_element_(element)
         if self.referencing:
             return element
+        for alt_id in self.alternative_identifiers:
+            alt_id.set_tag("alternateIdentifier")
+            element.append(alt_id.to_element())
         if self.short_name is not None:
             short_elem = self.object_to_element("shortName")
             short_elem.text = self.short_name
@@ -332,9 +369,6 @@ class Resource(EMLObject, ABC):
         for creator in self.creators:
             creator.set_tag("creator")
             element.append(creator.to_element())
-        for alt_id in self.alternative_identifiers:
-            alt_id.set_tag("alternativeIdentifier")
-            element.append(alt_id.to_element())
         for meta_prov in self.metadata_provider:
             meta_prov.set_tag("metadataProvider")
             element.append(meta_prov.to_element())
@@ -378,3 +412,16 @@ class Resource(EMLObject, ABC):
             annotation.set_tag("annotation")
             element.append(annotation.to_element())
         return element
+
+    def __str__(self) -> str:
+        creators = "\n\t\t".join([str(creator) for creator in self.creators])
+        creator_label = "Creator" if len(self.creators) <= 1 else "Creators"
+        metadata_provider = "\n\t\t".join([str(metadata_provider) for metadata_provider in self.metadata_provider])
+        associated_party = list()
+        for assoc, role in self.associated_party:
+            associated_party.append(f"\t{role}: {assoc}")
+        assoc_text = "\n".join(associated_party)
+        return (f"\tTitle: {self.title}\n"
+                f"\t{creator_label}: {creators}\n"
+                f"\tMetadataProvider: {metadata_provider}\n"
+                f"{assoc_text}")
