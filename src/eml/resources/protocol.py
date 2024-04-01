@@ -7,6 +7,7 @@ from lxml import etree as et
 from eml.resources import Resource
 
 
+# TODO: Implement Protocol Resource (https://eml.ecoinformatics.org/schema/eml_xsd#eml_protocol)
 class EMLProtocol(Resource):
     """
     EML Protocol Resource.
@@ -18,7 +19,7 @@ class EMLProtocol(Resource):
     """
     def __init__(self, **kwargs) -> None:
         # To avoid initialization
-        super().__init__(referencing=True, **kwargs)
+        # super().__init__(referencing=True, **kwargs)
         raise NotImplementedError("Protocol EML class not implemented yet")
 
     @classmethod

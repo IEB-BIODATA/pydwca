@@ -1,7 +1,7 @@
 import unittest
 from lxml import etree as et
 
-from dwca.utils import Language
+from xml_common.utils import Language
 from eml.types import EMLAddress
 from test_xml.test_xml import TestXML
 
@@ -174,6 +174,8 @@ class TestEMLAddress(TestXML):
             EMLAddress.from_string,
             reference_xml
         )
+
+    # TODO: Test different ways to equal on Address
 
 
 if __name__ == '__main__':

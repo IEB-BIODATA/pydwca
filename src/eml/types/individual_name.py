@@ -3,8 +3,8 @@ from typing import Dict, Union, List
 
 from lxml import etree as et
 
-from dwca.utils import Language
-from dwca.xml import XMLObject
+from xml_common.utils import Language
+from xml_common import XMLObject
 from eml.types import I18nString
 
 
@@ -24,7 +24,6 @@ class IndividualName(XMLObject):
         In case of given, the language of all the parameters given
     """
     PRINCIPAL_TAG = "individualName"
-    """str: Principal tag `individualName`"""
 
     def __init__(
             self, last_name: Union[str, I18nString],
@@ -121,15 +120,15 @@ class IndividualName(XMLObject):
             Object in the Element format.
         """
         individual_name = super().to_element()
-        last_name = self.last_name
-        last_name.set_tag("surName")
-        individual_name.append(last_name.to_element())
-        for first_name in self.first_name:
-            first_name.set_tag("givenName")
-            individual_name.append(first_name.to_element())
         for salutation in self.salutation:
             salutation.set_tag("salutation")
             individual_name.append(salutation.to_element())
+        for first_name in self.first_name:
+            first_name.set_tag("givenName")
+            individual_name.append(first_name.to_element())
+        last_name = self.last_name
+        last_name.set_tag("surName")
+        individual_name.append(last_name.to_element())
         return individual_name
 
     def lang(self, language: Language) -> str:

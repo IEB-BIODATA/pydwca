@@ -5,7 +5,7 @@ from typing import Dict, List, Union, Tuple
 from lxml import etree as et
 import datetime as dt
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 from eml.types import EMLObject, Scope
 
 
@@ -31,7 +31,6 @@ class TemporalCoverage(EMLObject):
         Means of encoding a range of dates and times.
     """
     PRINCIPAL_TAG = "temporalCoverage"
-    """str: Principal tag `temporalCoverage`"""
 
     class AlternativeTimeScale(XMLObject):
         """
@@ -51,7 +50,6 @@ class TemporalCoverage(EMLObject):
             Citation for works providing detailed information about any element of the timescale age.
         """
         PRINCIPAL_TAG = "alternativeTimeScale"
-        """str: Principal tag `alternativeTimeScale`."""
 
         def __init__(
                 self, name: str,

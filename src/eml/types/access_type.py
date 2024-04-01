@@ -4,7 +4,7 @@ from typing import Dict, Union, List
 
 from lxml import etree as et
 
-from dwca.utils import CamelCaseEnum
+from xml_common.utils import CamelCaseEnum
 from eml.types import EMLObject, Scope, _NoTagObject
 
 
@@ -129,7 +129,6 @@ class AccessType(EMLObject):
         A rule that revokes a permission type. Mandatory if AccessType is not a reference.
     """
     PRINCIPAL_TAG = "access"
-    """str: Principal tag `access`."""
 
     def __init__(
             self, auth_system: str,

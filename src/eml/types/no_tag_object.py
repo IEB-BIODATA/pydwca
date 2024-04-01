@@ -3,7 +3,7 @@ from typing import Dict
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 
 
 class _NoTagObject(XMLObject, ABC):

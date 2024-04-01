@@ -79,4 +79,5 @@ class ExtensionURI(_NoTagObject):
         """
         element = super().to_element()
         element.set("label", self.label)
+        element.text = str(self)
         return element

@@ -12,21 +12,17 @@
     <creator>
       <organizationName>Creator Organization</organizationName>
       <electronicMailAddress>info@creator.org</electronicMailAddress>
-      <address>
-        <city></city>
-        <country></country>
-      </address>
       <onlineUrl>https://example.creator.org</onlineUrl>
     </creator>
     <metadataProvider>
       <organizationName>Metadata Provider Organization</organizationName>
       <positionName>Metadata Manager</positionName>
-      <electronicMailAddress>info@metadata.org</electronicMailAddress>
       <address>
         <city>Ostend</city>
         <postalCode>4568</postalCode>
         <country>BE</country>
       </address>
+      <electronicMailAddress>info@metadata.org</electronicMailAddress>
       <onlineUrl>https://example.metadata.org</onlineUrl>
     </metadataProvider>
     <associatedParty>
@@ -38,8 +34,8 @@
       <address>
         <country>Belgium</country>
       </address>
-      <electronicMailAddress>info@custodian.org</electronicMailAddress>
       <phone>486554390</phone>
+      <electronicMailAddress>info@custodian.org</electronicMailAddress>
       <role>custodianSteward</role>
     </associatedParty>
     <associatedParty>
@@ -47,11 +43,6 @@
         <givenName>John</givenName>
         <surName>Doe</surName>
       </individualName>
-      <organizationName></organizationName>
-      <address>
-        <country></country>
-      </address>
-      <electronicMailAddress></electronicMailAddress>
       <role>originator</role>
     </associatedParty>
     <associatedParty>
@@ -59,11 +50,6 @@
         <givenName>Joe</givenName>
         <surName>Example</surName>
       </individualName>
-      <organizationName></organizationName>
-      <address>
-        <country></country>
-      </address>
-      <electronicMailAddress></electronicMailAddress>
       <role>author</role>
     </associatedParty>
     <pubDate>2023-05-19</pubDate>
@@ -76,7 +62,6 @@
       <keyword>database</keyword>
       <keyword>online</keyword>
       <keyword>species</keyword>
-      <keywordThesaurus />
     </keywordSet>
     <keywordSet>
       <keyword>checklist</keyword>
@@ -85,7 +70,7 @@
     <keywordSet>
       <keyword>taxonomicAuthority</keyword>
       <keyword>globalSpeciesDataset</keyword>
-    <keyword>inventoryThematic</keyword>
+      <keyword>inventoryThematic</keyword>
       <keywordThesaurus>GBIF Dataset Subtype Vocabulary: http://rs.gbif.org/vocabulary/gbif/dataset_subtype.xml</keywordThesaurus>
     </keywordSet>
     <intellectualRights>
@@ -119,7 +104,7 @@
             <calendarDate>1758</calendarDate>
           </beginDate>
           <endDate>
-            <calendarDate>2023-05-19</calendarDate>
+            <calendarDate>2024-02-01</calendarDate>
           </endDate>
         </rangeOfDates>
       </temporalCoverage>
@@ -134,7 +119,7 @@
       <gbif>
         <dateStamp>2024-01-30T02:02:09+02:00</dateStamp>
         <hierarchyLevel>dataset</hierarchyLevel>
-        <citation>&lt;b&gt;Jane, D.&lt;/b&gt; (2024). Darwin Core Archive Example. Available from https://example.download.org. Accessed 2024-02-01</citation>
+        <citation>&lt;b&gt;Jane, D.&lt;/b&gt; (2024). Darwin Core Archive Example. Available from https://example.download.org. Accessed 2024-02-11</citation>
         <resourceLogoUrl>https://www.python.org/static/community_logos/python-logo-master-v3-TM.png</resourceLogoUrl>
       </gbif>
     </metadata>

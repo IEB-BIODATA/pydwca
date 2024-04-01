@@ -17,13 +17,14 @@ class EMLCitation(Resource):
         The parameters of every type of Resource.
     """
     PRINCIPAL_TAG = "citation"
-    """str: Principal tag `citation`."""
 
     def __init__(
             self, **kwargs
     ) -> None:
         super().__init__(**kwargs)
         return
+
+    # TODO: Implement citation attributes (https://eml.ecoinformatics.org/schema/eml_xsd#eml_citation)
 
     @classmethod
     def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLCitation:

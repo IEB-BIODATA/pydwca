@@ -5,7 +5,7 @@ from typing import Dict, List, Union
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 from eml.types import I18nString
 
 
@@ -48,7 +48,6 @@ class EMLKeywordSet(XMLObject):
         A list of the type of each keyword.
     """
     PRINCIPAL_TAG = "keywordSet"
-    """str: Principal tag `keywordSet`"""
 
     def __init__(
             self, keywords: List[Union[I18nString, str]],
