@@ -5,7 +5,7 @@ from typing import Dict, Any
 from lxml import etree as et
 from enum import Enum
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 from eml.types import ExtensionString
 
 
@@ -191,7 +191,7 @@ See https://eml.ecoinformatics.org/validation-and-content-references#id-and-scop
 
     def _to_element_(self, element: et.Element) -> et.Element:
         """
-        Add references values and common values to element.
+        Add references values and xml_common values to element.
 
         Returns
         -------

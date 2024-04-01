@@ -27,7 +27,7 @@ class MeasurementOrFact(DataFile):
         Delimiter of the file (cells) on the file, default `","`.
     fields_enclosed_by : str, optional
         Specifies the character used to enclose (mark the start and end of) each field, default empty `""`.
-    ignore_header_lines : List[int|str] | int | str, optional
+    ignore_header_lines : int, optional
         Ignore headers at the start of document, can be one line or a list of them, default 0 (first line).
     """
     URI = DataFile.URI + "MeasurementOrFact"
@@ -46,7 +46,7 @@ class MeasurementOrFact(DataFile):
             lines_terminated_by: str = "\n",
             fields_terminated_by: str = ",",
             fields_enclosed_by: str = "",
-            ignore_header_lines: Union[List[Union[int, str]], int, str] = 0,
+            ignore_header_lines: int = 0,
     ) -> None:
         super().__init__(
             _id, files, fields, data_file_type, encoding,

@@ -34,8 +34,9 @@ To check the components on it:
 .. code-block:: python
 
     Core:
+        class: Taxon
         filename: taxon.txt
-        content: 98 species
+        content: 163461 entries
 
 The extensions component are stores in a ``Python list`` and can be access in the same way:
 
@@ -56,8 +57,9 @@ Check the first one:
 .. code-block:: python
 
     Extension:
-        filename: identifier.txt
-        content: 98 species
+        class: SpeciesProfile
+        filename: speciesprofile.txt
+        content: 153622 entries
 
 And you can work with this data as an array of ``Python objects``, as ``numpy arrays` or as ``pandas DataFrames``
 

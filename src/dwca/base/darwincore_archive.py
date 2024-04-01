@@ -10,9 +10,9 @@ from lxml import etree as et
 from dwca.base import DarwinCore
 from dwca.classes import DataFile, Occurrence, Organism, MaterialEntity, MaterialSample, Event, Location, \
     GeologicalContext, Identification, Taxon, ResourceRelationship, MeasurementOrFact, ChronometricAge, OutsideClass
-from dwca.utils import Language
-from dwca.xml import XMLObject
-from eml.base import EML
+from xml_common.utils import Language
+from xml_common import XMLObject
+from eml import EML
 from eml.resources import EMLResource
 
 
@@ -158,6 +158,20 @@ class DarwinCoreArchive(DarwinCore):
         """DataFile: The file with the core of the archive."""
         return self.__meta__.__core__
 
+    @core.setter
+    def core(self, core: DataFile) -> None:
+        self.__meta__.__core__ = core
+        try:
+            df = self.__meta__.__core__.pandas
+            for extension in self.extensions:
+                ext_df = extension.pandas
+                mask = ext_df.iloc[:, extension.id].isin(df.iloc[:, core.id])
+                ext_df = ext_df.loc[ext_df[mask].index, :]
+                extension.pandas = ext_df
+        except ImportError:
+            pass
+        return
+
     @property
     def extensions(self) -> List[DataFile]:
         """
@@ -214,12 +228,22 @@ class DarwinCoreArchive(DarwinCore):
         index_file = archive.read("meta.xml")
         metadata = DarwinCoreArchive.Metadata.from_string(index_file.decode(encoding="utf-8"))
         if metadata.metadata_filename is not None:
-            eml = EML.from_string(archive.read(metadata.metadata_filename).decode(encoding="utf-8"))
+            metadata_content = archive.read(metadata.metadata_filename)
+            try:
+                eml = EML.from_string(metadata_content.decode(encoding="utf-8"))
+            except ValueError:
+                eml = EML.from_string(metadata_content)
             darwin_core = DarwinCoreArchive(_id=eml.package_id)
         else:
             darwin_core = DarwinCoreArchive()
         darwin_core.__meta__ = metadata
         darwin_core.__metadata__ = eml
+        core_file = archive.read(darwin_core.core.filename)
+        darwin_core.__meta__.__core__.read_file(core_file.decode(encoding=metadata.__core__.__encoding__))
+        darwin_core.__meta__.__core__._register_darwin_core_(0, darwin_core)
+        for i, extension in enumerate(darwin_core.extensions):
+            extension_file = archive.read(extension.filename)
+            darwin_core.__meta__.__extensions__[i].read_file(extension_file.decode())
         archive.close()
         return darwin_core
 
@@ -251,4 +275,4 @@ class DarwinCoreArchive(DarwinCore):
         return f"<Darwin Core Archive ({self})>"
 
     def __str__(self) -> str:
-        return f"{self.id} [Core: {self.core}]"
+        return f"{self.id} [Core: {self.core.uri}, Entries: {len(self.core)}]"

@@ -1,8 +1,10 @@
-from typing import Any, Dict
 import datetime as dt
+from typing import Any, Dict, Union
+
+from datetime_interval import Interval
 
 from dwca.terms import Field
-from dwca.utils import Language
+from xml_common.utils import Language
 
 
 class DWCType(Field):
@@ -39,8 +41,8 @@ class DWCModified(Field):
     vocabulary: str, optional
         An URI for a vocabulary that the source values for this Field are based on.
     """
-    URI = "	http://purl.org/dc/terms/modified"
-    TYPE = dt.datetime
+    URI = "http://purl.org/dc/terms/modified"
+    TYPE = Union[dt.datetime, Interval]
 
     def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)

@@ -1,5 +1,7 @@
 import datetime as dt
-from typing import Union, Tuple, List
+from typing import Union, List
+
+from datetime_interval import Interval
 
 from dwca.terms import Field
 
@@ -97,7 +99,7 @@ class EventDate(Field):
         Specifies a value to use if one is not supplied.
     """
     URI = "http://rs.tdwg.org/dwc/terms/eventDate"
-    TYPE = Union[dt.datetime, Tuple[dt.datetime, dt.datetime]]
+    TYPE = Union[dt.datetime, Interval]
 
     def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)
@@ -116,7 +118,7 @@ class EventTime(Field):
         Specifies a value to use if one is not supplied.
     """
     URI = "http://rs.tdwg.org/dwc/terms/eventTime"
-    TYPE = Union[dt.time, Tuple[dt.time, dt.time]]
+    TYPE = Union[dt.time, Interval]
 
     def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)

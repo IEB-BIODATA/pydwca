@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from enum import Enum
-from typing import List, Union, Dict, Type
+from typing import List, Dict, Type, Tuple
 from warnings import warn
 
 from lxml import etree as et
@@ -11,7 +11,8 @@ from dwca.terms import Field, DWCType, DWCModified, DWCLanguage, DWCLicense, DWC
     DWCBibliographicCitation, DWCReferences, DWCInstitution, DWCCollection, DWCDataset, DWCInstitutionCode, \
     DWCCollectionCode, DWCDatasetName, DWCOwnerInstitutionCode, DWCBasisOfRecord, DWCInformationWithheld, \
     DWCDataGeneralizations, DWCDynamicProperties, OutsideTerm
-from dwca.xml import XMLObject
+from xml_common.utils import iterate_with_bar
+from xml_common import XMLObject
 
 
 class DataFileType(Enum):
@@ -44,8 +45,8 @@ class DataFile(XMLObject, ABC):
         Delimiter of the file (cells) on the file, default `","`.
     fields_enclosed_by : str, optional
         Specifies the character used to enclose (mark the start and end of) each field, default empty `""`.
-    ignore_header_lines : List[int|str] | int | str, optional
-        Ignore headers at the start of document, can be one line or a list of them, default 0 (first line).
+    ignore_header_lines : int, optional
+        Number of lines to ignore at the start of document. Default 0 lines.
     """
     URI = "http://rs.tdwg.org/dwc/terms/"
     """str: Unified Resource Identifier (URI) for the term identifying the class of data."""
@@ -58,6 +59,15 @@ class DataFile(XMLObject, ABC):
         DWCDynamicProperties,
     ]
 
+    class Entry:
+        def __init__(self, **kwargs) -> None:
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+            return
+
+        def to_dict(self) -> Dict:
+            return self.__dict__
+
     def __init__(
             self, _id: int, files: str,
             fields: List[Field],
@@ -66,7 +76,7 @@ class DataFile(XMLObject, ABC):
             lines_terminated_by: str = "\n",
             fields_terminated_by: str = ",",
             fields_enclosed_by: str = "",
-            ignore_header_lines: Union[List[Union[int, str]], int, str] = 0,
+            ignore_header_lines: int = 0,
     ) -> None:
         super().__init__()
         self.__id__ = _id
@@ -78,11 +88,11 @@ class DataFile(XMLObject, ABC):
         self.__lines_end__ = lines_terminated_by
         self.__fields_end__ = fields_terminated_by
         self.__fields_enclosed__ = fields_enclosed_by
-        if isinstance(ignore_header_lines, List):
-            self.__ignore_header_lines__ = [int(i) for i in ignore_header_lines]
-        else:
-            self.__ignore_header__ = [int(ignore_header_lines)]
+        self.__ignore_header_lines__ = ignore_header_lines
         self.PRINCIPAL_TAG = self.__type__.name.lower()
+        self.__entries__: List[DataFile.Entry] = list()
+        self.__data__ = None
+        self.__observers__: List[Tuple[int, DarwinCoreArchive]] = list()
         return
 
     @property
@@ -97,8 +107,41 @@ class DataFile(XMLObject, ABC):
 
     @property
     def filename(self) -> str:
-        """str: Filename of the Data File entity"""
+        """str: Filename of the Data File entity."""
         return self.__files__
+
+    @property
+    def fields(self) -> List[str]:
+        """List[str]: List of terms of this data file."""
+        return [field.uri for field in self.__fields__]
+
+    @property
+    def pandas(self) -> pd.DataFrame:
+        """pandas.DataFrame: Data of this DataFile as pandas.DataFrame."""
+        if self.__data__ is None:
+            self.as_pandas()
+        return self.__data__
+
+    @pandas.setter
+    def pandas(self, df: pd.DataFrame) -> None:
+        assert len(self.__data__.columns) == len(df.columns)
+        self.__data__ = df
+        self.__entries__.clear()
+        for _, row in df.iterrows():
+            self.__entries__.append(DataFile.Entry(**row.to_dict()))
+        for i, observer in self.__observers__:
+            if self.__type__ == DataFileType.CORE:
+                observer.core = self
+            else:  # self.__type__ == DataFileType.EXTENSION
+                observer.extensions[i] = self
+        return
+
+    def _register_darwin_core_(self, _on: int, dwca: DarwinCoreArchive) -> None:
+        self.__observers__.append((_on, dwca))
+        return
+
+    def __len__(self) -> int:
+        return len(self.__entries__)
 
     @classmethod
     def get_term_class(cls, element: et.Element) -> Type[Field]:
@@ -141,7 +184,11 @@ class DataFile(XMLObject, ABC):
         """
         fields = list()
         for field_tree in element.findall("field", namespaces=nmap):
-            fields.append(cls.get_term_class(field_tree).parse(field_tree, nmap))
+            try:
+                fields.append(cls.get_term_class(field_tree).parse(field_tree, nmap))
+            except TypeError as e:
+                warn(f"Error on field {et.tostring(field_tree)}: {e}")
+                pass
         assert len(fields) >= 1, "A Data File must contain at least one field"
         df_type = DataFileType[et.QName(element).localname.upper()]
         if df_type == DataFileType.CORE:
@@ -155,11 +202,31 @@ class DataFile(XMLObject, ABC):
             "fields": fields,
             "data_file_type": df_type,
             "encoding": element.get("encoding", "utf-8"),
-            "lines_terminated_by": element.get("linesTerminatedBy", "\n"),
-            "fields_terminated_by": element.get("fieldsTerminatedBy", ","),
+            "lines_terminated_by": cls.__format_escape__(element.get("linesTerminatedBy", "\n")),
+            "fields_terminated_by": cls.__format_escape__(element.get("fieldsTerminatedBy", ",")),
             "fields_enclosed_by": element.get("fieldsEnclosedBy", ""),
-            "ignore_header_lines": element.get("ignoreHeaderLines", 0),
+            "ignore_header_lines": int(element.get("ignoreHeaderLines", 0)),
         }
+
+    @staticmethod
+    def __format_escape__(characters: str) -> str:
+        return characters.replace(
+            "\\n", "\n"
+        ).replace(
+            "\\r", "\r"
+        ).replace(
+            "\\t", "\t"
+        )
+
+    @staticmethod
+    def __unformat_escape__(characters: str) -> str:
+        return characters.replace(
+            "\n", "\\n"
+        ).replace(
+            "\r", "\\r"
+        ).replace(
+            "\t", "\\t"
+        )
 
     @classmethod
     def parse(cls, element: et.Element, nmap: Dict) -> DataFile | None:
@@ -197,10 +264,10 @@ class DataFile(XMLObject, ABC):
         element = super().to_element()
         element.set("rowType", self.uri)
         element.set("encoding", self.__encoding__)
-        element.set("linesTerminatedBy", self.__lines_end__)
-        element.set("fieldsTerminatedBy", self.__fields_end__)
+        element.set("linesTerminatedBy", self.__unformat_escape__(self.__lines_end__))
+        element.set("fieldsTerminatedBy", self.__unformat_escape__(self.__fields_end__))
         element.set("fieldsEnclosedBy", self.__fields_enclosed__)
-        element.set("ignoreHeaderLines", ",".join([str(ignore) for ignore in self.__ignore_header__]))
+        element.set("ignoreHeaderLines", str(self.__ignore_header_lines__))
         if self.__type__ == DataFileType.CORE:
             element_id = self.object_to_element("id")
         else:  # self.__type__ == DataFileType.EXTENSION:
@@ -247,9 +314,76 @@ class DataFile(XMLObject, ABC):
             except IndexError:
                 pass
         if extension:
-            ordered_fields[self.id] = OutsideTerm(self.id, "")
+            if ordered_fields[self.id] is None:
+                ordered_fields[self.id] = OutsideTerm(self.id, "")
+            else:
+                ordered_fields.pop()
         nones = [str(i) for i, item in enumerate(ordered_fields) if item is None]
         if len(nones) > 0:
             raise AssertionError(f'Index {"".join(nones)} not declared.')
         self.__fields__ = ordered_fields
         return
+
+    def read_file(self, content: str) -> None:
+        """
+        Read the content of the file specified in `files` parameters (:meth:`filename`).
+
+        Parameters
+        ----------
+        content : str
+            Content of the file
+
+        Returns
+        -------
+        None
+        """
+        lines = content.split(self.__lines_end__)
+        lines = list(filter(lambda x: x != "", lines))
+        for line in iterate_with_bar(
+                lines[self.__ignore_header_lines__:],
+                desc=f"Reading file {self.filename}", unit="entry"
+        ):
+            kwargs = dict()
+            for field, value in zip(self.__fields__, line.split(self.__fields_end__)):
+                kwargs[field.uri.split("/")[-1]] = field.format(value)
+            self.__entries__.append(DataFile.Entry(**kwargs))
+        return
+
+    def write_file(self) -> None:
+        """
+        Write the content on the file specified in `files` parameters (:meth:`filename`).
+
+        Returns
+        -------
+        None
+        """
+        pass
+
+    def as_pandas(self) -> pd.DataFrame:
+        """
+        Convert information in this DataFile in a pandas.DataFrame.
+
+        Returns
+        -------
+        DataFrame
+            Information as a pandas.DataFrame.
+        """
+        try:
+            import pandas as pd
+        except ImportError:
+            raise ImportError("Install pandas to use this feature")
+        fields = list()
+        for field in self.__fields__:
+            fields.append(field.uri.split("/")[-1])
+        entries = list()
+        for entry in iterate_with_bar(self.__entries__, desc="Converting to pandas", unit="entry"):
+            entries.append(entry.to_dict())
+        self.__data__ = pd.DataFrame(entries, columns=fields)
+        return self.__data__
+
+    def __str__(self) -> str:
+        role = self.__type__.name.lower().capitalize()
+        return (f"{role}:"
+                f"\n\tclass: {self.uri}"
+                f"\n\tfilename: {self.filename}"
+                f"\n\tcontent: {len(self.__entries__)} entries")

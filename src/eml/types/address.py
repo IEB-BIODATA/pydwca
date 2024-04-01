@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import logging
 from typing import Dict, Union, List, Any
 
 from lxml import etree as et
 
-from dwca.utils import Language
+from xml_common.utils import Language
 from eml.types import EMLObject, Scope, I18nString
 
 

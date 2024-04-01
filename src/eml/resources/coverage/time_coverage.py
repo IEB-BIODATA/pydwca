@@ -5,7 +5,7 @@ from typing import Dict, List, Union, Tuple
 from lxml import etree as et
 import datetime as dt
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 from eml.types import EMLObject, Scope
 
 

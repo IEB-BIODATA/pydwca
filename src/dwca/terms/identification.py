@@ -1,5 +1,7 @@
 import datetime as dt
-from typing import List, Union, Tuple
+from typing import List, Union
+
+from datetime_interval import Interval
 
 from dwca.terms import Field
 
@@ -130,7 +132,7 @@ class DateIdentified(Field):
         Specifies a value to use if one is not supplied.
     """
     URI = "http://rs.tdwg.org/dwc/terms/dateIdentified"
-    TYPE = Union[dt.datetime, Tuple[dt.datetime, dt.datetime]]
+    TYPE = Union[dt.datetime, Interval]
 
     def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)

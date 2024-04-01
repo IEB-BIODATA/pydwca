@@ -827,7 +827,7 @@ class ScientificNameAuthorship(Field):
 
 class VernacularName(Field):
     """
-    A common or vernacular name.
+    A xml_common or vernacular name.
     
     Parameters
     ----------

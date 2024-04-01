@@ -1,9 +1,16 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict
 
-from dwca.xml import XMLObject
+
+ABBREVIATIONS = {
+    "es": "esp",
+    "esp": "esp",
+    "spanish": "esp",
+    "en": "eng",
+    "eng": "eng",
+    "english": "eng",
+}
 
 
 class Language(Enum):
@@ -23,6 +30,6 @@ class Language(Enum):
     @staticmethod
     def get_language(abbreviation: str) -> Language:
         for lang in Language:
-            if lang.name.lower() == abbreviation.lower():
+            if lang.name.lower() == ABBREVIATIONS[abbreviation.lower()]:
                 return lang
         raise NotImplementedError(f"{abbreviation} language not implemented yet")

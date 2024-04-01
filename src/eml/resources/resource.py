@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from abc import ABC
 from typing import Union, List, Dict, Tuple
+from warnings import warn
 
 import datetime as dt
 
 from lxml import etree as et
 
-from dwca.utils import Language
+from xml_common.utils import Language, format_datetime
 from eml.resources import EMLKeywordSet, EMLLicense, EMLDistribution, EMLCoverage
 from eml.types import I18nString, EMLObject, Scope, ExtensionString, ResponsibleParty, EMLTextType, SemanticAnnotation, \
     Role
@@ -253,7 +254,7 @@ class Resource(EMLObject, ABC):
     @classmethod
     def parse_kwargs(cls, element: et.Element, nmap: Dict) -> Dict:
         """
-        Parse an element to generate the common parameters of Resource classes.
+        Parse an element to generate the xml_common parameters of Resource classes.
 
         Parameters
         ----------
@@ -301,7 +302,7 @@ class Resource(EMLObject, ABC):
             ))
         pub_date_elem = element.find("pubDate", nmap)
         if pub_date_elem is not None:
-            kwargs["publication_date"] = dt.datetime.strptime(pub_date_elem.text, "%Y-%m-%d").date()
+            kwargs["publication_date"] = format_datetime(pub_date_elem.text).date()
         lang_elem = element.find("language", nmap)
         if lang_elem is not None:
             kwargs["language"] = lang_elem.text
@@ -313,7 +314,11 @@ class Resource(EMLObject, ABC):
             kwargs["abstract"] = EMLTextType.parse(abs_elem, nmap)
         kwargs["keyword_set"] = list()
         for keyword_elem in element.findall("keywordSet", nmap):
-            kwargs["keyword_set"].append(EMLKeywordSet.parse(keyword_elem, nmap))
+            try:
+                kwargs["keyword_set"].append(EMLKeywordSet.parse(keyword_elem, nmap))
+            except ValueError as e:
+                warn(str(e))
+                pass
         kwargs["additional_info"] = list()
         for add_info in element.findall("additionalInfo", nmap):
             kwargs["additional_info"].append(EMLTextType.parse(add_info, nmap))
@@ -328,7 +333,11 @@ class Resource(EMLObject, ABC):
             kwargs["distribution"].append(EMLDistribution.parse(dist_elem, nmap))
         cover_elem = element.find("coverage", nmap)
         if cover_elem is not None:
-            kwargs["coverage"] = EMLCoverage.parse(cover_elem, nmap)
+            try:
+                kwargs["coverage"] = EMLCoverage.parse(cover_elem, nmap)
+            except TypeError as e:
+                warn(str(e))
+                pass
         kwargs["annotation"] = list()
         for annotation_elem in element.findall("annotation", nmap):
             kwargs["annotation"].append(SemanticAnnotation.parse(annotation_elem, nmap))

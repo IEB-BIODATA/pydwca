@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <archive xmlns="http://rs.tdwg.org/dwc/text/" metadata="eml.xml">
-  <core encoding="UTF-8" linesTerminatedBy="\r\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.tdwg.org/dwc/terms/Taxon">
+  <core encoding="UTF-8" linesTerminatedBy="\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.tdwg.org/dwc/terms/Taxon">
     <files>
       <location>taxon.txt</location>
     </files>
@@ -52,7 +52,7 @@
     <field index="45" default="Example Darwin Core Archive" term="http://rs.tdwg.org/dwc/terms/datasetName"/>
     <field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>
   </core>
-  <extension encoding="UTF-8" linesTerminatedBy="\r\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/SpeciesProfile">
+  <extension encoding="UTF-8" linesTerminatedBy="\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/SpeciesProfile">
     <files>
       <location>speciesprofile.txt</location>
     </files>
@@ -61,7 +61,7 @@
     <field index="3" term="http://rs.gbif.org/terms/1.0/isTerrestrial"/>
     <field index="4" term="http://rs.gbif.org/terms/1.0/isExtinct"/>
   </extension>
-  <extension encoding="UTF-8" linesTerminatedBy="\r\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/Reference">
+  <extension encoding="UTF-8" linesTerminatedBy="\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.gbif.org/terms/1.0/Reference">
     <files>
       <location>reference.txt</location>
     </files>
@@ -73,7 +73,7 @@
     <field index="6" term="http://purl.org/dc/terms/description"/>
     <field index="7" term="http://purl.org/dc/terms/type"/>
   </extension>
-  <extension encoding="UTF-8" linesTerminatedBy="\r\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.tdwg.org/dwc/terms/Identification">
+  <extension encoding="UTF-8" linesTerminatedBy="\n" fieldsTerminatedBy="\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://rs.tdwg.org/dwc/terms/Identification">
     <files>
       <location>identification.txt</location>
     </files>

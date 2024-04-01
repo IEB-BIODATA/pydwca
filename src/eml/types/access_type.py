@@ -4,7 +4,7 @@ from typing import Dict, Union, List
 
 from lxml import etree as et
 
-from dwca.utils import CamelCaseEnum
+from xml_common.utils import CamelCaseEnum
 from eml.types import EMLObject, Scope, _NoTagObject
 
 

@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List, Union, Tuple
 
 from dwca.terms import Field
-from dwca.utils import EstablishmentMeans
+from xml_common.utils import EstablishmentMeans
 
 
 class OccurrenceID(Field):
@@ -295,7 +295,7 @@ class DWCEstablishmentMeans(Field):
         An URI for a vocabulary that the source values for this Field are based on.
     """
     URI = "http://rs.tdwg.org/dwc/terms/establishmentMeans"
-    TYPE = Union[EstablishmentMeans, str]
+    TYPE = EstablishmentMeans
 
     def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)

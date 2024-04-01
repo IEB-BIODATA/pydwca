@@ -1,4 +1,4 @@
-from dwca.utils import CamelCaseEnum
+from xml_common.utils import CamelCaseEnum
 
 
 class LengthUnit(CamelCaseEnum):

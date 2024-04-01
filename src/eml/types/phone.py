@@ -3,7 +3,7 @@ from typing import Dict, Union
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 
 
 class EMLPhone(XMLObject):

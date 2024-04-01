@@ -21,7 +21,7 @@ class OutsideTerm(Field):
     vocabulary: str, optional
         An URI for a vocabulary that the source values for this Field are based on.
     """
-    TYPE = Any
+    TYPE = str
 
     def __init__(self, index: int | str, uri: str = None, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)

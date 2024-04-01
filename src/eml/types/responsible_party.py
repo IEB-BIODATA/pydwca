@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from enum import Enum
 from typing import Dict, List, Union
+from warnings import warn
 
 from lxml import etree as et
 
-from dwca.utils import CamelCaseEnum
+from xml_common.utils import CamelCaseEnum
 from eml.types import EMLObject, _NoTagObject, Scope, IndividualName, OrganizationName, PositionName, EMLAddress, \
     EMLPhone, I18nString
 
@@ -243,7 +243,14 @@ class ResponsibleParty(EMLObject, _NoTagObject):
             Value of the role inside the XML element.
         """
         role_elem = element.find("role", nmap)
-        return Role.get_enum(role_elem.text)
+        try:
+            return Role.get_enum(role_elem.text)
+        except ValueError:
+            link = "https://eml.ecoinformatics.org/schema/eml-party_xsd.html#RoleType"
+            warn(f"Role {role_elem.text} is not supported, "
+                 f"check {link} for the full list of choices. "
+                 f"Using contentProvider as default.")
+            return Role.CONTENT_PROVIDER
 
     def __str__(self) -> str:
         position_name = "" if self.position_name is None else f"{self.position_name}"

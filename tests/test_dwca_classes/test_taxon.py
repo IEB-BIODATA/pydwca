@@ -16,6 +16,13 @@ class TestTaxon(TestXML):
         base_file = et.fromstring(content)
         self.taxon_xml = base_file.find("core", namespaces=base_file.nsmap)
         self.text = et.tostring(self.taxon_xml, pretty_print=True).decode("utf-8")
+        self.taxon = None
+        return
+
+    def read_pandas(self):
+        self.taxon = Taxon.from_string(self.text)
+        with open(os.path.join(PATH, os.pardir, "example_data", "taxon.txt"), "r", encoding="utf-8") as file:
+            self.taxon.read_file(file.read())
         return
 
     def test_parse(self):
@@ -23,10 +30,10 @@ class TestTaxon(TestXML):
         self.assertEqual("taxon.txt", taxon.filename, "Files parse incorrectly")
         self.assertEqual(0, taxon.id, "Files parse incorrectly")
         self.assertEqual("UTF-8", taxon.__encoding__, "Encoding parse incorrectly")
-        self.assertEqual("\\r\\n", taxon.__lines_end__, "Lines end parse incorrectly")
-        self.assertEqual("\\t", taxon.__fields_end__, "Field end parse incorrectly")
+        self.assertEqual("\n", taxon.__lines_end__, "Lines end parse incorrectly")
+        self.assertEqual("\t", taxon.__fields_end__, "Field end parse incorrectly")
         self.assertEqual("", taxon.__fields_enclosed__, "Field enclosed parse incorrectly")
-        self.assertEqual([1], taxon.__ignore_header__, "Ignore header parse incorrectly")
+        self.assertEqual(1, taxon.__ignore_header_lines__, "Ignore header parse incorrectly")
         self.assertEqual(Taxon.URI, taxon.uri, "Row type parse incorrectly")
         self.assertEqual(47, len(taxon.__fields__), "Fields parse incorrectly")
         self.assertEqualTree(self.taxon_xml, taxon.to_element(), "Error on element conversion")
@@ -86,6 +93,16 @@ class TestTaxon(TestXML):
 </core-id>
             """
         )
+
+    def test_set_pandas(self):
+        self.read_pandas()
+        df = self.taxon.pandas
+        self.assertEqual(163460, len(self.taxon), "Data incorrectly read.")
+        self.assertEqual(163460, len(df), "DataFrame incorrectly read.")
+        df = df[0:100]
+        self.taxon.pandas = df
+        self.assertEqual(100, len(df), "DataFrame incorrectly set.")
+        self.assertEqual(100, len(self.taxon), "Data incorrectly set.")
 
 
 if __name__ == '__main__':

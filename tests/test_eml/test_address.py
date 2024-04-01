@@ -1,7 +1,7 @@
 import unittest
 from lxml import etree as et
 
-from dwca.utils import Language
+from xml_common.utils import Language
 from eml.types import EMLAddress
 from test_xml.test_xml import TestXML
 

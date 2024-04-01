@@ -5,7 +5,7 @@ from typing import Dict, List, Union
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 from eml.types import I18nString
 
 

@@ -1,6 +1,6 @@
 import unittest
 
-from eml.base import EML
+from eml import EML
 from eml.types import SemanticAnnotation
 from test_xml.test_xml import TestXML
 

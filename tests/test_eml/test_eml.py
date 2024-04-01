@@ -6,8 +6,8 @@ import requests
 import datetime as dt
 from lxml import etree as et
 
-from eml.base import EML, EMLVersion
-from dwca.utils import Language
+from eml import EML, EMLVersion
+from xml_common.utils import Language
 from eml.resources import EMLResource, EMLKeywordSet, EMLLicense, EMLDistribution, EMLCoverage
 from eml.resources.coverage import TemporalCoverage
 from eml.resources.distribution import EMLOnline, EMLOffline

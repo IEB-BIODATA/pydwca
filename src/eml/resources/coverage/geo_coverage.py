@@ -5,7 +5,7 @@ from typing import Dict, Tuple, List
 
 from lxml import etree as et
 
-from dwca.utils import LengthUnit, GPolygon, GRing
+from xml_common.utils import LengthUnit, GPolygon, GRing
 from eml.types import EMLObject, Scope
 
 
@@ -175,6 +175,8 @@ class GeographicCoverage(EMLObject):
         """
         description_elem = element.find("geographicDescription", nmap)
         bounding_elem = element.find("boundingCoordinates", nmap)
+        if bounding_elem is None:
+            raise ValueError("Bounding Coordinates is required.")
         west_bounding_elem = bounding_elem.find("westBoundingCoordinate", nmap)
         west = float(west_bounding_elem.text)
         east_bounding_elem = bounding_elem.find("eastBoundingCoordinate", nmap)
