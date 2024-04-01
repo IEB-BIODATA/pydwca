@@ -2,8 +2,9 @@ name: Python 🐍 Unnitest ✅
 
 on:
   push:
-    branches-ignore:
-      - 'main'
+    branches:
+      - '*'
+      - '!main'
   pull_request:
     branches:
       - 'main'
