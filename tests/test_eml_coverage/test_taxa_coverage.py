@@ -79,8 +79,8 @@ class MyTestCase(TestXML):
         )
         self.assertEqual("Kingdom", coverage.classification[0].rank_name, "Error on parsing taxonomic rank name")
         self.assertEqual("Viridiplantae", coverage.classification[0].rank_value, "Error on parsing taxonomic rank value")
-        self.assertEqual(1, len(coverage.classification[0].common_name), "Error on parsing common name")
-        self.assertEqual("Green Plants", coverage.classification[0].common_name[0], "Error on parsing common name")
+        self.assertEqual(1, len(coverage.classification[0].common_name), "Error on parsing xml_common name")
+        self.assertEqual("Green Plants", coverage.classification[0].common_name[0], "Error on parsing xml_common name")
         self.assertEqual(1, len(coverage.classification[0].taxon_id), "Error on parsing taxon id")
         self.assertEqual(
             33090,
@@ -253,8 +253,8 @@ class MyTestCase(TestXML):
         taxonomic_classification = TaxonomicCoverage.TaxonomicClassification.from_string(text_xml)
         self.assertEqual("Kingdom", taxonomic_classification.rank_name, "Error on parsing taxonomic rank name")
         self.assertEqual("Viridiplantae", taxonomic_classification.rank_value, "Error on parsing taxonomic rank value")
-        self.assertEqual(1, len(taxonomic_classification.common_name), "Error on parsing common name")
-        self.assertEqual("Green Plants", taxonomic_classification.common_name[0], "Error on parsing common name")
+        self.assertEqual(1, len(taxonomic_classification.common_name), "Error on parsing xml_common name")
+        self.assertEqual("Green Plants", taxonomic_classification.common_name[0], "Error on parsing xml_common name")
         self.assertEqual(1, len(taxonomic_classification.taxon_id), "Error on parsing taxon id")
         self.assertEqual(
             33090,
@@ -279,8 +279,8 @@ class MyTestCase(TestXML):
             taxonomic_classification.classification[0].rank_value,
             "Error on parsing taxonomic rank value"
         )
-        self.assertEqual(1, len(taxonomic_classification.classification[0].common_name), "Error on parsing common name")
-        self.assertEqual("Green Algae", taxonomic_classification.classification[0].common_name[0], "Error on parsing common name")
+        self.assertEqual(1, len(taxonomic_classification.classification[0].common_name), "Error on parsing xml_common name")
+        self.assertEqual("Green Algae", taxonomic_classification.classification[0].common_name[0], "Error on parsing xml_common name")
         self.assertEqual(1, len(taxonomic_classification.classification[0].taxon_id), "Error on parsing taxon id")
         self.assertEqual(
             3041,
@@ -358,8 +358,8 @@ class MyTestCase(TestXML):
         self.assertEqual(1, len(coverage.classification), "Error on parsing classification")
         self.assertEqual("Kingdom", coverage.classification[0].rank_name, "Error on parsing taxonomic rank name")
         self.assertEqual("Viridiplantae", coverage.classification[0].rank_value, "Error on parsing taxonomic rank value")
-        self.assertEqual(1, len(coverage.classification[0].common_name), "Error on parsing common name")
-        self.assertEqual("Green Plants", coverage.classification[0].common_name[0], "Error on parsing common name")
+        self.assertEqual(1, len(coverage.classification[0].common_name), "Error on parsing xml_common name")
+        self.assertEqual("Green Plants", coverage.classification[0].common_name[0], "Error on parsing xml_common name")
         self.assertEqual(1, len(coverage.classification[0].taxon_id), "Error on parsing taxon id")
         self.assertEqual(
             33090,

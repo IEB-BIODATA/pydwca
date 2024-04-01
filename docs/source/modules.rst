@@ -11,3 +11,4 @@ This package is compose of two modules:
 
    dwca
    eml
+   xml_common

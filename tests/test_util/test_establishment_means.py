@@ -1,6 +1,6 @@
 import unittest
 
-from dwca.utils import EstablishmentMeans
+from xml_common.utils import EstablishmentMeans
 
 
 class TestEstablishmentMeans(unittest.TestCase):

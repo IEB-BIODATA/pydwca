@@ -5,7 +5,8 @@ from typing import Any, Dict
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from xml_common.utils import format_to_type
+from xml_common import XMLObject
 
 
 class Field(XMLObject, ABC):
@@ -41,7 +42,7 @@ class Field(XMLObject, ABC):
 
     @property
     def default(self) -> Any:
-        """Any: Specifies a value to use if one is not supplied"""
+        """Any: Specifies a value to use if one is not supplied."""
         return self.__default__
 
     @property
@@ -51,8 +52,27 @@ class Field(XMLObject, ABC):
 
     @property
     def uri(self) -> str:
-        """str: An URI for the term represented by this field"""
+        """str: An URI for the term represented by this field."""
         return self.URI
+
+    def format(self, value: str) -> TYPE:
+        """
+        Format value in the TYPE of the field.
+
+        Parameters
+        ----------
+        value : str
+            Value to be formatted in the type of the respected field.
+
+        Returns
+        -------
+        TYPE
+            Formatted value.
+        """
+        try:
+            return format_to_type(value, self.TYPE)
+        except Exception as e:
+            raise type(e)(f"{e}. Must overwrite `Field.format` method to use this field.")
 
     @classmethod
     def parse(cls, element: et.Element, nmap: Dict) -> Field | None:

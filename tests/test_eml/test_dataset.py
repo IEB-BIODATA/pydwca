@@ -2,7 +2,7 @@ import os
 import unittest
 from lxml import etree as et
 
-from dwca.utils import Language
+from xml_common.utils import Language
 from eml.resources import EMLDataset
 from eml.types import Scope, SemanticAnnotation
 from test_xml.test_xml import TestXML

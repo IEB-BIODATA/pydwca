@@ -1,4 +1,5 @@
 import unittest
+from typing import Callable
 
 from lxml import etree as et
 
@@ -58,6 +59,23 @@ class TestOutsideTerm(TestXML):
             """
 <field index="0"/>
             """
+        )
+
+    def test_invalid_format(self):
+        term = OutsideTerm(3, "http://example.org/terms/example")
+
+        class A:
+            pass
+
+        term.TYPE = A
+        self.assertRaisesRegex(
+            TypeError, "automatic conversion",
+            term.format, "a"
+        )
+        term.TYPE = Callable
+        self.assertRaisesRegex(
+            TypeError, "automatic conversion",
+            term.format, "a"
         )
 
 

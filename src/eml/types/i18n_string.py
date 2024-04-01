@@ -4,7 +4,7 @@ from typing import Dict, Union
 
 from lxml import etree as et
 
-from dwca.utils import Language
+from xml_common.utils import Language
 from eml.types import _NoTagObject
 
 

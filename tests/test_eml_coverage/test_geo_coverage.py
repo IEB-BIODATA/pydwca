@@ -3,7 +3,7 @@ import unittest
 
 from lxml import etree as et
 
-from dwca.utils import LengthUnit, GPolygon, GRing
+from xml_common.utils import LengthUnit, GPolygon, GRing
 from eml.resources.coverage import GeographicCoverage
 from test_xml.test_xml import TestXML
 

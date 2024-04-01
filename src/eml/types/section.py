@@ -4,8 +4,8 @@ from typing import Dict, Union, Any
 
 from lxml import etree as et
 
-from dwca.utils import Language
-from dwca.xml import XMLObject
+from xml_common.utils import Language
+from xml_common import XMLObject
 from eml.types import I18nString
 
 

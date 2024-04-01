@@ -1,5 +1,7 @@
 import datetime as dt
-from typing import Union, Tuple
+from typing import Union
+
+from datetime_interval import Interval
 
 from dwca.terms import Field
 
@@ -144,7 +146,7 @@ class RelationshipEstablishedDate(Field):
         Specifies a value to use if one is not supplied.
     """
     URI = "http://rs.tdwg.org/dwc/terms/relationshipEstablishedDate"
-    TYPE = Union[dt.datetime, Tuple[dt.datetime, dt.datetime]]
+    TYPE = Union[dt.datetime, Interval]
 
     def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)

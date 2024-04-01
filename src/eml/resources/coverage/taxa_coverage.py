@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple, Any
 
 from lxml import etree as et
 
-from dwca.xml import XMLObject
+from xml_common import XMLObject
 from eml.types import EMLObject, Scope, ResponsibleParty
 
 
@@ -336,7 +336,7 @@ class TaxonomicCoverage(EMLObject):
         rank_value : str, optional
             The taxonomic rank name being described.
         common_name: List[str], optional
-            Specification of applicable common names.
+            Specification of applicable xml_common names.
         taxon_id: List[Tuple[int, str]], optional
             Element holds an ID and ID-provider for this taxon.
         classification: List[TaxonClassification], optional
@@ -387,7 +387,7 @@ class TaxonomicCoverage(EMLObject):
 
         @property
         def common_name(self) -> List[str]:
-            """List[str]: Specification of applicable common names."""
+            """List[str]: Specification of applicable xml_common names."""
             return self.__common__
 
         @property

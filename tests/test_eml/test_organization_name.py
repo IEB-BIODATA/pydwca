@@ -2,7 +2,7 @@ import unittest
 
 from lxml import etree as et
 
-from dwca.utils import Language
+from xml_common.utils import Language
 from test_xml.test_xml import TestXML
 from eml.types import OrganizationName
 

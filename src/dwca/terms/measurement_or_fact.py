@@ -1,5 +1,7 @@
-from typing import Any, List, Union, Tuple
 import datetime as dt
+from typing import Any, List, Union
+
+from datetime_interval import Interval
 
 from dwca.terms import Field
 
@@ -158,7 +160,7 @@ class MeasurementDeterminedDate(Field):
         Specifies a value to use if one is not supplied.
     """
     URI = "http://rs.tdwg.org/dwc/terms/measurementDeterminedDate"
-    TYPE = Union[dt.datetime, Tuple[dt.datetime, dt.datetime]]
+    TYPE = Union[dt.datetime, Interval]
 
     def __init__(self, index: int | str, default: TYPE = None, **kwargs) -> None:
         super().__init__(index, default, None)

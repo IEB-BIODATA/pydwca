@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Dict
+from warnings import warn
 
 from lxml import etree as et
 
@@ -116,10 +117,25 @@ class EMLCoverage(EMLObject):
         EMLCoverage
             Object parsed.
         """
+        try:
+            geographic = GeographicCoverage.parse(element.find("geographicCoverage", nmap), nmap)
+        except ValueError as e:
+            warn(str(e))
+            geographic = None
+        try:
+            temporal = TemporalCoverage.parse(element.find("temporalCoverage", nmap), nmap)
+        except ValueError as e:
+            warn(str(e))
+            temporal = None
+        try:
+            taxonomic = TaxonomicCoverage.parse(element.find("taxonomicCoverage", nmap), nmap)
+        except ValueError as e:
+            warn(str(e))
+            taxonomic = None
         return EMLCoverage(
-            geographic=GeographicCoverage.parse(element.find("geographicCoverage", nmap), nmap),
-            temporal=TemporalCoverage.parse(element.find("temporalCoverage", nmap), nmap),
-            taxonomic=TaxonomicCoverage.parse(element.find("taxonomicCoverage", nmap), nmap),
+            geographic=geographic,
+            temporal=temporal,
+            taxonomic=taxonomic,
             _id=element.get("id", None),
             scope=cls.get_scope(element),
             system=element.get("system", None),

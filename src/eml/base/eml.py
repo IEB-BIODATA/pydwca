@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple, Any
 import datetime as dt
 from lxml import etree as et
 
-from dwca.utils import Language
+from xml_common.utils import Language
 from eml.base import EMLMetadata, EMLVersion
 from eml.resources import EMLResource, EMLDataset, EMLCitation, EMLProtocol, EMLSoftware, Resource, EMLKeywordSet, \
     EMLLicense, EMLDistribution, EMLCoverage
