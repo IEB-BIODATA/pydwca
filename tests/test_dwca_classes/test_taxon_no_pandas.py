@@ -1,4 +1,3 @@
-import logging
 import os.path
 import sys
 import unittest
@@ -13,12 +12,17 @@ PATH = os.path.abspath(os.path.dirname(__file__))
 
 class TestTaxon(TestXML):
     def setUp(self) -> None:
+        sys.modules['pandas'] = None
         with open(os.path.join(PATH, os.pardir, "example_data", "meta.xml"), "r", encoding="utf-8") as file:
             content = file.read()
         base_file = et.fromstring(content)
         self.taxon_xml = base_file.find("core", namespaces=base_file.nsmap)
         self.text = et.tostring(self.taxon_xml, pretty_print=True).decode("utf-8")
         self.taxon = None
+        return
+
+    def tearDown(self) -> None:
+        del sys.modules['pandas']
         return
 
     def read_pandas(self):
@@ -39,15 +43,6 @@ class TestTaxon(TestXML):
         self.assertEqual(Taxon.URI, taxon.uri, "Row type parse incorrectly")
         self.assertEqual(47, len(taxon.__fields__), "Fields parse incorrectly")
         self.assertEqualTree(self.taxon_xml, taxon.to_element(), "Error on element conversion")
-
-    def test_filter_kingdom_exception(self):
-        taxon = Taxon(0, "file.txt", [])
-        self.assertRaisesRegex(
-            AssertionError,
-            "Kingdom must be in fields",
-            taxon.filter_by_kingdom,
-            []
-        )
 
     def test_get_parents(self):
         self.read_pandas()
@@ -101,144 +96,50 @@ class TestTaxon(TestXML):
 
     def test_filter_kingdom(self):
         self.read_pandas()
-        df = self.taxon.pandas
-        length_df = len(df)
-        kingdom_summary = df.groupby("kingdom").size().to_dict()
-        print(f"Kingdom Summary: {kingdom_summary}", file=sys.stderr)
-        self.assertEqual(length_df, len(self.taxon), "Original length of dataframe.")
-        self.taxon.filter_by_kingdom(kingdom_summary.keys())
-        self.assertEqual(length_df, len(self.taxon), "Filter by all kingdoms.")
-        first_kingdom = list(kingdom_summary.keys())[0]
-        self.taxon.filter_by_kingdom([first_kingdom])
-        self.assertEqual(kingdom_summary[first_kingdom], len(self.taxon), "Filter by first kingdom.")
-
-    def test_filter_phylum_exception(self):
-        taxon = Taxon(0, "file.txt", [])
-        self.assertRaisesRegex(
-            AssertionError,
-            "Phylum must be in fields",
-            taxon.filter_by_phylum,
-            []
-        )
+        length = len(self.taxon)
+        self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
+        self.taxon.filter_by_kingdom(["Ydhxpqku", "Zcmmvusczo"])
+        self.assertEqual(length, len(self.taxon), "Filter by all kingdoms.")
+        self.taxon.filter_by_kingdom(["Ydhxpqku"])
+        self.assertEqual(159490, len(self.taxon), "Filter by first kingdom.")
 
     def test_filter_phylum(self):
         self.read_pandas()
-        df = self.taxon.pandas
-        length_df = len(df)
-        phylum_summary = df.groupby(["kingdom", "phylum"]).size().to_dict()
-        kingdom_list = list()
-        phylum_list = list()
-        for candid in phylum_summary.keys():
-            if candid[1] != "":
-                phylum_list.append(candid[1])
-            else:
-                kingdom_list.append(candid[0])
-        print(f"Phylum Summary: {phylum_summary}", file=sys.stderr)
-        self.assertEqual(length_df, len(self.taxon), "Original length of dataframe.")
-        self.taxon.filter_by_phylum(phylum_list)
-        self.assertEqual(length_df, len(self.taxon), "Filter by all phylum.")
-        self.taxon.filter_by_phylum([phylum_list[0]])
+        length = len(self.taxon)
+        self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
+        self.taxon.filter_by_phylum(["Ajiwcqftc", "Xpqnzcij", "Gdhevlcsj", "Xtgktcts"])
+        self.assertEqual(length, len(self.taxon), "Filter by all phylum.")
+        self.taxon.filter_by_phylum(["Ajiwcqftc"])
         self.assertEqual(
-            phylum_summary[(kingdom_list[0], "")] + phylum_summary[(kingdom_list[0], phylum_list[0])],
+            79772,
             len(self.taxon),
-            f"Incorrect filter by {phylum_list[0]}."
+            "Incorrect filter by Ajiwcqftc."
         )
 
     def test_filter_class(self):
         self.read_pandas()
-        df = self.taxon.pandas
-        length_df = len(df)
-        class_summary = df.groupby(["kingdom", "phylum", "class"]).size().to_dict()
-        kingdom_list = list()
-        phylum_list = list()
-        class_list = list()
-        for candid in class_summary.keys():
-            if candid[2] != "":
-                class_list.append(candid[2])
-            else:
-                if candid[1] != "":
-                    phylum_list.append(candid[1])
-                else:
-                    kingdom_list.append(candid[0])
-        print(f"Class Summary: {class_summary}", file=sys.stderr)
-        self.assertEqual(length_df, len(self.taxon), "Original length of dataframe.")
-        self.taxon.filter_by_class(class_list)
-        self.assertEqual(length_df, len(self.taxon), "Filter by all classes.")
-        self.taxon.filter_by_class([class_list[2]])
+        length = len(self.taxon)
+        self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
+        self.taxon.filter_by_class([
+            "Rwqpdxtmzf", "Wturcymgs", "Yichyzkbff",
+            "Mrtuudeumnwn", "Yoadtafayw", "Vicipbwnr",
+            "Qipttfiyorbt", "Pvopxyxw",  "Uzskxjpkntg"
+        ])
+        self.assertEqual(length, len(self.taxon), "Filter by all classes.")
+        self.taxon.filter_by_class(["Yichyzkbff"])
         self.assertEqual(
-            class_summary[(kingdom_list[0], "", "")] +
-            class_summary[(kingdom_list[0], phylum_list[0], "")] +
-            class_summary[(kingdom_list[0], phylum_list[0], class_list[1])] +
-            class_summary[(kingdom_list[0], phylum_list[0], class_list[2])],
+            1 + 39941 + 1 + 1,
             len(self.taxon),
-            f"Incorrect filter by {class_list[2]}."
+            "Incorrect filter by Yichyzkbff."
         )
 
     def test_none(self):
         self.assertIsNone(Taxon.parse(None, {}), "Object parsed from nothing")
 
-    def test_missing_field(self):
-        self.assertRaises(
-            AssertionError,
-            Taxon.from_string,
-            """
-<core>
-    <files>
-      <location>missing.txt</location>
-    </files>
-    <id index="0"/>
-    <field index="0" term=""/>
-    <field index="1" term=""/>
-    <field index="3" term=""/>
-</core>
-            """
-        )
-
-    def test_field_twice(self):
-        self.assertRaises(
-            AssertionError,
-            Taxon.from_string,
-            """
-<core>
-    <files>
-      <location>missing.txt</location>
-    </files>
-    <id index="0"/>
-    <field index="0" term=""/>
-    <field index="1" term=""/>
-    <field index="3" term=""/>
-    <field index="2" term=""/>
-    <field index="3" term=""/>
-    <field index="4" term=""/>
-</core>
-            """
-        )
-
-    def test_parse_invalid(self):
-        self.assertRaises(
-            AssertionError,
-            Taxon.from_string,
-            '<extension />'
-        )
-        self.assertRaises(
-            KeyError,
-            Taxon.from_string,
-            """
-<core-id>
-    <field index="0" term=""/>
-</core-id>
-            """
-        )
-
-    def test_set_pandas(self):
+    def test_no_pandas(self):
         self.read_pandas()
-        df = self.taxon.pandas
-        self.assertEqual(163460, len(self.taxon), "Data incorrectly read.")
-        self.assertEqual(163460, len(df), "DataFrame incorrectly read.")
-        df = df[0:100]
-        self.taxon.pandas = df
-        self.assertEqual(100, len(df), "DataFrame incorrectly set.")
-        self.assertEqual(100, len(self.taxon), "Data incorrectly set.")
+        with self.assertRaisesRegex(ImportError, "Install pandas to use this feature"):
+            var = self.taxon.pandas
 
 
 if __name__ == '__main__':
