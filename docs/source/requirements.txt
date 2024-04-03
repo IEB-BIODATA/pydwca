@@ -1,3 +1,4 @@
+datetime-interval>=0.2
 lxml==5.1.0
 numpydoc==1.6.0
 pydata-sphinx-theme==0.15.2
