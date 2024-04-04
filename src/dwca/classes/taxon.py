@@ -81,18 +81,10 @@ class Taxon(DataFile):
         complete_taxa = set(taxa)
         try:
             df = self.pandas
-            taxa_id = df.loc[
-                df[(df[ScientificName.name()].isin(taxa)) & (df[TaxonRank.name()].str.lower() == taxa_name.lower())].index,
-                TaxonID.name()
-            ]
-            for taxon in taxa_id:
-                complete_taxa.update(self.all_synonyms(taxon, get_names=True))
-            parents = set()
-            for taxon in taxa_id:
-                parents.update(self.get_parents(taxon))
-            name = taxa_field.name()
-            df = df[df[name].isin(complete_taxa) | df[TaxonID.name()].isin(parents)]
-            self.pandas = df
+            taxa_id = df[
+                (df[ScientificName.name()].isin(taxa)) &
+                (df[TaxonRank.name()].str.lower() == taxa_name.lower())
+            ][TaxonID.name()]
         except ImportError:
             taxa_id = [
                 getattr(
@@ -102,12 +94,19 @@ class Taxon(DataFile):
                     }), TaxonID.name()
                 ) for taxon in taxa
             ]
-            for taxon in taxa_id:
-                complete_taxa.update(self.all_synonyms(taxon, get_names=True))
-            parents = set()
-            for taxon in taxa_id:
-                parents.update(self.get_parents(taxon))
-
+        for taxon in taxa_id:
+            complete_taxa.update(self.all_synonyms(taxon, get_names=True))
+        parents = set()
+        for taxon in taxa_id:
+            parents.update(self.get_parents(taxon))
+        for parent in parents.copy():
+            parents.update(self.all_synonyms(parent))
+        try:
+            df = self.pandas
+            name = taxa_field.name()
+            df = df[df[name].isin(complete_taxa) | df[TaxonID.name()].isin(parents)]
+            self.pandas = df
+        except ImportError:
             def filter_taxa(entry: DataFile.Entry) -> bool:
                 return getattr(entry, taxa_field.name()) in complete_taxa or getattr(entry, TaxonID.name()) in parents
 
@@ -122,10 +121,6 @@ class Taxon(DataFile):
         ----------
         kingdoms : List[str]
             Kingdom names to filter data.
-
-        Returns
-        -------
-        None
         """
         return self.__filter_by_taxa__(Kingdom, "Kingdom", kingdoms)
 
@@ -137,10 +132,6 @@ class Taxon(DataFile):
         ----------
         phyla : List[str]
             Phylum names to filter data.
-
-        Returns
-        -------
-        None
         """
         return self.__filter_by_taxa__(Phylum, "Phylum", phyla)
 
@@ -152,12 +143,59 @@ class Taxon(DataFile):
         ----------
         classes : List[str]
             Class names to filter data.
-
-        Returns
-        -------
-        None
         """
         return self.__filter_by_taxa__(DWCClass, "Class", classes)
+
+    def filter_by_order(self, orders: List[str]) -> None:
+        """
+        Filter data by a valid order.
+
+        Parameters
+        ----------
+        orders : List[str]
+            Order names to filter data.
+        """
+        return self.__filter_by_taxa__(Order, "Order", orders)
+
+    def filter_by_family(self, families: List[str]) -> None:
+        """
+        Filter data by a valid family.
+
+        Parameters
+        ----------
+        families : List[str]
+            Family names to filter data.
+        """
+        return self.__filter_by_taxa__(Family, "Family", families)
+
+    def filter_by_genus(self, genera: List[str]) -> None:
+        """
+        Filter data by a valid genus.
+
+        Parameters
+        ----------
+        genera : List[str]
+            Class names to filter genus.
+        """
+        return self.__filter_by_taxa__(Genus, "Genus", genera)
+
+    def filter_by_species(self, species: List[str]) -> None:
+        """
+        Filer data by species or any rank taxonomy below (subspecies, variety, form, etc.).
+
+        In contrast with the other `filter_by_` taxonomy methods, this one filter
+        the taxonomic data using the scientific name field :class:`dwca.terms.taxon.ScientificName`.
+
+        .. warning:: Because of that, use this method with precautions.
+           If a scientific name of a rank above species (genus, order,
+           etc...) is used, it could result in unexpected behaviour.
+
+        Parameters
+        ----------
+        species : List[str]
+            Scientific Name of species (or rank below) to filter data.
+        """
+        return
 
     def get_parents(self, taxa_id: str) -> List[str]:
         """

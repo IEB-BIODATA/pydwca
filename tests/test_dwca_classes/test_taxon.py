@@ -3,6 +3,7 @@ import os.path
 import sys
 import unittest
 
+import pandas as pd
 from lxml import etree as et
 
 from dwca.classes import Taxon
@@ -173,6 +174,81 @@ class TestTaxon(TestXML):
             len(self.taxon),
             f"Incorrect filter by {class_list[2]}."
         )
+
+    def test_filter_order(self):
+        self.read_pandas()
+        df = self.taxon.pandas
+        length_df = len(df)
+        orders = list(filter(lambda x: x != "", pd.unique(df["order"])))
+        order_names = ", ".join([f'"{order}"' for order in orders])
+        print(f"Orders found: {order_names}", file=sys.stderr)
+        self.assertEqual(length_df, len(self.taxon), "Original length of dataframe.")
+        self.taxon.filter_by_order(orders)
+        self.assertEqual(length_df, len(self.taxon), "Filter by all orders.")
+        accepted = df[df["scientificName"] == "Rbaliuycliu"]["acceptedNameUsage"].iloc[0]
+        with_order = sum(df["order"].isin(["Rbaliuycliu", "Xlhofowltm", accepted]))
+        taxa_id = df[df["scientificName"].isin(["Rbaliuycliu", "Xlhofowltm", accepted])]["taxonID"]
+        parents = set()
+        for taxon in taxa_id:
+            parents.update(self.taxon.get_parents(taxon))
+        for parent in parents.copy():
+            parents.update(self.taxon.all_synonyms(parent))
+        parents = sum(df["taxonID"].isin(parents))
+        print("Filtering by orders: Rbaliuycliu, Xlhofowltm", file=sys.stderr)
+        print(f"Accepted orders: Rbaliuycliu, {accepted}", file=sys.stderr)
+        self.taxon.filter_by_order(["Rbaliuycliu", "Xlhofowltm"])
+        print(f"Expected: with order {with_order} and parents {parents}", file=sys.stderr)
+        self.assertEqual(with_order + parents, len(self.taxon), "Incorrect filter.")
+
+    def test_filter_family(self):
+        self.read_pandas()
+        df = self.taxon.pandas
+        length_df = len(df)
+        families = list(filter(lambda x: x != "", pd.unique(df["family"])))
+        family_names = ", ".join([f'"{family}"' for family in families])
+        print(f"Families found: {family_names}", file=sys.stderr)
+        self.assertEqual(length_df, len(self.taxon), "Original length of dataframe.")
+        self.taxon.filter_by_family(families)
+        self.assertEqual(length_df, len(self.taxon), "Filter by all families.")
+        accepted = df[df["scientificName"] == "Dxaougdpy"]["acceptedNameUsage"].iloc[0]
+        with_family = sum(df["family"].isin(["Dxaougdpy", "Kvtgqwfmy", accepted]))
+        taxa_id = df[df["scientificName"].isin(["Dxaougdpy", "Kvtgqwfmy", accepted])]["taxonID"]
+        parents = set()
+        for taxon in taxa_id:
+            parents.update(self.taxon.get_parents(taxon))
+        for parent in parents.copy():
+            parents.update(self.taxon.all_synonyms(parent))
+        parents = sum(df["taxonID"].isin(parents))
+        print("Filtering by family: Dxaougdpy, Kvtgqwfmy", file=sys.stderr)
+        print(f"Accepted families: Kvtgqwfmy, {accepted}", file=sys.stderr)
+        self.taxon.filter_by_family(["Dxaougdpy", "Kvtgqwfmy"])
+        print(f"Expected: with family {with_family} and parents {parents}", file=sys.stderr)
+        self.assertEqual(with_family + parents, len(self.taxon), "Incorrect filter.")
+
+    def test_filter_genus(self):
+        self.read_pandas()
+        df = self.taxon.pandas
+        length_df = len(df)
+        genera = list(filter(lambda x: x != "", pd.unique(df["genus"])))
+        genus_names = ", ".join([f'"{genus}"' for genus in genera])
+        print(f"Genera found: {genus_names}", file=sys.stderr)
+        self.assertEqual(length_df, len(self.taxon), "Original length of dataframe.")
+        self.taxon.filter_by_genus(genera)
+        self.assertEqual(length_df, len(self.taxon), "Filter by all genera.")
+        accepted = df[df["scientificName"] == "Hbqrtfopjuh"]["acceptedNameUsage"].iloc[0]
+        with_genus = sum(df["genus"].isin(["Hbqrtfopjuh", "Vbpjkmfqd", accepted]))
+        taxa_id = df[df["scientificName"].isin(["Hbqrtfopjuh", "Vbpjkmfqd", accepted])]["taxonID"]
+        parents = set()
+        for taxon in taxa_id:
+            parents.update(self.taxon.get_parents(taxon))
+        for parent in parents.copy():
+            parents.update(self.taxon.all_synonyms(parent))
+        parents = sum(df["taxonID"].isin(parents))
+        print("Filtering by genus: Hbqrtfopjuh, Vbpjkmfqd", file=sys.stderr)
+        print(f"Accepted genera: Vbpjkmfqd, {accepted}", file=sys.stderr)
+        self.taxon.filter_by_genus(["Hbqrtfopjuh", "Vbpjkmfqd"])
+        print(f"Expected: with genus {with_genus} and parents {parents}", file=sys.stderr)
+        self.assertEqual(with_genus + parents, len(self.taxon), "Incorrect filter.")
 
     def test_none(self):
         self.assertIsNone(Taxon.parse(None, {}), "Object parsed from nothing")

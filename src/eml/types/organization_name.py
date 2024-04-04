@@ -60,10 +60,6 @@ class OrganizationName(I18nString):
         ----------
         tag : str
             Any tag.
-
-        Returns
-        -------
-        None
         """
         return
 
