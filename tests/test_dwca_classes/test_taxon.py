@@ -250,6 +250,44 @@ class TestTaxon(TestXML):
         print(f"Expected: with genus {with_genus} and parents {parents}", file=sys.stderr)
         self.assertEqual(with_genus + parents, len(self.taxon), "Incorrect filter.")
 
+    def test_filter_species(self):
+        self.read_pandas()
+        df = self.taxon.pandas
+        length_df = len(df)
+        self.assertEqual(length_df, len(self.taxon), "Original length of dataframe.")
+        species_synonym = "Hqmjhacvb (Azvoxtzhwueu) gupfjmnf "
+        variety = "Rtfkiaicpdng obzninluz var. cebwyzcqoy Glhnskwn"
+        cultivar = "Rtfkiaicpdng Abifwvxqn gurqtwpof f. prczacpvtdtu  'xzhgezqpaorp'"
+        synonyms = set()
+        species_row = df[df["scientificName"] == species_synonym].iloc[0]
+        accepted = species_row["acceptedNameUsageID"]
+        synonyms.add(accepted)
+        synonyms.add(species_row["taxonID"])
+        first_parents = self.taxon.get_parents(accepted)
+        print(f"For {species_synonym} expected {len(first_parents)} parents, accepted and synonym", file=sys.stderr)
+        variety_id = df[df["scientificName"] == variety]["taxonID"].iloc[0]
+        second_parents = self.taxon.get_parents(variety_id)
+        synonyms.add(variety_id)
+        print(f"For {variety} expected {len(second_parents)} parents and self", file=sys.stderr)
+        cultivar_id = df[df["scientificName"] == cultivar]["taxonID"].iloc[0]
+        third_parents = self.taxon.get_parents(cultivar_id)
+        synonyms.add(cultivar_id)
+        print(f"For {cultivar} expected {len(third_parents)} parents", file=sys.stderr)
+        for taxon in list(synonyms.copy()) + first_parents + second_parents + third_parents:
+            synonyms.update(self.taxon.all_synonyms(taxon))
+        other_synonyms = synonyms.difference({species_synonym, variety, cultivar})
+        other_synonyms = other_synonyms.difference(set(first_parents))
+        other_synonyms = other_synonyms.difference(set(second_parents))
+        other_synonyms = other_synonyms.difference(set(third_parents))
+        print(f"Synonyms found: {len(other_synonyms)}", file=sys.stderr)
+        print(f"Total {len(synonyms)}", file=sys.stderr)
+        self.taxon.filter_by_species([species_synonym, variety, cultivar])
+        self.assertEqual(
+            len(synonyms),
+            len(self.taxon),
+            "Filter by all genera."
+        )
+
     def test_none(self):
         self.assertIsNone(Taxon.parse(None, {}), "Object parsed from nothing")
 
