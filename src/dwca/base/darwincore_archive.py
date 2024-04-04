@@ -199,11 +199,6 @@ class DarwinCoreArchive(DarwinCore):
         ----------
         filename : str
             Filename for the EML file to be generated
-
-        Returns
-        -------
-        None
-            Generate an EML object on the archive
         """
         self.__meta__.__metadata__ = filename
         self.__metadata__ = EML(self.id, system="http://gbif.org", resource_type=EMLResource.DATASET)
@@ -257,11 +252,6 @@ class DarwinCoreArchive(DarwinCore):
             Path of the archive to generate.
         encoding : str, optional
             Encoding of the corresponding files. Default `"utf-8"`.
-
-        Returns
-        -------
-        None
-            Writes file.
         """
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'a') as zip_file:

@@ -39,10 +39,5 @@ class DarwinCore(ABC):
             Path of the archive to generate.
         encoding : str, optional
             Encoding of the corresponding files. Default `"utf-8"`.
-
-        Returns
-        -------
-        None
-            Writes file.
         """
         pass

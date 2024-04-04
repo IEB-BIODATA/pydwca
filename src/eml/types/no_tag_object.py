@@ -55,11 +55,6 @@ class _NoTagObject(XMLObject, ABC):
         ----------
         tag : str
             Tag of the XML output element.
-
-        Returns
-        -------
-        None
-            Set tag.
         """
         self.__tag__ = tag
         return

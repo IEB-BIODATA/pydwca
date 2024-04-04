@@ -55,6 +55,15 @@ class Field(XMLObject, ABC):
         """str: An URI for the term represented by this field."""
         return self.URI
 
+    @classmethod
+    def name(cls) -> str:
+        """str: The name of the field."""
+        names = cls.URI.split("/")
+        if len(names) > 1:
+            return names[-1]
+        else:
+            return names[0]
+
     def format(self, value: str) -> TYPE:
         """
         Format value in the TYPE of the field.
