@@ -133,6 +133,47 @@ class TestTaxon(TestXML):
             "Incorrect filter by Yichyzkbff."
         )
 
+    def test_filter_order(self):
+        self.read_pandas()
+        length = len(self.taxon)
+        self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
+        self.taxon.filter_by_order([
+            "Emicapsmvx", "Qyztmnpzz", "Udfewrqmk", "Ffknrbypsk", "Tqmvrbmttmo", "Xhngcistiqri", "Iwxoydtagzew",
+            "Civppxeuqtes", "Xmvvualtokh", "Rbaliuycliu", "Xlhofowltm", "Jqgigdqsvqtw", "Mrvmytfgxyb", "Krwyqoqmeih",
+            "Zcucwtks", "Lphobkhmtio", "Gwmtzgbm", "Wryqyvfr", "Koblytwog", "Oqqwmlsoycmg", "Mrplaoqwi"
+        ])
+        self.assertEqual(length, len(self.taxon), "Filter by all orders.")
+        self.taxon.filter_by_order(["Rbaliuycliu", "Xlhofowltm"])
+        self.assertEqual(39834 + 4, len(self.taxon), "Incorrect filter.")
+
+    def test_filter_family(self):
+        self.read_pandas()
+        length = len(self.taxon)
+        self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
+        self.taxon.filter_by_family([
+            "Yzpkpquxs", "Aagnljgrt", "Kdahroigttef", "Wbeobsbx", "Uzajhqjglr", "Qmsjwosehsjg", "Jcvvsouvb", "Geitphvl",
+            "Szlglzepeoj", "Tuguotkggz", "Csmeldytb", "Yvnmmueju", "Wykuuqdtfh", "Dxojfzqb", "Nwzoybkyquv",
+            "Xvflpivgwtw", "Hbznvnpvdlll", "Nytpapprh", "Cdaukfqnbild", "Dvfwfnrosp", "Vowctemwht", "Yhfsclavzwz",
+            "Dcohvbddjk", "Rtuitsplmqrw", "Kxwbhmfxwmah", "Abaxaenj", "Cscukzira", "Dxaougdpy", "Kvtgqwfmy",
+            "Hoskerxymj", "Bmtbnvhlsn", "Jaksslqkhna", "Gvwkrzuzcsm", "Qejrpechiokg", "Ldbjloyw", "Acxcalcjb",
+            "Exudmuohg", "Jisevptt", "Dmlkwsbankpr", "Ebxkmrllsmhb", "Fhhnxbgsj", "Blvgjqyf", "Ofrmsymysbj",
+            "Iegtwpmzsn", "Uxlbjpgytrr", "Yppvqkvpyg", "Ufeoonfwvbwj", "Wxnibhsng", "Gzhzmloknffb", "Yqzeqqieric",
+            "Bwysxkndbdo", "Aujqbritahm", "Nnjnmwvudn", "Pnpuqusvjmoh", "Qubplgsfgbf", "Aatwuzftuuh", "Mieccdvk",
+            "Dakljsno", "Jqvrvbesgygm", "Iuzgldlop", "Xiuuksnsmk", "Cvbllcbq", "Hfwzlwzsmin", "Rqbbjpso", "Ipfvwairk",
+            "Nbtktczp", "Jodyeaftwmzy", "Xuejrpuqj", "Xbezapgssp", "Iqrmrnbiovqz", "Wkttduowlm", "Xnxaxfml",
+            "Bzivoaubjpig"
+        ])
+        self.assertEqual(length, len(self.taxon), "Filter by all families.")
+        self.taxon.filter_by_family(["Dxaougdpy", "Kvtgqwfmy"])
+        self.assertEqual(9969 + 5, len(self.taxon), "Incorrect filter.")
+
+    def test_filter_genus(self):
+        self.read_pandas()
+        length = len(self.taxon)
+        self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
+        self.taxon.filter_by_genus(["Hbqrtfopjuh", "Vbpjkmfqd"])
+        self.assertEqual(624 + 11, len(self.taxon), "Incorrect filter.")
+
     def test_none(self):
         self.assertIsNone(Taxon.parse(None, {}), "Object parsed from nothing")
 

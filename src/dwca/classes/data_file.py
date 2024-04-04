@@ -302,10 +302,6 @@ class DataFile(XMLObject, ABC):
             Actual tag.
         nmap : Dict
             Namespace.
-
-        Returns
-        -------
-        None
         """
         pass
 
@@ -338,10 +334,6 @@ class DataFile(XMLObject, ABC):
         ----------
         content : str
             Content of the file
-
-        Returns
-        -------
-        None
         """
         lines = content.split(self.__lines_end__)
         lines = list(filter(lambda x: x != "", lines))
@@ -358,10 +350,6 @@ class DataFile(XMLObject, ABC):
     def write_file(self) -> None:
         """
         Write the content on the file specified in `files` parameters (:meth:`filename`).
-
-        Returns
-        -------
-        None
         """
         pass
 
