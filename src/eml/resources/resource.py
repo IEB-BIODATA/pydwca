@@ -237,10 +237,6 @@ class Resource(EMLObject, ABC):
         annotation : SemanticAnnotation
             An annotation in the :class:`eml.types.semantic_annotation.SemanticAnnotation` instance format.
 
-        Returns
-        -------
-        None
-
         Raises
         ------
         ValueError

@@ -15,6 +15,12 @@ from xml_common.utils import iterate_with_bar
 from xml_common import XMLObject
 
 
+try:
+    import pandas as pd
+except Exception:
+    pd = None
+
+
 class DataFileType(Enum):
     """
     Type of data file in the Darwin Core Archive.
@@ -296,10 +302,6 @@ class DataFile(XMLObject, ABC):
             Actual tag.
         nmap : Dict
             Namespace.
-
-        Returns
-        -------
-        None
         """
         pass
 
@@ -332,10 +334,6 @@ class DataFile(XMLObject, ABC):
         ----------
         content : str
             Content of the file
-
-        Returns
-        -------
-        None
         """
         lines = content.split(self.__lines_end__)
         lines = list(filter(lambda x: x != "", lines))
@@ -345,17 +343,13 @@ class DataFile(XMLObject, ABC):
         ):
             kwargs = dict()
             for field, value in zip(self.__fields__, line.split(self.__fields_end__)):
-                kwargs[field.uri.split("/")[-1]] = field.format(value)
+                kwargs[field.name()] = field.format(value)
             self.__entries__.append(DataFile.Entry(**kwargs))
         return
 
     def write_file(self) -> None:
         """
         Write the content on the file specified in `files` parameters (:meth:`filename`).
-
-        Returns
-        -------
-        None
         """
         pass
 
@@ -374,7 +368,7 @@ class DataFile(XMLObject, ABC):
             raise ImportError("Install pandas to use this feature")
         fields = list()
         for field in self.__fields__:
-            fields.append(field.uri.split("/")[-1])
+            fields.append(field.name())
         entries = list()
         for entry in iterate_with_bar(self.__entries__, desc="Converting to pandas", unit="entry"):
             entries.append(entry.to_dict())
