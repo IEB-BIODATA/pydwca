@@ -174,6 +174,16 @@ class TestTaxon(TestXML):
         self.taxon.filter_by_genus(["Hbqrtfopjuh", "Vbpjkmfqd"])
         self.assertEqual(624 + 11, len(self.taxon), "Incorrect filter.")
 
+    def test_filter_species(self):
+        self.read_pandas()
+        length = len(self.taxon)
+        self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
+        species_synonym = "Hqmjhacvb (Azvoxtzhwueu) gupfjmnf "
+        variety = "Rtfkiaicpdng obzninluz var. cebwyzcqoy Glhnskwn"
+        cultivar = "Rtfkiaicpdng Abifwvxqn gurqtwpof f. prczacpvtdtu  'xzhgezqpaorp'"
+        self.taxon.filter_by_species([species_synonym, variety, cultivar])
+        self.assertEqual(24, len(self.taxon), "Filter by all genera.")
+
     def test_none(self):
         self.assertIsNone(Taxon.parse(None, {}), "Object parsed from nothing")
 

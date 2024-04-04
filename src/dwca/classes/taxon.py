@@ -76,24 +76,38 @@ class Taxon(DataFile):
         )
         return
 
-    def __filter_by_taxa__(self, taxa_field: Type[Field], taxa_name: str, taxa: List[str]) -> None:
+    def _filter_by_taxa_(
+            self,
+            taxa_field: Type[Field],
+            taxa_name: str,
+            taxa: List[str],
+            filter_with_rank: bool = True
+    ) -> None:
         assert taxa_field.URI in self.fields, f"{taxa_name} must be in fields of this class to use this feature."
         complete_taxa = set(taxa)
         try:
             df = self.pandas
-            taxa_id = df[
-                (df[ScientificName.name()].isin(taxa)) &
-                (df[TaxonRank.name()].str.lower() == taxa_name.lower())
-            ][TaxonID.name()]
+            mask = df[ScientificName.name()].isin(taxa)
+            if filter_with_rank:
+                mask &= df[TaxonRank.name()].str.lower() == taxa_name.lower()
+            taxa_id = df[mask][TaxonID.name()]
         except ImportError:
-            taxa_id = [
-                getattr(
-                    self.__get_entry__(**{
-                        ScientificName.name(): taxon,
-                        f"{TaxonRank.name()}__case_insensitive": taxa_name
-                    }), TaxonID.name()
-                ) for taxon in taxa
-            ]
+            if filter_with_rank:
+                taxa_id = [
+                    getattr(
+                        self.__get_entry__(**{
+                            ScientificName.name(): taxon,
+                            f"{TaxonRank.name()}__case_insensitive": taxa_name
+                        }), TaxonID.name()
+                    ) for taxon in taxa
+                ]
+            else:
+                taxa_id = [
+                    getattr(
+                        self.__get_entry__(**{ScientificName.name(): taxon}),
+                        TaxonID.name()
+                    ) for taxon in taxa
+                ]
         for taxon in taxa_id:
             complete_taxa.update(self.all_synonyms(taxon, get_names=True))
         parents = set()
@@ -122,7 +136,7 @@ class Taxon(DataFile):
         kingdoms : List[str]
             Kingdom names to filter data.
         """
-        return self.__filter_by_taxa__(Kingdom, "Kingdom", kingdoms)
+        return self._filter_by_taxa_(Kingdom, "Kingdom", kingdoms)
 
     def filter_by_phylum(self, phyla: List[str]) -> None:
         """
@@ -133,7 +147,7 @@ class Taxon(DataFile):
         phyla : List[str]
             Phylum names to filter data.
         """
-        return self.__filter_by_taxa__(Phylum, "Phylum", phyla)
+        return self._filter_by_taxa_(Phylum, "Phylum", phyla)
 
     def filter_by_class(self, classes: List[str]) -> None:
         """
@@ -144,7 +158,7 @@ class Taxon(DataFile):
         classes : List[str]
             Class names to filter data.
         """
-        return self.__filter_by_taxa__(DWCClass, "Class", classes)
+        return self._filter_by_taxa_(DWCClass, "Class", classes)
 
     def filter_by_order(self, orders: List[str]) -> None:
         """
@@ -155,7 +169,7 @@ class Taxon(DataFile):
         orders : List[str]
             Order names to filter data.
         """
-        return self.__filter_by_taxa__(Order, "Order", orders)
+        return self._filter_by_taxa_(Order, "Order", orders)
 
     def filter_by_family(self, families: List[str]) -> None:
         """
@@ -166,7 +180,7 @@ class Taxon(DataFile):
         families : List[str]
             Family names to filter data.
         """
-        return self.__filter_by_taxa__(Family, "Family", families)
+        return self._filter_by_taxa_(Family, "Family", families)
 
     def filter_by_genus(self, genera: List[str]) -> None:
         """
@@ -177,7 +191,7 @@ class Taxon(DataFile):
         genera : List[str]
             Class names to filter genus.
         """
-        return self.__filter_by_taxa__(Genus, "Genus", genera)
+        return self._filter_by_taxa_(Genus, "Genus", genera)
 
     def filter_by_species(self, species: List[str]) -> None:
         """
@@ -195,7 +209,7 @@ class Taxon(DataFile):
         species : List[str]
             Scientific Name of species (or rank below) to filter data.
         """
-        return
+        return self._filter_by_taxa_(ScientificName, "Species", species, filter_with_rank=False)
 
     def get_parents(self, taxa_id: str) -> List[str]:
         """
