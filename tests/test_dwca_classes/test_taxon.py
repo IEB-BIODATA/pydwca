@@ -1,4 +1,3 @@
-import logging
 import os.path
 import sys
 import unittest
@@ -89,7 +88,7 @@ class TestTaxon(TestXML):
         no_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:100005", get_names=True)
         self.assertEqual(1, len(no_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
         self.assertEqual(
-            "Wxjncmbdqbd Jdhbtbju oojmaovly var. ushibyxcfc Whhngbhiq",
+            "Wxjncmbdqbd (Jdhbtbju) oojmaovly var. ushibyxcfc Whhngbhiq",
             no_synonyms[0], "Incorrect same synonym"
         )
 
@@ -255,9 +254,9 @@ class TestTaxon(TestXML):
         df = self.taxon.pandas
         length_df = len(df)
         self.assertEqual(length_df, len(self.taxon), "Original length of dataframe.")
-        species_synonym = "Hqmjhacvb (Azvoxtzhwueu) gupfjmnf "
+        species_synonym = "Hqmjhacvb (Azvoxtzhwueu) gupfjmnf"
         variety = "Rtfkiaicpdng obzninluz var. cebwyzcqoy Glhnskwn"
-        cultivar = "Rtfkiaicpdng Abifwvxqn gurqtwpof f. prczacpvtdtu  'xzhgezqpaorp'"
+        cultivar = "Rtfkiaicpdng (Abifwvxqn) gurqtwpof f. prczacpvtdtu 'xzhgezqpaorp'"
         synonyms = set()
         species_row = df[df["scientificName"] == species_synonym].iloc[0]
         accepted = species_row["acceptedNameUsageID"]
@@ -353,6 +352,18 @@ class TestTaxon(TestXML):
         self.taxon.pandas = df
         self.assertEqual(100, len(df), "DataFrame incorrectly set.")
         self.assertEqual(100, len(self.taxon), "Data incorrectly set.")
+
+    def test_write_file(self):
+        self.read_pandas()
+        plain_text = self.taxon.write_file()
+        self.maxDiff = None
+        with open(os.path.join(PATH, os.pardir, "example_data", "taxon.txt"), "r", encoding="utf-8") as file:
+            for expected, actual in zip(file.read().split("\n"), plain_text.split("\n")):
+                self.assertEqual(
+                    expected,
+                    actual,
+                    "File written incorrectly."
+                )
 
 
 if __name__ == '__main__':

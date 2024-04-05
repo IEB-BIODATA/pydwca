@@ -347,11 +347,28 @@ class DataFile(XMLObject, ABC):
             self.__entries__.append(DataFile.Entry(**kwargs))
         return
 
-    def write_file(self) -> None:
+    # TODO
+    def write_file(self) -> str:
         """
-        Write the content on the file specified in `files` parameters (:meth:`filename`).
+        Write the content as a text using format information on this object.
+
+        Returns
+        -------
+        str
+            Data File as plain text.
         """
-        pass
+        output_file = ""
+        header = [
+            field.name() for field in self.__fields__
+        ]
+        output_file += f"{self.__fields_end__}".join(header) + self.__lines_end__
+        for entry in iterate_with_bar(self.__entries__, desc=f"Writing data {self.uri}", unit="line"):
+            line = list()
+            for field in self.__fields__:
+                line.append(field.unformat(getattr(entry, field.name())))
+            output_file += f"{self.__fields_end__}".join(line) + self.__lines_end__
+        return output_file
+
 
     def as_pandas(self) -> pd.DataFrame:
         """

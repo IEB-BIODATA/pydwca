@@ -83,7 +83,7 @@ class TestTaxon(TestXML):
         no_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:100005", get_names=True)
         self.assertEqual(1, len(no_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
         self.assertEqual(
-            "Wxjncmbdqbd Jdhbtbju oojmaovly var. ushibyxcfc Whhngbhiq",
+            "Wxjncmbdqbd (Jdhbtbju) oojmaovly var. ushibyxcfc Whhngbhiq",
             no_synonyms[0], "Incorrect same synonym"
         )
 
@@ -178,9 +178,9 @@ class TestTaxon(TestXML):
         self.read_pandas()
         length = len(self.taxon)
         self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
-        species_synonym = "Hqmjhacvb (Azvoxtzhwueu) gupfjmnf "
+        species_synonym = "Hqmjhacvb (Azvoxtzhwueu) gupfjmnf"
         variety = "Rtfkiaicpdng obzninluz var. cebwyzcqoy Glhnskwn"
-        cultivar = "Rtfkiaicpdng Abifwvxqn gurqtwpof f. prczacpvtdtu  'xzhgezqpaorp'"
+        cultivar = "Rtfkiaicpdng (Abifwvxqn) gurqtwpof f. prczacpvtdtu 'xzhgezqpaorp'"
         self.taxon.filter_by_species([species_synonym, variety, cultivar])
         self.assertEqual(24, len(self.taxon), "Filter by all genera.")
 
