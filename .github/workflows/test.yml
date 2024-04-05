@@ -24,17 +24,17 @@ jobs:
     - name: Install test requirements
       run: pip install -r requirements-test.txt
     - name: Install optional package
-      run: pip install pandas==2.2.1 tqdm==4.66.2
+      run: pip install pandas==2.2.1
     - name: Download ⬇️ files for testing
       run: >-
         mkdir tests/example_data &&
-        wget https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/eml.xml -O tests/example_data/eml.xml &&
-        wget https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/example_archive.zip -O tests/example_data/example_archive.zip &&
-        wget https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/identification.txt -O tests/example_data/identification.txt &&
-        wget https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/meta.xml -O tests/example_data/meta.xml &&
-        wget https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/reference.txt -O tests/example_data/reference.txt &&
-        wget https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/speciesprofile.txt -O tests/example_data/speciesprofile.txt &&
-        wget https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/taxon.txt -O tests/example_data/taxon.txt
+        wget -q https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/eml.xml -O tests/example_data/eml.xml &&
+        wget -q https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/example_archive.zip -O tests/example_data/example_archive.zip &&
+        wget -q https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/identification.txt -O tests/example_data/identification.txt &&
+        wget -q https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/meta.xml -O tests/example_data/meta.xml &&
+        wget -q https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/reference.txt -O tests/example_data/reference.txt &&
+        wget -q https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/speciesprofile.txt -O tests/example_data/speciesprofile.txt &&
+        wget -q https://pydwca-unittest-files.s3.sa-east-1.amazonaws.com/taxon.txt -O tests/example_data/taxon.txt
     - name: Run tests and collect coverage
       run: |
         pip install coverage
