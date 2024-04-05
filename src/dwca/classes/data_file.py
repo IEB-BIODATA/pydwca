@@ -347,7 +347,6 @@ class DataFile(XMLObject, ABC):
             self.__entries__.append(DataFile.Entry(**kwargs))
         return
 
-    # TODO
     def write_file(self) -> str:
         """
         Write the content as a text using format information on this object.
@@ -368,7 +367,6 @@ class DataFile(XMLObject, ABC):
                 line.append(field.unformat(getattr(entry, field.name())))
             output_file += f"{self.__fields_end__}".join(line) + self.__lines_end__
         return output_file
-
 
     def as_pandas(self) -> pd.DataFrame:
         """
