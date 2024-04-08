@@ -16,6 +16,10 @@ class TestDWCA(unittest.TestCase):
         )
         return
 
+    def tearDown(self) -> None:
+        del sys.modules['pandas']
+        return
+
     def test_set_core(self):
         core = self.object.core
         self.assertEqual(163460, len(core), "Wrong number of entries")
