@@ -246,9 +246,9 @@ class DarwinCoreArchive(DarwinCore):
             if self.metadata is not None:
                 zip_file.writestr(self.__meta__.__metadata__, self.__metadata__.to_xml().encode(encoding))
             if self.core is not None:
-                zip_file.writestr(self.core.filename, self.core.to_xml())
+                zip_file.writestr(self.core.filename, self.core.write_file())
             for extension in self.extensions:
-                zip_file.writestr(extension.filename, extension.to_xml())
+                zip_file.writestr(extension.filename, extension.write_file())
         with open(path_to_archive, 'wb') as output_file:
             output_file.write(zip_buffer.getvalue())
         zip_buffer.close()
