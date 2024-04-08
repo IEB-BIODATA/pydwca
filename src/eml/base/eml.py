@@ -186,10 +186,6 @@ class EML(EMLObject):
         Other Parameters
         ----------------
         **kwargs : Parameters given in :class:`eml.resources.resource.Resource` or any subclass.
-
-        Returns
-        -------
-        None
         """
         proper_titles = list()
         if isinstance(titles, list):
@@ -214,10 +210,6 @@ class EML(EMLObject):
             The title as string or with language already
         language : Language, optional
             The language of the title. If the title given is a I18nString, this argument is discarded.
-
-        Returns
-        -------
-        None
         """
         self.resource.__titles__.append(I18nString(title, language))
         return
@@ -230,10 +222,6 @@ class EML(EMLObject):
         ----------
         creator : ResponsibleParty
             The creator to be added to the resource.
-
-        Returns
-        -------
-        None
         """
         self.resource.__creators__.append(creator)
         return
@@ -246,10 +234,6 @@ class EML(EMLObject):
         ----------
         alternative_identifier : str | ExtensionString
             An alternative identifier.
-
-        Returns
-        -------
-        None
         """
         self.resource.__alternative_identifier__.append(ExtensionString(alternative_identifier))
         return
@@ -262,10 +246,6 @@ class EML(EMLObject):
         ----------
         short_name : str
             A short name for the resource.
-
-        Returns
-        -------
-        None
         """
         self.resource.__short_name__ = short_name
         return
@@ -278,10 +258,6 @@ class EML(EMLObject):
         ----------
         metadata_provider : ResponsibleParty
             A Metadata Provider of the resource in the EML.
-
-        Returns
-        -------
-        None
         """
         self.resource.__metadata_provider__.append(metadata_provider)
         return
@@ -296,10 +272,6 @@ class EML(EMLObject):
             An Associated Party of the resource in the EML.
         role : Role
             The role of the Associated Party.
-
-        Returns
-        -------
-        None
         """
         self.resource.__associated__.append((associated_party, role))
         return
@@ -312,10 +284,6 @@ class EML(EMLObject):
         ----------
         date : datetime.date
             Publication date.
-
-        Returns
-        -------
-        None
         """
         self.resource.__pub_date__ = date
         return
@@ -328,10 +296,6 @@ class EML(EMLObject):
         ----------
         language : Language
             A Language enum instance.
-
-        Returns
-        -------
-        None
         """
         self.resource.__lang__ = language
         return
@@ -344,10 +308,6 @@ class EML(EMLObject):
         ----------
         series : str
             The series from which the resource came.
-
-        Returns
-        -------
-        None
         """
         self.resource.__series__ = series
         return
@@ -360,10 +320,6 @@ class EML(EMLObject):
         ----------
         abstract : EMLTextType
             An abstract in the required :class:`eml.types.text_type.EMLTextType` instance format.
-
-        Returns
-        -------
-        None
         """
         self.resource.__abstract__ = abstract
         return
@@ -376,10 +332,6 @@ class EML(EMLObject):
         ----------
         keyword_set : EMLKeywordSet
             An instance of :class:`eml.resources.keyword_set.EMLKeywordSet`.
-
-        Returns
-        -------
-        None
         """
         self.resource.__keywords__.append(keyword_set)
         return
@@ -392,10 +344,6 @@ class EML(EMLObject):
         ----------
         additional_info : EMLTextType
             Additional info in the required :class:`eml.types.text_type.EMLTextType` instance format.
-
-        Returns
-        -------
-        None
         """
         self.resource.__add_info__.append(additional_info)
         return
@@ -408,10 +356,6 @@ class EML(EMLObject):
         ----------
         intellectual_rights : EMLTextType
             The intellectual rights in the required :class:`eml.types.text_type.EMLTextType` instance format.
-
-        Returns
-        -------
-        None
         """
         self.resource.__int_rights__ = intellectual_rights
         return
@@ -424,10 +368,6 @@ class EML(EMLObject):
         ----------
         licensed : EMLLicense
             An license instance.
-
-        Returns
-        -------
-        None
         """
         self.resource.__licensed__.append(licensed)
         return
@@ -440,10 +380,6 @@ class EML(EMLObject):
         ----------
         distribution : EMLDistribution
             An instance of :class:`eml.resources.distribution.distribution.EMLDistribution`.
-
-        Returns
-        -------
-        None
         """
         self.resource.__dist__.append(distribution)
         return
@@ -456,10 +392,6 @@ class EML(EMLObject):
         ----------
         coverage : EMLCoverage
             An instance of :class:`eml.resources.coverage.coverage.EMLCoverage`.
-
-        Returns
-        -------
-        None
         """
         self.resource.__cover__ = coverage
         return
@@ -472,10 +404,6 @@ class EML(EMLObject):
         ----------
         annotation : SemanticAnnotation
             An annotation in the :class:`eml.types.semantic_annotation.SemanticAnnotation` instance format.
-
-        Returns
-        -------
-        None
         """
         self.resource.annotate(annotation)
         return

@@ -35,6 +35,23 @@ class TestOutsideTerm(TestXML):
         self.assertEqual("http://example.org/terms/example", term.uri, "URI wrongly parsed")
         self.assertEqualTree(et.fromstring(term_xml), term.to_element(), "Error on to element")
 
+    def test_parse_invalid(self):
+        self.assertRaises(
+            ValueError,
+            OutsideTerm.from_string,
+            '<field index="OK" term="http://rs.tdwg.org/dwc/terms/scientificNameID"/>'
+        )
+        self.assertRaises(
+            AssertionError,
+            OutsideTerm.from_string,
+            '<archive index="0" term="Valid Term"/>'
+        )
+        self.assertRaises(
+            TypeError,
+            OutsideTerm.from_string,
+            '<field index="2"/>'
+        )
+
     def test_repr(self):
         term_xml = """
         <field index="0" term="http://example.org/terms/example"/>

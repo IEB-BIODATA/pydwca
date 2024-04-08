@@ -5,7 +5,7 @@ from typing import Any, Dict
 
 from lxml import etree as et
 
-from xml_common.utils import format_to_type
+from xml_common.utils import format_to_type, unformat_type
 from xml_common import XMLObject
 
 
@@ -55,6 +55,15 @@ class Field(XMLObject, ABC):
         """str: An URI for the term represented by this field."""
         return self.URI
 
+    @classmethod
+    def name(cls) -> str:
+        """str: The name of the field."""
+        names = cls.URI.split("/")
+        if len(names) > 1:
+            return names[-1]
+        else:
+            return names[0]
+
     def format(self, value: str) -> TYPE:
         """
         Format value in the TYPE of the field.
@@ -73,6 +82,22 @@ class Field(XMLObject, ABC):
             return format_to_type(value, self.TYPE)
         except Exception as e:
             raise type(e)(f"{e}. Must overwrite `Field.format` method to use this field.")
+
+    def unformat(self, value: TYPE) -> str:
+        """
+        Encode value from TYPE to a string.
+
+        Parameters
+        ----------
+        value : TYPE
+            Value to be encoded.
+
+        Returns
+        -------
+        str
+            Text encoded value..
+        """
+        return unformat_type(value, self.TYPE)
 
     @classmethod
     def parse(cls, element: et.Element, nmap: Dict) -> Field | None:

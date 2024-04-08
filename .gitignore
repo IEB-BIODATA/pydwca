@@ -187,3 +187,9 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Temporary database
+visualizer.sqlite
+
+# Test files
+tests/example_data/
