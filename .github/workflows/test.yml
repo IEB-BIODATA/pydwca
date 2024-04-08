@@ -1,4 +1,4 @@
-name: Python 🐍 Unittest ✅
+name: Python 🐍 Unit Tests ✅
 
 on:
   push:
@@ -23,8 +23,6 @@ jobs:
       run: pip install -r requirements.txt
     - name: Install test requirements
       run: pip install -r requirements-test.txt
-    - name: Install optional package
-      run: pip install pandas==2.2.1
     - name: Download ⬇️ files for testing
       run: >-
         mkdir tests/example_data &&
