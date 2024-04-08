@@ -25,6 +25,7 @@ class DarwinCoreArchive(DarwinCore):
     _id : str, optional
         A unique id for this Darwin Core Archive.
     """
+
     class Metadata(XMLObject):
         """
         Metadata class of the Darwin Core Archive storing the file name of the archive elements.
@@ -72,27 +73,6 @@ class DarwinCoreArchive(DarwinCore):
                  f"Some functionalities may not be available.")
             return OutsideClass
 
-        @property
-        def core(self) -> DataFile:
-            """
-            DataFile: Core object representing the data entity upon which records are based on.
-            """
-            return self.__core__
-
-        @property
-        def extensions(self) -> List[DataFile]:
-            """
-            List[DataFile]: A list of Extension objects representing the entities directly related to the core
-            """
-            return self.__extensions__
-
-        @property
-        def metadata_filename(self) -> str:
-            """
-            str: Name of the metadata file (e.g.: eml.xml)
-            """
-            return self.__metadata__
-
         @classmethod
         def parse(cls, element: et.Element, nmap: Dict) -> DarwinCoreArchive.Metadata:
             """
@@ -135,9 +115,9 @@ class DarwinCoreArchive(DarwinCore):
             element = super().to_element()
             if self.__metadata__ is not None:
                 element.set("metadata", self.__metadata__)
-            if self.core is not None:
-                element.append(self.core.to_element())
-            for extension in self.extensions:
+            if self.__core__ is not None:
+                element.append(self.__core__.to_element())
+            for extension in self.__extensions__:
                 element.append(extension.to_element())
             return element
 
@@ -169,7 +149,14 @@ class DarwinCoreArchive(DarwinCore):
                 ext_df = ext_df.loc[ext_df[mask].index, :]
                 extension.pandas = ext_df
         except ImportError:
-            pass
+            core_ids = [getattr(entry, core.__fields__[core.id].name()) for entry in self.core.__entries__]
+            for extension in self.extensions:
+                def criteria(entry: DataFile.Entry) -> bool:
+                    entry_id = getattr(entry, extension.__fields__[extension.id].name())
+                    return entry_id in core_ids
+                extension.__entries__ = list(filter(
+                    criteria, extension.__entries__
+                ))
         return
 
     @property
@@ -222,8 +209,8 @@ class DarwinCoreArchive(DarwinCore):
         archive = zipfile.ZipFile(path_to_archive, "r")
         index_file = archive.read("meta.xml")
         metadata = DarwinCoreArchive.Metadata.from_string(index_file.decode(encoding="utf-8"))
-        if metadata.metadata_filename is not None:
-            metadata_content = archive.read(metadata.metadata_filename)
+        if metadata.__metadata__ is not None:
+            metadata_content = archive.read(metadata.__metadata__)
             try:
                 eml = EML.from_string(metadata_content.decode(encoding="utf-8"))
             except ValueError:
@@ -255,7 +242,13 @@ class DarwinCoreArchive(DarwinCore):
         """
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'a') as zip_file:
-            zip_file.writestr("meta.xml", self.__metadata__.to_xml().encode(encoding))
+            zip_file.writestr("meta.xml", self.__meta__.to_xml().encode(encoding))
+            if self.metadata is not None:
+                zip_file.writestr(self.__meta__.__metadata__, self.__metadata__.to_xml().encode(encoding))
+            if self.core is not None:
+                zip_file.writestr(self.core.filename, self.core.write_file())
+            for extension in self.extensions:
+                zip_file.writestr(extension.filename, extension.write_file())
         with open(path_to_archive, 'wb') as output_file:
             output_file.write(zip_buffer.getvalue())
         zip_buffer.close()

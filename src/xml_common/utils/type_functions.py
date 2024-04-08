@@ -7,8 +7,10 @@ from warnings import warn
 POSSIBLE_DATETIME_FORMATS = [
     "%Y-%m-%dT%H:%M:%S%z",
     "%Y-%m-%dT%H:%M%z",
+    "%Y-%m-%dT%H%z",
     "%Y-%m-%dT%H:%M:%S",
     "%Y-%m-%dT%H:%M",
+    "%Y-%m-%dT%H",
     "%Y-%m-%d",
     "%Y-%m",
     "%Y",
@@ -113,7 +115,7 @@ def format_union(value: str, types: TypeAlias) -> Any:
     raise exception
 
 
-def format_datetime(value: str) -> datetime | None:
+def format_datetime(value: str) -> dt.datetime | None:
     """
     Convert value in a datetime object.
 
@@ -141,3 +143,75 @@ def format_datetime(value: str) -> datetime | None:
     exception = ValueError(f"{value} does not match any of:\n{format_string}")
     exception.__cause__ = previous_exception
     raise exception
+
+
+def unformat_type(value: Any, a_type: TypeAlias) -> str:
+    """
+    Convert a value to a string according to the type given.
+
+    Parameters
+    ----------
+    value : Any
+        A value in a_type format.
+    a_type : TypeAlias
+        The type of the value given.
+
+    Returns
+    -------
+    str
+        Encoded value
+    """
+    if value is None:
+        return ""
+    if a_type == List[str]:
+        assert isinstance(value, list), f"Value must be a list of string"
+        return " | ".join([str(v) for v in value])
+    elif a_type.__name__ == "Tuple":
+        encoded_str = [unformat_type(v, this_type) for v, this_type in zip(value, get_args(a_type))]
+        return "/".join(encoded_str)
+    else:
+        assert isinstance(value, a_type), f"Value must be an instance of {a_type}"
+        if a_type == Interval or (Interval in get_args(a_type) and isinstance(value, Interval)):
+            return f"{unformat_datetime(value.start)}/{unformat_datetime(value.end)}"
+        elif a_type == dt.datetime or (dt.datetime in get_args(a_type) and isinstance(value, dt.datetime)):
+            return unformat_datetime(value)
+        else:
+            return str(value)
+
+
+def unformat_datetime(value: dt.datetime) -> str:
+    """
+    Convert a datetime value in an encoded string.
+
+    Parameters
+    ----------
+    value : datetime
+        Value to be encoded as a string.
+
+    Returns
+    -------
+    str
+        Encoded Datetime object.
+    """
+    if value.tzinfo is None:
+        z = ""
+    elif value.tzinfo == dt.timezone.utc:
+        z = "Z"
+    else:
+        z = "%z"
+    if value.second == 0:
+        if value.minute == 0:
+            if value.hour == 0:
+                if value.day == 1:
+                    if value.month == 1:
+                        return value.strftime(f"%Y")
+                    else:
+                        return value.strftime(f"%Y-%m")
+                else:
+                    return value.strftime(f"%Y-%m-%d")
+            else:
+                return value.strftime(f"%Y-%m-%dT%H{z}")
+        else:
+            return value.strftime(f"%Y-%m-%dT%H:%M{z}")
+    else:
+        return value.strftime(f"%Y-%m-%dT%H:%M:%S{z}")

@@ -99,15 +99,18 @@ For this package, we implemented EML support (`Next section <#eml-module>`_) for
 
 .. code-block:: python
 
-    darwin_core.metadata.define_resource(EMLResource.DATASET)
-    darwin_core.metadata.add_title("Example for Darwin Core Archive")
-    darwin_core.metadata.add_creator(ResponsibleParty(
-        individual_name=IndividualName(
-            last_name="Doe",
-            first_name="John",
-            salutation="Mr."
-        )
-    ))
+    darwin_core.metadata.initialize_resource(
+        "Example for Darwin Core Archive",
+        ResponsibleParty(
+            individual_name=IndividualName(
+                _id="1"
+                last_name="Doe",
+                first_name="John",
+                salutation="Mr."
+            )
+        ),
+        contact=[ResponsibleParty(_id="1", referencing=True)]
+    )
 
     # Add core data
     darwin_core.set_core("taxon.txt")
