@@ -18,12 +18,12 @@ class TestMeta(TestXML):
 
     def test_parse(self):
         meta = DarwinCoreArchive.Metadata.from_string(self.text)
-        self.assertEqual("eml.xml", meta.metadata_filename,"Metadata not found in file")
-        self.assertEqual(0, meta.core.id, "Core not found")
-        self.assertEqual(3, len(meta.extensions), "Extensions not found")
-        self.assertEqual(0, meta.extensions[0].id, "First extension not found")
-        self.assertEqual(0, meta.extensions[1].id, "Second extension not found")
-        self.assertEqual(0, meta.extensions[2].id, "Third extension not found")
+        self.assertEqual("eml.xml", meta.__metadata__,"Metadata not found in file")
+        self.assertEqual(0, meta.__core__.id, "Core not found")
+        self.assertEqual(3, len(meta.__extensions__), "Extensions not found")
+        self.assertEqual(0, meta.__extensions__[0].id, "First extension not found")
+        self.assertEqual(0, meta.__extensions__[1].id, "Second extension not found")
+        self.assertEqual(0, meta.__extensions__[2].id, "Third extension not found")
         self.assertEqualTree(self.metadata, meta.to_element(), "Not same tree generated")
 
 
