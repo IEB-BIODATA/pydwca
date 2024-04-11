@@ -51,53 +51,57 @@ class TestTaxon(TestXML):
 
     def test_get_parents(self):
         self.read_pandas()
-        parents_set = self.taxon.get_parents("urn:lsid:example.org:taxname:360")
+        parents_set = self.taxon.get_parents(["urn:lsid:example.org:taxname:360"])
         self.assertEqual(11, len(parents_set), "Incorrect number of parents.")
-        parents_set = self.taxon.get_parents("urn:lsid:example.org:taxname:366")
+        parents_set = self.taxon.get_parents(["urn:lsid:example.org:taxname:366"])
+        self.assertEqual(14, len(parents_set), "Incorrect number of parents.")
+        parents_set = self.taxon.get_parents(["urn:lsid:example.org:taxname:360", "urn:lsid:example.org:taxname:366"])
         self.assertEqual(14, len(parents_set), "Incorrect number of parents.")
 
     def test_get_incorrect_parent(self):
         self.read_pandas()
         taxa_id = "urn:lsid:example.org:taxname:300000"
-        self.assertRaisesRegex(
-            ValueError, taxa_id, self.taxon.get_parents, taxa_id
-        )
+        with self.assertWarnsRegex(UserWarning, taxa_id):
+            missing = self.taxon.get_parents([taxa_id])
+            self.assertEqual(0, len(missing), "Parent found of invalid taxon id")
 
     def test_get_synonyms(self):
         self.read_pandas()
-        first_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:10000")
+        first_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10000"])
         self.assertEqual(2, len(first_synonyms), "Incorrect number of synonyms.")
-        second_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:10001")
+        second_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10001"])
         self.assertEqual(2, len(second_synonyms), "Incorrect number of synonyms.")
         self.assertCountEqual(
             first_synonyms, second_synonyms, "Synonyms do not match"
         )
-        no_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:100005")
-        self.assertEqual(1, len(no_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
-        self.assertEqual("urn:lsid:example.org:taxname:100005", no_synonyms[0], "Incorrect same synonym")
+        two_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10000", "urn:lsid:example.org:taxname:100005"])
+        self.assertEqual(3, len(two_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
+        self.assertTrue("urn:lsid:example.org:taxname:100005" in two_synonyms, "Incorrect same synonym")
 
     def test_get_synonyms_names(self):
         self.read_pandas()
-        first_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:10000", get_names=True)
+        first_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10000"], get_names=True)
         self.assertEqual(2, len(first_synonyms), "Incorrect number of synonyms.")
-        second_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:10001", get_names=True)
+        second_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10001"], get_names=True)
         self.assertEqual(2, len(second_synonyms), "Incorrect number of synonyms.")
         self.assertCountEqual(
             first_synonyms, second_synonyms, "Synonyms do not match"
         )
-        no_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:100005", get_names=True)
-        self.assertEqual(1, len(no_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
-        self.assertEqual(
-            "Wxjncmbdqbd (Jdhbtbju) oojmaovly var. ushibyxcfc Whhngbhiq",
-            no_synonyms[0], "Incorrect same synonym"
+        two_synonyms = self.taxon.all_synonyms([
+            "urn:lsid:example.org:taxname:10000", "urn:lsid:example.org:taxname:100005"
+        ], get_names=True)
+        self.assertEqual(3, len(two_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
+        self.assertTrue(
+            "Wxjncmbdqbd (Jdhbtbju) oojmaovly var. ushibyxcfc Whhngbhiq" in two_synonyms,
+            "Incorrect same synonym"
         )
 
     def test_get_incorrect_synonyms(self):
         self.read_pandas()
         taxa_id = "urn:lsid:example.org:taxname:300000"
-        self.assertRaisesRegex(
-            ValueError, taxa_id, self.taxon.all_synonyms, taxa_id
-        )
+        with self.assertWarnsRegex(UserWarning, "urn:lsid:example.org:taxname:300000"):
+            synonyms = self.taxon.all_synonyms([taxa_id])
+            self.assertEqual(0, len(synonyms), "Found something of false taxon id.")
 
     def test_filter_kingdom(self):
         self.read_pandas()
@@ -187,11 +191,8 @@ class TestTaxon(TestXML):
         accepted = df[df["scientificName"] == "Rbaliuycliu"]["acceptedNameUsage"].iloc[0]
         with_order = sum(df["order"].isin(["Rbaliuycliu", "Xlhofowltm", accepted]))
         taxa_id = df[df["scientificName"].isin(["Rbaliuycliu", "Xlhofowltm", accepted])]["taxonID"]
-        parents = set()
-        for taxon in taxa_id:
-            parents.update(self.taxon.get_parents(taxon))
-        for parent in parents.copy():
-            parents.update(self.taxon.all_synonyms(parent))
+        parents = self.taxon.get_parents(taxa_id)
+        parents.update(self.taxon.all_synonyms(parents))
         parents = sum(df["taxonID"].isin(parents))
         print("Filtering by orders: Rbaliuycliu, Xlhofowltm", file=sys.stderr)
         print(f"Accepted orders: Rbaliuycliu, {accepted}", file=sys.stderr)
@@ -212,11 +213,8 @@ class TestTaxon(TestXML):
         accepted = df[df["scientificName"] == "Dxaougdpy"]["acceptedNameUsage"].iloc[0]
         with_family = sum(df["family"].isin(["Dxaougdpy", "Kvtgqwfmy", accepted]))
         taxa_id = df[df["scientificName"].isin(["Dxaougdpy", "Kvtgqwfmy", accepted])]["taxonID"]
-        parents = set()
-        for taxon in taxa_id:
-            parents.update(self.taxon.get_parents(taxon))
-        for parent in parents.copy():
-            parents.update(self.taxon.all_synonyms(parent))
+        parents = self.taxon.get_parents(taxa_id)
+        parents.update(self.taxon.all_synonyms(parents))
         parents = sum(df["taxonID"].isin(parents))
         print("Filtering by family: Dxaougdpy, Kvtgqwfmy", file=sys.stderr)
         print(f"Accepted families: Kvtgqwfmy, {accepted}", file=sys.stderr)
@@ -237,11 +235,8 @@ class TestTaxon(TestXML):
         accepted = df[df["scientificName"] == "Hbqrtfopjuh"]["acceptedNameUsage"].iloc[0]
         with_genus = sum(df["genus"].isin(["Hbqrtfopjuh", "Vbpjkmfqd", accepted]))
         taxa_id = df[df["scientificName"].isin(["Hbqrtfopjuh", "Vbpjkmfqd", accepted])]["taxonID"]
-        parents = set()
-        for taxon in taxa_id:
-            parents.update(self.taxon.get_parents(taxon))
-        for parent in parents.copy():
-            parents.update(self.taxon.all_synonyms(parent))
+        parents = self.taxon.get_parents(taxa_id)
+        parents.update(self.taxon.all_synonyms(parents))
         parents = sum(df["taxonID"].isin(parents))
         print("Filtering by genus: Hbqrtfopjuh, Vbpjkmfqd", file=sys.stderr)
         print(f"Accepted genera: Vbpjkmfqd, {accepted}", file=sys.stderr)
@@ -262,18 +257,22 @@ class TestTaxon(TestXML):
         accepted = species_row["acceptedNameUsageID"]
         synonyms.add(accepted)
         synonyms.add(species_row["taxonID"])
-        first_parents = self.taxon.get_parents(accepted)
+        first_parents = self.taxon.get_parents([accepted])
         print(f"For {species_synonym} expected {len(first_parents)} parents, accepted and synonym", file=sys.stderr)
         variety_id = df[df["scientificName"] == variety]["taxonID"].iloc[0]
-        second_parents = self.taxon.get_parents(variety_id)
+        second_parents = self.taxon.get_parents([variety_id])
         synonyms.add(variety_id)
         print(f"For {variety} expected {len(second_parents)} parents and self", file=sys.stderr)
         cultivar_id = df[df["scientificName"] == cultivar]["taxonID"].iloc[0]
-        third_parents = self.taxon.get_parents(cultivar_id)
+        third_parents = self.taxon.get_parents([cultivar_id])
         synonyms.add(cultivar_id)
         print(f"For {cultivar} expected {len(third_parents)} parents", file=sys.stderr)
-        for taxon in list(synonyms.copy()) + first_parents + second_parents + third_parents:
-            synonyms.update(self.taxon.all_synonyms(taxon))
+        synonyms.update(self.taxon.all_synonyms(
+            list(synonyms.copy()) +
+            list(first_parents) +
+            list(second_parents) +
+            list(third_parents)
+        ))
         other_synonyms = synonyms.difference({species_synonym, variety, cultivar})
         other_synonyms = other_synonyms.difference(set(first_parents))
         other_synonyms = other_synonyms.difference(set(second_parents))

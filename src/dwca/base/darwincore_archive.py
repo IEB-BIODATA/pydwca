@@ -10,10 +10,10 @@ from lxml import etree as et
 from dwca.base import DarwinCore
 from dwca.classes import DataFile, Occurrence, Organism, MaterialEntity, MaterialSample, Event, Location, \
     GeologicalContext, Identification, Taxon, ResourceRelationship, MeasurementOrFact, ChronometricAge, OutsideClass
-from xml_common.utils import Language
-from xml_common import XMLObject
 from eml import EML
 from eml.resources import EMLResource
+from xml_common import XMLObject
+from xml_common.utils import Language
 
 
 class DarwinCoreArchive(DarwinCore):
@@ -144,15 +144,15 @@ class DarwinCoreArchive(DarwinCore):
         try:
             df = self.__meta__.__core__.pandas
             for extension in self.extensions:
-                ext_df = extension.pandas
+                ext_df = extension.as_pandas(_no_interaction=True)
                 mask = ext_df.iloc[:, extension.id].isin(df.iloc[:, core.id])
                 ext_df = ext_df.loc[ext_df[mask].index, :]
                 extension.pandas = ext_df
         except ImportError:
-            core_ids = [getattr(entry, core.__fields__[core.id].name()) for entry in self.core.__entries__]
+            core_ids = [getattr(entry, core.__fields__[core.id].name) for entry in self.core.__entries__]
             for extension in self.extensions:
                 def criteria(entry: DataFile.Entry) -> bool:
-                    entry_id = getattr(entry, extension.__fields__[extension.id].name())
+                    entry_id = getattr(entry, extension.__fields__[extension.id].name)
                     return entry_id in core_ids
                 extension.__entries__ = list(filter(
                     criteria, extension.__entries__

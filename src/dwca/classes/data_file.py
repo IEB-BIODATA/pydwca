@@ -11,9 +11,8 @@ from dwca.terms import Field, DWCType, DWCModified, DWCLanguage, DWCLicense, DWC
     DWCBibliographicCitation, DWCReferences, DWCInstitution, DWCCollection, DWCDataset, DWCInstitutionCode, \
     DWCCollectionCode, DWCDatasetName, DWCOwnerInstitutionCode, DWCBasisOfRecord, DWCInformationWithheld, \
     DWCDataGeneralizations, DWCDynamicProperties, OutsideTerm
-from xml_common.utils import iterate_with_bar
 from xml_common import XMLObject
-
+from xml_common.utils import iterate_with_bar
 
 try:
     import pandas as pd
@@ -167,7 +166,8 @@ class DataFile(XMLObject, ABC):
         for field_class in cls.__field_class__:
             if element.get("term") == field_class.URI:
                 return field_class
-        warn(f"{element.get('term')} not in expected namespace. "
+        warn(f"{element.get('term')} not in expected namespace for "
+             f"{cls.URI} class. "
              f"Some functionalities may not be available.")
         return OutsideTerm
 
@@ -343,7 +343,7 @@ class DataFile(XMLObject, ABC):
         ):
             kwargs = dict()
             for field, value in zip(self.__fields__, line.split(self.__fields_end__)):
-                kwargs[field.name()] = field.format(value)
+                kwargs[field.name] = field.format(value)
             self.__entries__.append(DataFile.Entry(**kwargs))
         return
 
@@ -357,18 +357,16 @@ class DataFile(XMLObject, ABC):
             Data File as plain text.
         """
         output_file = ""
-        header = [
-            field.name() for field in self.__fields__
-        ]
+        header = [field.name for field in self.__fields__]
         output_file += f"{self.__fields_end__}".join(header) + self.__lines_end__
         for entry in iterate_with_bar(self.__entries__, desc=f"Writing data {self.uri}", unit="line"):
             line = list()
             for field in self.__fields__:
-                line.append(field.unformat(getattr(entry, field.name())))
+                line.append(field.unformat(getattr(entry, field.name)))
             output_file += f"{self.__fields_end__}".join(line) + self.__lines_end__
         return output_file
 
-    def as_pandas(self) -> pd.DataFrame:
+    def as_pandas(self, _no_interaction: bool = False) -> pd.DataFrame:
         """
         Convert information in this DataFile in a pandas.DataFrame.
 
@@ -383,10 +381,14 @@ class DataFile(XMLObject, ABC):
             raise ImportError("Install pandas to use this feature")
         fields = list()
         for field in self.__fields__:
-            fields.append(field.name())
+            fields.append(field.name)
         entries = list()
-        for entry in iterate_with_bar(self.__entries__, desc="Converting to pandas", unit="entry"):
-            entries.append(entry.to_dict())
+        if _no_interaction:
+            for entry in self.__entries__:
+                entries.append(entry.to_dict())
+        else:
+            for entry in iterate_with_bar(self.__entries__, desc="Converting to pandas", unit="entry"):
+                entries.append(entry.to_dict())
         self.__data__ = pd.DataFrame(entries, columns=fields)
         return self.__data__
 

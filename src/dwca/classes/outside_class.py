@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import List, Union, Dict
+from typing import List, Dict, Type
 
 from lxml import etree as et
 
 from dwca.classes import DataFile, DataFileType
-from dwca.terms import Field
+from dwca.terms import Field, OutsideTerm
 
 
 class OutsideClass(DataFile):
@@ -35,6 +35,7 @@ class OutsideClass(DataFile):
     ignore_header_lines : int, optional
         Ignore headers at the start of document, can be one line or a list of them, default 0 (first line).
     """
+    __field_class__ = DataFile.__field_class__
     def __init__(
             self, _id: int, uri: str,
             files: str,
@@ -78,3 +79,23 @@ class OutsideClass(DataFile):
         outside = OutsideClass(**kwargs)
         outside.__namespace__ = nmap
         return outside
+
+    @classmethod
+    def get_term_class(cls, element: et.Element) -> Type[Field]:
+        """
+        Extract the Python ``class`` term from an XML element instance.
+
+        Parameters
+        ----------
+        element : lxml.etree.Element
+            XML element instance.
+
+        Returns
+        -------
+        Type[Field]
+            The Python ``class`` representing the term name.
+        """
+        for field_class in cls.__field_class__:
+            if element.get("term") == field_class.URI:
+                return field_class
+        return OutsideTerm

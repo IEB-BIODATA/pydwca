@@ -56,9 +56,18 @@ class Field(XMLObject, ABC):
         return self.URI
 
     @classmethod
-    def name(cls) -> str:
+    def name_cls(cls) -> str:
         """str: The name of the field."""
         names = cls.URI.split("/")
+        if len(names) > 1:
+            return names[-1]
+        else:
+            return names[0]
+
+    @property
+    def name(self) -> str:
+        """str: The name of the field."""
+        names = self.uri.split("/")
         if len(names) > 1:
             return names[-1]
         else:
