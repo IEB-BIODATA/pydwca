@@ -1,4 +1,4 @@
-from xml_common.utils.iteratate import iterate_with_bar
+from xml_common.utils.iteratate import iterate_with_bar, OptionalTqdm
 from xml_common.utils.enum import CamelCaseEnum
 from xml_common.utils.language import Language
 from xml_common.utils.gpolygon import GRing, GPolygon

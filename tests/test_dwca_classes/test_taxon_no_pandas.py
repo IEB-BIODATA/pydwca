@@ -46,53 +46,58 @@ class TestTaxon(TestXML):
 
     def test_get_parents(self):
         self.read_pandas()
-        parents_set = self.taxon.get_parents("urn:lsid:example.org:taxname:360")
+        parents_set = self.taxon.get_parents(["urn:lsid:example.org:taxname:360"])
         self.assertEqual(11, len(parents_set), "Incorrect number of parents.")
-        parents_set = self.taxon.get_parents("urn:lsid:example.org:taxname:366")
+        parents_set = self.taxon.get_parents(["urn:lsid:example.org:taxname:366"])
+        self.assertEqual(14, len(parents_set), "Incorrect number of parents.")
+        parents_set = self.taxon.get_parents(["urn:lsid:example.org:taxname:360", "urn:lsid:example.org:taxname:366"])
         self.assertEqual(14, len(parents_set), "Incorrect number of parents.")
 
     def test_get_incorrect_parent(self):
         self.read_pandas()
         taxa_id = "urn:lsid:example.org:taxname:300000"
-        self.assertRaisesRegex(
-            ValueError, taxa_id, self.taxon.get_parents, taxa_id
-        )
+        with self.assertWarnsRegex(UserWarning, taxa_id):
+            missing = self.taxon.get_parents([taxa_id])
+            self.assertEqual(0, len(missing), "Parent found of invalid taxon id")
 
     def test_get_synonyms(self):
         self.read_pandas()
-        first_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:10000")
+        first_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10000"])
         self.assertEqual(2, len(first_synonyms), "Incorrect number of synonyms.")
-        second_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:10001")
+        second_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10001"])
         self.assertEqual(2, len(second_synonyms), "Incorrect number of synonyms.")
         self.assertCountEqual(
             first_synonyms, second_synonyms, "Synonyms do not match"
         )
-        no_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:100005")
-        self.assertEqual(1, len(no_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
-        self.assertEqual("urn:lsid:example.org:taxname:100005", no_synonyms[0], "Incorrect same synonym")
+        two_synonyms = self.taxon.all_synonyms(
+            ["urn:lsid:example.org:taxname:10000", "urn:lsid:example.org:taxname:100005"])
+        self.assertEqual(3, len(two_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
+        self.assertTrue("urn:lsid:example.org:taxname:100005" in two_synonyms, "Incorrect same synonym")
 
     def test_get_synonyms_names(self):
         self.read_pandas()
-        first_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:10000", get_names=True)
+        first_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10000"], get_names=True)
         self.assertEqual(2, len(first_synonyms), "Incorrect number of synonyms.")
-        second_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:10001", get_names=True)
+        second_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10001"], get_names=True)
         self.assertEqual(2, len(second_synonyms), "Incorrect number of synonyms.")
         self.assertCountEqual(
             first_synonyms, second_synonyms, "Synonyms do not match"
         )
-        no_synonyms = self.taxon.all_synonyms("urn:lsid:example.org:taxname:100005", get_names=True)
-        self.assertEqual(1, len(no_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
-        self.assertEqual(
-            "Wxjncmbdqbd (Jdhbtbju) oojmaovly var. ushibyxcfc Whhngbhiq",
-            no_synonyms[0], "Incorrect same synonym"
+        two_synonyms = self.taxon.all_synonyms([
+            "urn:lsid:example.org:taxname:10000", "urn:lsid:example.org:taxname:100005"
+        ], get_names=True)
+        self.assertEqual(3, len(two_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
+        self.assertTrue(
+            "Wxjncmbdqbd (Jdhbtbju) oojmaovly var. ushibyxcfc Whhngbhiq" in two_synonyms,
+            "Incorrect same synonym"
         )
 
     def test_get_incorrect_synonyms(self):
         self.read_pandas()
         taxa_id = "urn:lsid:example.org:taxname:300000"
-        self.assertRaisesRegex(
-            ValueError, taxa_id, self.taxon.all_synonyms, taxa_id
-        )
+        with self.assertWarnsRegex(UserWarning, "urn:lsid:example.org:taxname:300000"):
+            synonyms = self.taxon.all_synonyms([taxa_id])
+            self.assertEqual(0, len(synonyms), "Found something of false taxon id.")
 
     def test_filter_kingdom(self):
         self.read_pandas()

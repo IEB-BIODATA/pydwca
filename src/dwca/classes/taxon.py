@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import re
-from typing import List, Type
+from typing import List, Type, Any, Union, Set, Iterable
+from warnings import warn
 
 from dwca.classes import DataFile, DataFileType
 from dwca.terms import Field, TaxonID, ScientificNameID, AcceptedNameUsageID, ParentNameUsageID, OriginalNameUsageID, \
@@ -10,6 +11,7 @@ from dwca.terms import Field, TaxonID, ScientificNameID, AcceptedNameUsageID, Pa
     DWCClass, Order, Superfamily, Family, Subfamily, Tribe, Subtribe, Genus, GenericName, Subgenus, \
     InfragenericEpithet, SpecificEpithet, InfraspecificEpithet, CultivarEpithet, TaxonRank, VerbatimTaxonRank, \
     ScientificNameAuthorship, VernacularName, NomenclaturalCode, TaxonomicStatus, NomenclaturalStatus, TaxonRemarks
+from xml_common.utils import iterate_with_bar, OptionalTqdm
 
 try:
     import pandas as pd
@@ -84,47 +86,67 @@ class Taxon(DataFile):
             filter_with_rank: bool = True
     ) -> None:
         assert taxa_field.URI in self.fields, f"{taxa_name} must be in fields of this class to use this feature."
-        complete_taxa = set(taxa)
+        tqdm = OptionalTqdm(total=100)
+        tqdm.set_descriptor(desc="Getting Taxon ID")
         try:
             df = self.pandas
-            mask = df[ScientificName.name()].isin(taxa)
+            mask = df[ScientificName.name_cls()].isin(taxa)
             if filter_with_rank:
-                mask &= df[TaxonRank.name()].str.lower() == taxa_name.lower()
-            taxa_id = df[mask][TaxonID.name()]
+                mask &= df[TaxonRank.name_cls()].str.lower() == taxa_name.lower()
+            taxa_id = df[mask][TaxonID.name_cls()]
         except ImportError:
+            tqdm.reset(total=len(taxa))
+            taxa_id = list()
             if filter_with_rank:
-                taxa_id = [
-                    getattr(
-                        self.__get_entry__(**{
-                            ScientificName.name(): taxon,
-                            f"{TaxonRank.name()}__case_insensitive": taxa_name
-                        }), TaxonID.name()
-                    ) for taxon in taxa
-                ]
+                for taxon in taxa:
+                    taxa_id.append(
+                        getattr(
+                            self.__get_entry__(**{
+                                ScientificName.name_cls(): taxon,
+                                f"{TaxonRank.name_cls()}__case_insensitive": taxa_name
+                            }), TaxonID.name_cls()
+                        )
+                    )
+                    tqdm.update()
             else:
-                taxa_id = [
-                    getattr(
-                        self.__get_entry__(**{ScientificName.name(): taxon}),
-                        TaxonID.name()
-                    ) for taxon in taxa
-                ]
-        for taxon in taxa_id:
-            complete_taxa.update(self.all_synonyms(taxon, get_names=True))
-        parents = set()
-        for taxon in taxa_id:
-            parents.update(self.get_parents(taxon))
-        for parent in parents.copy():
-            parents.update(self.all_synonyms(parent))
+                for taxon in taxa:
+                    taxa_id.append(
+                        getattr(
+                            self.__get_entry__(**{ScientificName.name_cls(): taxon}),
+                            TaxonID.name_cls()
+                        )
+                    )
+                    tqdm.update()
+            tqdm.reset(total=100)
+        tqdm.update(n=10)
+        postfix = {"Exact match found": len(taxa_id)}
+        tqdm.set_postfix(ordered_dict=postfix)
+        tqdm.set_descriptor(desc="Getting synonyms")
+        complete_taxa = self.all_synonyms(taxa_id, get_names=True)
+        postfix["Synonyms found"] = len(complete_taxa) - len(taxa_id)
+        tqdm.set_postfix(ordered_dict=postfix)
+        tqdm.update(n=40)
+        tqdm.set_descriptor(desc="Getting parents")
+        parents = self.get_parents(taxa_id)
+        parents.update(self.all_synonyms(parents))
+        postfix["Parents found"] = len(parents)
+        tqdm.set_postfix(ordered_dict=postfix)
+        tqdm.update(n=40)
+        tqdm.set_descriptor(desc=f"Filtering {taxa_name}")
         try:
             df = self.pandas
-            name = taxa_field.name()
-            df = df[df[name].isin(complete_taxa) | df[TaxonID.name()].isin(parents)]
+            name = taxa_field.name_cls()
+            df = df[df[name].isin(complete_taxa) | df[TaxonID.name_cls()].isin(parents)]
             self.pandas = df
         except ImportError:
             def filter_taxa(entry: DataFile.Entry) -> bool:
-                return getattr(entry, taxa_field.name()) in complete_taxa or getattr(entry, TaxonID.name()) in parents
-
+                return (getattr(entry, taxa_field.name_cls()) in complete_taxa or
+                        getattr(entry, TaxonID.name_cls()) in parents)
             self.__entries__ = list(filter(filter_taxa, self.__entries__))
+        postfix["Total filtered"] = len(self)
+        tqdm.set_postfix(ordered_dict=postfix)
+        tqdm.update(n=10)
+        tqdm.close()
         return
 
     def filter_by_kingdom(self, kingdoms: List[str]) -> None:
@@ -211,51 +233,53 @@ class Taxon(DataFile):
         """
         return self._filter_by_taxa_(ScientificName, "Species", species, filter_with_rank=False)
 
-    def get_parents(self, taxa_id: str) -> List[str]:
+    def get_parents(self, taxa_id: List[str]) -> Set[str]:
         """
-        Get a list of taxa ids of the parent of the taxa.
+        Get a list of taxa ids of the parent of the list taxa id provided.
 
         Parameters
         ----------
-        taxa_id : str
-            A :class:`dwca.terms.taxon.TaxonID` to look for parents.
+        taxa_id : List[str]
+            A list of :class:`dwca.terms.taxon.TaxonID` to look for parents.
 
         Returns
         -------
-        List[str]
-            List of taxa ids.
+        Set[str]
+            Set of taxa ids.
         """
-        parent_taxa = list()
+        parent_taxa = set()
         try:
             df = self.pandas
-            current_taxa = df[df[TaxonID.name()] == taxa_id]
-            if len(current_taxa) != 1:
-                raise ValueError(f"{taxa_id} not found in data file.")
-            while len(current_taxa) == 1:
-                new_parent_found = current_taxa[ParentNameUsageID.name()].iloc[0]
-                if pd.notna(new_parent_found) and new_parent_found != "":
-                    parent_taxa.append(new_parent_found)
-                current_taxa = df[df[TaxonID.name()] == new_parent_found]
+            current_taxa = self.__get_rows__(taxa_id)
+            while len(current_taxa) > 0:
+                new_found_parents = current_taxa[ParentNameUsageID.name_cls()]
+                new_found_parents = new_found_parents[
+                    pd.notna(new_found_parents) &
+                    (new_found_parents != "")
+                ]
+                parent_taxa.update(list(new_found_parents))
+                current_taxa = df[df[TaxonID.name_cls()].isin(new_found_parents)]
         except ImportError:
-            entry = self.__get_entry__(**{TaxonID.name(): taxa_id})
-            if entry is None:
-                raise ValueError(f"{taxa_id} not found in data file.")
-            current = entry
-            while current is not None:
-                new_parent_found = getattr(current, ParentNameUsageID.name())
-                if new_parent_found is not None and new_parent_found != "":
-                    parent_taxa.append(new_parent_found)
-                current = self.__get_entry__(**{TaxonID.name(): new_parent_found})
+            entries = self.__get_rows__(taxa_id)
+            current_taxa = entries.copy()
+            while len(current_taxa) > 0:
+                new_found_parents = [getattr(current, ParentNameUsageID.name_cls()) for current in current_taxa]
+                new_found_parents = list(filter(
+                    lambda current: current != "" and current is not None,
+                    new_found_parents
+                ))
+                parent_taxa.update(new_found_parents)
+                current_taxa = self.__get_entries__(**{f"{TaxonID.name_cls()}__isin": new_found_parents})
         return parent_taxa
 
-    def all_synonyms(self, taxa_id: str, get_names: bool = False) -> List[str]:
+    def all_synonyms(self, taxa_id: Iterable[str], get_names: bool = False) -> List[str]:
         """
-        Get a list of all valid names of a taxon.
+        Get a list of all valid names of a list of taxa.
 
         Parameters
         ----------
-        taxa_id : str
-            A :class:`dwca.terms.taxon.TaxonID` value.
+        taxa_id : Iterable[str]
+            A list (or iterable) of :class:`dwca.terms.taxon.TaxonID` value.
         get_names : bool
             Whether to get :class:`dwca.terms.taxon.ScientificName` or :class:`dwca.terms.taxon.TaxonID`.
 
@@ -266,23 +290,36 @@ class Taxon(DataFile):
         """
         try:
             df = self.pandas
-            current_taxa = df[df[TaxonID.name()] == taxa_id]
-            if len(current_taxa) != 1:
-                raise ValueError(f"{taxa_id} not found in data file.")
-            accepted_name = current_taxa.iloc[0][AcceptedNameUsageID.name()]
+            current_taxa = self.__get_rows__(taxa_id)
+            accepted_names = current_taxa[AcceptedNameUsageID.name_cls()]
             return list(
-                df[df[AcceptedNameUsageID.name()] == accepted_name][
-                    ScientificName.name() if get_names else TaxonID.name()
+                df[df[AcceptedNameUsageID.name_cls()].isin(accepted_names)][
+                    ScientificName.name_cls() if get_names else TaxonID.name_cls()
                 ]
             )
         except ImportError:
-            entry = self.__get_entry__(**{TaxonID.name(): taxa_id})
-            if entry is None:
-                raise ValueError(f"{taxa_id} not found in data file.")
-            accepted_name = getattr(entry, AcceptedNameUsageID.name())
-            synonyms = self.__get_entries__(**{AcceptedNameUsageID.name(): accepted_name})
-            field = ScientificName.name() if get_names else TaxonID.name()
+            entries = self.__get_rows__(taxa_id)
+            accepted_names = [getattr(entry, AcceptedNameUsageID.name_cls()) for entry in entries]
+            synonyms = self.__get_entries__(**{f"{AcceptedNameUsageID.name_cls()}__isin": accepted_names})
+            field = ScientificName.name_cls() if get_names else TaxonID.name_cls()
             return [getattr(synonymous, field) for synonymous in synonyms]
+
+    def __get_rows__(self, taxa_id: List[str]) -> Union[pd.DataFrame, List[DataFile.Entry]]:
+        try:
+            df = self.pandas
+            current_taxa = df[df[TaxonID.name_cls()].isin(taxa_id)]
+            if len(current_taxa) != len(taxa_id):
+                candidates = pd.Series(taxa_id)
+                not_present = candidates[~candidates.isin(df[TaxonID.name_cls()])]
+                warn(f"{', '.join(list(not_present))} not found in data file.")
+            return current_taxa
+        except ImportError:
+            entries = self.__get_entries__(**{f"{TaxonID.name_cls()}__isin": taxa_id})
+            if len(entries) != len(taxa_id):
+                found_taxa = [getattr(entry, TaxonID.name_cls()) for entry in entries]
+                not_present = list(filter(lambda candid: candid not in found_taxa, taxa_id))
+                warn(f"{', '.join(not_present)} not found in data file.")
+            return entries
 
     def __get_entry__(self, **kwargs) -> DataFile.Entry | None:
         for candid in self.__entries__:
@@ -308,9 +345,11 @@ class Taxon(DataFile):
         return results
 
     @staticmethod
-    def __compare__(candid: DataFile.Entry, key: str, value: str) -> bool:
+    def __compare__(candid: DataFile.Entry, key: str, value: Any) -> bool:
         match = re.match(r"(\w+)__case_insensitive$", key)
         if match:
             return getattr(candid, match.group(1)).lower() == value.lower()
-        else:
-            return getattr(candid, key) == value
+        match = re.match(r"(\w+)__isin$", key)
+        if match:
+            return getattr(candid, match.group(1)) in value
+        return getattr(candid, key) == value
