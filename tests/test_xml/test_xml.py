@@ -11,6 +11,9 @@ class TestXML(unittest.TestCase):
     def assertEqualTree(self, expected: et.ElementTree, actual: et.ElementTree, msg: str) -> None:
         try:
             self.assertEqual(expected.tag, actual.tag, "Not same tag")
+            expected_text = expected.text.strip() if expected.text is not None else ""
+            actual_text = actual.text.strip() if actual.text is not None else ""
+            self.assertEqual(expected_text, actual_text, "Not same text")
             # Add default values:
             exp_attributes = deepcopy(expected.attrib)
             actual_attributes = deepcopy(actual.attrib)

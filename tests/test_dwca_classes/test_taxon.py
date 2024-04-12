@@ -16,6 +16,7 @@ class TestTaxon(TestXML):
         with open(os.path.join(PATH, os.pardir, "example_data", "meta.xml"), "r", encoding="utf-8") as file:
             content = file.read()
         base_file = et.fromstring(content)
+        self.nmap = base_file.nsmap
         self.taxon_xml = base_file.find("core", namespaces=base_file.nsmap)
         self.text = et.tostring(self.taxon_xml, pretty_print=True).decode("utf-8")
         self.taxon = None

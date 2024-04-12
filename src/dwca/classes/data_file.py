@@ -282,6 +282,7 @@ class DataFile(XMLObject, ABC):
         element.append(element_id)
         files = self.object_to_element("files")
         location = self.object_to_element("location")
+        location.text = self.filename
         files.append(location)
         element.append(files)
         for field in self.__fields__:

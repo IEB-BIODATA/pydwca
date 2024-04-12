@@ -19,14 +19,14 @@ class TestGeoCoverage(TestXML):
         <northBoundingCoordinate>-18.25</northBoundingCoordinate>
         <southBoundingCoordinate>-118.25</southBoundingCoordinate>
         <boundingAltitudes>
-            <altitudeMinimum>-10</altitudeMinimum>
+            <altitudeMinimum>-10.0</altitudeMinimum>
             <altitudeMaximum>100.6</altitudeMaximum>
             <altitudeUnits>Yard_Indian</altitudeUnits>
         </boundingAltitudes>
     </boundingCoordinates>
     <datasetGPolygon>
         <datasetGPolygonOuterGRing>
-            <gRing>12, 2.0987 12, -7.5555 34.345,10.40</gRing>
+            <gRing>12.0, 2.0987 12.0, -7.5555 34.345, 10.4</gRing>
         </datasetGPolygonOuterGRing>
     </datasetGPolygon>
 </geographicCoverage>
@@ -236,7 +236,7 @@ class TestGeoCoverage(TestXML):
                 <gRingLatitude>+78.25</gRingLatitude>
                 <gRingLongitude>45.24755</gRingLongitude>
             </gRingPoint>""", """
-<gRing>34.123, -118.25 -18.25, 25 78.25, 45.24755</gRing>
+<gRing>34.123, -118.25 -18.25, 25.0 78.25, 45.24755</gRing>
             """)
         self.assertEqualTree(
             et.fromstring(text_xml),
@@ -312,13 +312,13 @@ class TestGeoCoverage(TestXML):
         xml = """
 <datasetGPolygon>
     <datasetGPolygonOuterGRing>
-        <gRing>12, 2.0987 12, -7.5555 34.345, 10.40</gRing>
+        <gRing>12, 2.0987 12, -7.5555 34.345, 10.4</gRing>
     </datasetGPolygonOuterGRing>
     <datasetGPolygonExclusionGRing>
-        <gRing>12, 2.0987 12, -7.5555 34.345, 10.40</gRing>
+        <gRing>12, 2.0987 12, -7.5555 34.345, 10.4</gRing>
     </datasetGPolygonExclusionGRing>
     <datasetGPolygonExclusionGRing>
-        <gRing>12, 2.0987 12, -7.5555 34.345, 10.40</gRing>
+        <gRing>12, 2.0987 12, -7.5555 34.345, 10.4</gRing>
     </datasetGPolygonExclusionGRing>
 </datasetGPolygon>
         """

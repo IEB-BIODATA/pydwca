@@ -151,7 +151,7 @@ class EMLOffline(XMLObject):
             offline_elem.append(density_elem)
         if self.medium_density_units is not None:
             units_elem = self.object_to_element("mediumDensityUnits")
-            units_elem.text = self.medium_density
+            units_elem.text = self.medium_density_units
             offline_elem.append(units_elem)
         if self.medium_volume is not None:
             volume_elem = self.object_to_element("mediumVolume")

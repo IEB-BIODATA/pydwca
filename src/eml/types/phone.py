@@ -79,4 +79,5 @@ class EMLPhone(XMLObject):
         """
         phone_elem = super().to_element()
         phone_elem.set("phonetype", self.phone_type)
+        phone_elem.text = self.phone
         return phone_elem

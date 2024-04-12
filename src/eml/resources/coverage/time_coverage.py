@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import Dict, List, Union, Tuple
 
 from lxml import etree as et
@@ -7,6 +8,7 @@ import datetime as dt
 
 from xml_common import XMLObject
 from eml.types import EMLObject, Scope
+from xml_common.utils.type_functions import unformat_datetime, format_datetime
 
 
 class TemporalCoverage(EMLObject):
@@ -321,16 +323,15 @@ class TemporalCoverage(EMLObject):
             return TemporalCoverage.AlternativeTimeScale.parse(alternative_elem, nmap)
         time_elem = element.find("time")
         calendar_elem = element.find("calendarDate")
-        try:
-            calendar_date = dt.datetime.strptime(calendar_elem.text, "%Y-%m-%d").date()
-        except ValueError:
-            calendar_date = dt.datetime.strptime(calendar_elem.text, "%Y").date()
+        calendar_date = format_datetime(calendar_elem.text).date()
         if time_elem is not None:
             try:
-                return dt.datetime.strptime(
+                output_datetime = dt.datetime.strptime(
                     f"{calendar_date.strftime('%Y-%m-%d')} {time_elem.text}",
                     "%Y-%m-%d %H:%M:%SZ"
                 )
+                output_datetime = output_datetime.replace(tzinfo=dt.timezone.utc)
+                return output_datetime
             except ValueError:
                 return dt.datetime.strptime(
                     f"{calendar_date.strftime('%Y-%m-%d')} {time_elem.text}",
@@ -361,15 +362,19 @@ class TemporalCoverage(EMLObject):
         """
         element = et.Element("placeholderDate")
         if isinstance(datetime, dt.datetime):
+            string_time = unformat_datetime(datetime)
+            string_time = re.sub(r"([+-])(\d{2})(\d{2})", r"\1\2:\3", string_time)
+            date_text, time_text = string_time.split("T")
             calendar_elem = et.Element("calendarDate")
-            calendar_elem.text = datetime.date().strftime("%Y-%m-%d")
+            calendar_elem.text = date_text
             element.append(calendar_elem)
             time_elem = et.Element("time")
-            time_elem.text = datetime.time().strftime("%H:%M:%S%z")
+            time_elem.text = time_text
             element.append(time_elem)
         elif isinstance(datetime, dt.date):
             calendar_elem = et.Element("calendarDate")
-            calendar_elem.text = datetime.strftime("%Y-%m-%d")
+            date_text = unformat_datetime(dt.datetime.combine(datetime, dt.time()))
+            calendar_elem.text = date_text
             element.append(calendar_elem)
         elif isinstance(datetime, TemporalCoverage.AlternativeTimeScale):
             element.append(datetime.to_element())
