@@ -40,6 +40,11 @@ class Field(XMLObject, ABC):
         """int: Specifies the position of the column in the row."""
         return self.__index__
 
+    @index.setter
+    def index(self, index: int) -> None:
+        self.__index__ = index
+        return
+
     @property
     def default(self) -> Any:
         """Any: Specifies a value to use if one is not supplied."""

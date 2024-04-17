@@ -6,7 +6,9 @@ import pandas as pd
 from lxml import etree as et
 
 from dwca.classes import Taxon
+from dwca.terms import DWCLanguage
 from test_xml.test_xml import TestXML
+from xml_common.utils import Language
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -27,6 +29,52 @@ class TestTaxon(TestXML):
         with open(os.path.join(PATH, os.pardir, "example_data", "taxon.txt"), "r", encoding="utf-8") as file:
             self.taxon.read_file(file.read())
         return
+
+    def test_add_field(self):
+        taxon = Taxon.from_string(self.text)
+        taxon.add_field(DWCLanguage(index=47, default="eng"))
+        self.assertEqual(48, len(taxon.__fields__), "Fields not set")
+        self.text = self.text.replace(
+            """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>""",
+            """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>
+    <field index="47" default="eng" term="http://purl.org/dc/elements/1.1/language"/>""")
+        self.assertEqualTree(et.fromstring(self.text), taxon.to_element(), "Error on element conversion with new field")
+
+    def test_add_field_incorrect_index(self):
+        taxon = Taxon.from_string(self.text)
+        with self.assertWarnsRegex(UserWarning, "index"):
+            taxon.add_field(DWCLanguage(index=3, default="eng"))
+        self.assertEqual(48, len(taxon.__fields__), "Fields not set")
+        self.text = self.text.replace(
+            """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>""",
+            """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>
+    <field index="47" default="eng" term="http://purl.org/dc/elements/1.1/language"/>""")
+        self.assertEqualTree(et.fromstring(self.text), taxon.to_element(), "Error on element conversion with new field")
+
+    def test_add_field_data(self):
+        self.read_pandas()
+        df = self.taxon.pandas
+        self.assertEqual(47, len(df.columns), "Wrong number of initial columns")
+        self.assertRaisesRegex(
+            AttributeError, "language",
+            getattr,
+            self.taxon.__entries__[0],
+            "language"
+        )
+        self.taxon.add_field(DWCLanguage(index=47, default="eng"))
+        self.assertEqual(
+            Language.ENG,
+            self.taxon.__entries__[0].language,
+            "Language not write on all entries"
+        )
+        df = self.taxon.pandas
+        self.assertEqual(48, len(df.columns), "Wrong number of columns after set")
+        self.assertEqual(48, len(self.taxon.fields), "Fields not set")
+        self.text = self.text.replace(
+            """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>""",
+            """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>
+    <field index="47" default="eng" term="http://purl.org/dc/elements/1.1/language"/>""")
+        self.assertEqualTree(et.fromstring(self.text), self.taxon.to_element(), "Error on element conversion with new field")
 
     def test_parse(self):
         taxon = Taxon.from_string(self.text)

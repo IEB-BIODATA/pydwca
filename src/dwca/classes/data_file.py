@@ -120,6 +120,31 @@ class DataFile(XMLObject, ABC):
         """List[str]: List of terms of this data file."""
         return [field.uri for field in self.__fields__]
 
+    def add_field(self, field: Field) -> None:
+        """
+        Add a field to this Data File.
+
+        Parameters
+        ----------
+        field : Field
+            A :class:`dwca.terms.field.Field` object.
+
+        Returns
+        -------
+        None
+        """
+        if field.index != len(self.__fields__):
+            warn(f"Field must be added at the end of current data, setting index to {len(self.__fields__)}")
+            field.index = len(self.__fields__)
+        field.__namespace__ = self.__namespace__
+        self.__fields__.append(field)
+        if len(self.__entries__) > 0:
+            self.__data__ = None
+            for entry in self.__entries__:
+                setattr(entry, field.name, None if field.default is None else field.format(field.default))
+        return
+
+
     @property
     def pandas(self) -> pd.DataFrame:
         """pandas.DataFrame: Data of this DataFile as pandas.DataFrame."""

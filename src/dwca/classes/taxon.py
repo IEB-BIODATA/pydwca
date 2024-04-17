@@ -124,6 +124,7 @@ class Taxon(DataFile):
         tqdm.set_descriptor(desc="Getting synonyms")
         complete_taxa = self.all_synonyms(taxa_id, get_names=True)
         postfix["Synonyms found"] = len(complete_taxa) - len(taxa_id)
+        taxa_id = self.all_synonyms(taxa_id)
         tqdm.set_postfix(ordered_dict=postfix)
         tqdm.update(n=40)
         tqdm.set_descriptor(desc="Getting parents")
@@ -136,12 +137,21 @@ class Taxon(DataFile):
         try:
             df = self.pandas
             name = taxa_field.name_cls()
-            df = df[df[name].isin(complete_taxa) | df[TaxonID.name_cls()].isin(parents)]
+            mask = df[TaxonID.name_cls()].isin(parents) | df[TaxonID.name_cls()].isin(taxa_id)
+            if filter_with_rank:
+                mask |= df[name].isin(complete_taxa)
+            df = df[mask]
             self.pandas = df
         except ImportError:
-            def filter_taxa(entry: DataFile.Entry) -> bool:
-                return (getattr(entry, taxa_field.name_cls()) in complete_taxa or
-                        getattr(entry, TaxonID.name_cls()) in parents)
+            if filter_with_rank:
+                def filter_taxa(entry: DataFile.Entry) -> bool:
+                    return (getattr(entry, taxa_field.name_cls()) in complete_taxa or
+                            getattr(entry, TaxonID.name_cls()) in parents or
+                            getattr(entry, TaxonID.name_cls()) in taxa_id)
+            else:
+                def filter_taxa(entry: DataFile.Entry) -> bool:
+                    return (getattr(entry, TaxonID.name_cls()) in parents or
+                            getattr(entry, TaxonID.name_cls()) in taxa_id)
             self.__entries__ = list(filter(filter_taxa, self.__entries__))
         postfix["Total filtered"] = len(self)
         tqdm.set_postfix(ordered_dict=postfix)
@@ -304,7 +314,7 @@ class Taxon(DataFile):
             field = ScientificName.name_cls() if get_names else TaxonID.name_cls()
             return [getattr(synonymous, field) for synonymous in synonyms]
 
-    def __get_rows__(self, taxa_id: List[str]) -> Union[pd.DataFrame, List[DataFile.Entry]]:
+    def __get_rows__(self, taxa_id: Iterable[str]) -> Union[pd.DataFrame, List[DataFile.Entry]]:
         try:
             df = self.pandas
             current_taxa = df[df[TaxonID.name_cls()].isin(taxa_id)]
