@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import os.path
 import zipfile
 from typing import List, Dict, Type
 from warnings import warn
@@ -126,6 +127,9 @@ class DarwinCoreArchive(DarwinCore):
         self.__id__ = _id
         self.__meta__ = DarwinCoreArchive.Metadata()
         self.__metadata__ = None
+        self.__dataset_meta__ = {
+            "metadata": self.__metadata__
+        }
         return
 
     @property
@@ -172,6 +176,13 @@ class DarwinCoreArchive(DarwinCore):
         EML: Metadata instance, currently supported EML.
         """
         return self.__metadata__
+
+    @property
+    def dataset_metadata(self) -> Dict[str, EML]:
+        """
+        Dict[str, EML]: Metadata instances for each dataset present on DWC-A.
+        """
+        return self.__dataset_meta__
 
     @property
     def language(self) -> Language:
@@ -226,7 +237,18 @@ class DarwinCoreArchive(DarwinCore):
         for i, extension in enumerate(darwin_core.extensions):
             extension_file = archive.read(extension.filename)
             darwin_core.__meta__.__extensions__[i].read_file(extension_file.decode())
-        # TODO: add reading extra datasets xml.
+        darwin_core.__dataset_meta__ = {
+            "metadata": darwin_core.__metadata__
+        }
+        for item in archive.namelist():
+            if item.startswith("dataset/"):
+                if item == "dataset/":
+                    continue
+                try:
+                    dataset_meta = EML.from_string(archive.read(item).decode(encoding="utf-8"))
+                except ValueError:
+                    dataset_meta = EML.from_string(archive.read(item))
+                darwin_core.__dataset_meta__[dataset_meta.package_id] = dataset_meta
         archive.close()
         return darwin_core
 
