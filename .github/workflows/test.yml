@@ -32,9 +32,9 @@ jobs:
         wget -q ${{ secrets.CLOUDFRONT_URL }}/meta.xml -O tests/example_data/meta.xml &&
         wget -q ${{ secrets.CLOUDFRONT_URL }}/reference.txt -O tests/example_data/reference.txt &&
         wget -q ${{ secrets.CLOUDFRONT_URL }}/speciesprofile.txt -O tests/example_data/speciesprofile.txt &&
-        wget -q ${{ secrets.CLOUDFRONT_URL }}/taxon.txt -O tests/example_data/taxon.txt
-        wget -q ${{ secrets.CLOUDFRONT_URL }}/dataset_1.zip -O tests/example_data/dataset_1.zip
-        wget -q ${{ secrets.CLOUDFRONT_URL }}/dataset_2.zip -O tests/example_data/dataset_2.zip
+        wget -q ${{ secrets.CLOUDFRONT_URL }}/taxon.txt -O tests/example_data/taxon.txt &&
+        wget -q ${{ secrets.CLOUDFRONT_URL }}/dataset_1.zip -O tests/example_data/dataset_1.zip &&
+        wget -q ${{ secrets.CLOUDFRONT_URL }}/dataset_2.zip -O tests/example_data/dataset_2.zip &&
         wget -q ${{ secrets.CLOUDFRONT_URL }}/merged_dataset.zip -O tests/example_data/merged_dataset.zip
     - name: Run tests and collect coverage
       run: |
