@@ -88,4 +88,4 @@ class LengthUnit(CamelCaseEnum):
         str
             Name of the unit.
         """
-        return super().to_camel_case().capitalize()
+        return "_".join([word.lower().capitalize() for word in self.name.split("_")])

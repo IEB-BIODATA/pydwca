@@ -69,6 +69,22 @@ class DWCLanguage(Field):
         super().__init__(index, default, vocabulary)
         return
 
+    def format(self, value: str) -> Language:
+        """
+        Format value to Language.
+
+        Parameters
+        ----------
+        value : str
+            Value to be formatted as a Language.
+
+        Returns
+        -------
+        Language
+            Value as a Language object.
+        """
+        return Language.get_language(value)
+
 
 class DWCLicense(Field):
     """

@@ -82,6 +82,7 @@ class TestTemporalCoverage(TestXML):
             dt.datetime(
                 2011, 12, 31,
                 8, 31, 22,
+                tzinfo=dt.timezone.utc
             ),
             coverage.single_datetime[1],
             "Error on parsing second single date time"
@@ -98,7 +99,7 @@ class TestTemporalCoverage(TestXML):
             <time>08:31:22Z</time>
         </beginDate>
         <endDate>
-            <calendarDate>2021-01-01</calendarDate>
+            <calendarDate>2021</calendarDate>
         </endDate>
     </rangeOfDates>
 </temporalCoverage>
@@ -113,6 +114,7 @@ class TestTemporalCoverage(TestXML):
             dt.datetime(
                 2001, 1, 1,
                 8, 31, 22,
+                tzinfo=dt.timezone.utc
             ),
             coverage.range_datetime[0],
             "Error on parsing begin range date time"
