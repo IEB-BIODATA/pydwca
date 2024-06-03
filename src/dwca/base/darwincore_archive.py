@@ -14,7 +14,7 @@ from dwca.classes import DataFile, Occurrence, Organism, MaterialEntity, Materia
 from eml import EML
 from eml.resources import EMLResource
 from xml_common import XMLObject
-from xml_common.utils import Language
+from xml_common.utils import Language, read_string
 
 
 class DarwinCoreArchive(DarwinCore):
@@ -219,13 +219,10 @@ class DarwinCoreArchive(DarwinCore):
         """
         archive = zipfile.ZipFile(path_to_archive, "r")
         index_file = archive.read("meta.xml")
-        metadata = DarwinCoreArchive.Metadata.from_string(index_file.decode(encoding="utf-8"))
+        metadata = DarwinCoreArchive.Metadata.from_string(read_string(index_file))
         if metadata.__metadata__ is not None:
             metadata_content = archive.read(metadata.__metadata__)
-            try:
-                eml = EML.from_string(metadata_content.decode(encoding="utf-8"))
-            except ValueError:
-                eml = EML.from_string(metadata_content)
+            eml = EML.from_string(read_string(metadata_content))
             darwin_core = DarwinCoreArchive(_id=eml.package_id)
         else:
             darwin_core = DarwinCoreArchive()
@@ -244,10 +241,7 @@ class DarwinCoreArchive(DarwinCore):
             if item.startswith("dataset/"):
                 if item == "dataset/":
                     continue
-                try:
-                    dataset_meta = EML.from_string(archive.read(item).decode(encoding="utf-8"))
-                except ValueError:
-                    dataset_meta = EML.from_string(archive.read(item))
+                dataset_meta = EML.from_string(read_string(archive.read(item)))
                 darwin_core.__dataset_meta__[dataset_meta.package_id] = dataset_meta
         archive.close()
         return darwin_core
