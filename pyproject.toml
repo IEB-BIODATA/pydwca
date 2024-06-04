@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pydwca"
-version = "0.1.2"
+version = "0.1.3"
 dynamic = ["dependencies"]
 description = 'Python library to read, parse and write Darwin Core Archive files'
 readme = "README.md"
