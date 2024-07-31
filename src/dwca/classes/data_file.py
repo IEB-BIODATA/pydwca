@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from abc import ABC
 from enum import Enum
 from typing import List, Dict, Type, Tuple
@@ -388,7 +389,11 @@ class DataFile(XMLObject, ABC):
         for entry in iterate_with_bar(self.__entries__, desc=f"Writing data {self.uri}", unit="line"):
             line = list()
             for field in self.__fields__:
-                line.append(field.unformat(getattr(entry, field.name)))
+                try:
+                    line.append(field.unformat(getattr(entry, field.name)))
+                except Exception as e:
+                    print(f"Error on {field.name} with value {getattr(entry, field.name)}", file=sys.stderr)
+                    raise e
             output_file += f"{self.__fields_end__}".join(line) + self.__lines_end__
         return output_file
 
