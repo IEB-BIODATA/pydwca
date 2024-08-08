@@ -6,12 +6,12 @@ import zipfile
 from dwca.base import DarwinCoreArchive
 from eml import EML
 from eml.types import ResponsibleParty, IndividualName
-from xml_common.utils import Language
+from test_dwca.test_dwca_common import TestDWCACommon
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
 
-class TestDWCA(unittest.TestCase):
+class TestDWCA(TestDWCACommon):
     def setUp(self) -> None:
         self.object = DarwinCoreArchive.from_file(
             os.path.join(PATH, os.pardir, "example_data", "example_archive.zip")
@@ -19,34 +19,10 @@ class TestDWCA(unittest.TestCase):
         return
 
     def test_attributes(self):
-        self.assertIsNotNone(self.object.metadata, "Doesn't have metadata")
-        self.assertEqual(3, len(self.object.extensions), "Missing or wrong number of extensions")
-        self.assertEqual("taxon.txt", self.object.core.filename, "Wrong filename in Core")
-        self.assertEqual("Core:"
-                         "\n\tclass: http://rs.tdwg.org/dwc/terms/Taxon"
-                         "\n\tfilename: taxon.txt"
-                         "\n\tcontent: 163460 entries", str(self.object.core), "Wrong string of core")
-        self.assertCountEqual(
-            ["speciesprofile.txt", "reference.txt", "identification.txt"],
-            [extension.filename for extension in self.object.extensions],
-            "Extension not read"
-        )
-        self.assertEqual("Extension:"
-                         "\n\tclass: http://rs.gbif.org/terms/1.0/SpeciesProfile"
-                         "\n\tfilename: speciesprofile.txt"
-                         "\n\tcontent: 153621 entries", str(self.object.extensions[0]),
-                         "Wrong string of extension (species profile)")
-        self.assertEqual("Extension:"
-                         "\n\tclass: http://rs.gbif.org/terms/1.0/Reference"
-                         "\n\tfilename: reference.txt"
-                         "\n\tcontent: 98518 entries", str(self.object.extensions[1]),
-                         "Wrong string of extension (reference)")
-        self.assertEqual("Extension:"
-                         "\n\tclass: http://rs.tdwg.org/dwc/terms/Identification"
-                         "\n\tfilename: identification.txt"
-                         "\n\tcontent: 7617 entries", str(self.object.extensions[2]),
-                         "Wrong string of extension (identification)")
-        self.assertEqual(Language.ENG, self.object.language, "Wrong language")
+        super().__test_attributes__()
+
+    def test_merge(self):
+        super().__test_merge__()
 
     def test_as_pandas(self):
         df = self.object.core.as_pandas()

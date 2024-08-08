@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import logging
 import sys
+import warnings
 from abc import ABC
+from copy import deepcopy
 from enum import Enum
 from typing import List, Dict, Type, Tuple
 from warnings import warn
@@ -422,6 +425,24 @@ class DataFile(XMLObject, ABC):
                 entries.append(entry.to_dict())
         self.__data__ = pd.DataFrame(entries, columns=fields)
         return self.__data__
+
+    def merge(self, data_file: DataFile) -> DataFile:
+        assert self.uri == data_file.uri, "Cannot merge two different classes: `{}` and `{}`".format(
+            self.uri, data_file.uri
+        )
+        merged = deepcopy(self)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore")
+            for field in data_file.__fields__:
+                if field.uri not in merged.fields:
+                    merged.add_field(field)
+        try:
+            data = merged.pandas
+            merged.pandas = pd.concat([data, data_file.pandas], axis=0)
+        except ImportError:
+            for entry in data_file.__entries__:
+                merged.__entries__.append(entry)
+        return merged
 
     def __str__(self) -> str:
         role = self.__type__.name.lower().capitalize()

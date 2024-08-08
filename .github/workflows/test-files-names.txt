@@ -1,0 +1,16 @@
+dataset1_meta.xml
+dataset2_meta.xml
+dataset_1.zip
+dataset_2.zip
+eml.xml
+example_archive.zip
+extension_example1.txt
+extension_example2.txt
+identification.txt
+merged_dataset.zip
+meta.xml
+reference.txt
+speciesprofile.txt
+taxon.txt
+taxon1.txt
+taxon2.txt

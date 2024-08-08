@@ -3,6 +3,7 @@ from __future__ import annotations
 import io
 import os.path
 import zipfile
+from copy import deepcopy
 from typing import List, Dict, Type
 from warnings import warn
 
@@ -178,6 +179,13 @@ class DarwinCoreArchive(DarwinCore):
         return self.__metadata__
 
     @property
+    def metadata_filename(self) -> str:
+        """
+        str: The filename of the metadata file.
+        """
+        return self.__meta__.__metadata__
+
+    @property
     def dataset_metadata(self) -> Dict[str, EML]:
         """
         Dict[str, EML]: Metadata instances for each dataset present on DWC-A.
@@ -279,6 +287,47 @@ class DarwinCoreArchive(DarwinCore):
             output_file.write(zip_buffer.getvalue())
         zip_buffer.close()
         return
+
+    @classmethod
+    def merge(
+            cls, first_archive: DarwinCoreArchive,
+            second_archive: DarwinCoreArchive,
+            _id: str = None, eml: EML = None,
+            eml_filename: str = "eml.xml"
+    ) -> DarwinCoreArchive:
+        merged_dwca = DarwinCoreArchive(_id=_id)
+        if eml is not None:
+            merged_dwca.__metadata__ = eml
+        new_core = first_archive.core.merge(second_archive.core)
+        merged_dwca.core = new_core
+        first_extensions = [ext.uri for ext in first_archive.extensions]
+        second_extensions = [ext.uri for ext in second_archive.extensions]
+        for extension in first_archive.extensions:
+            try:
+                index = second_extensions.index(extension.uri)
+                new_extension = extension.merge(second_archive.extensions[index])
+                merged_dwca.extensions.append(deepcopy(new_extension))
+                del new_extension
+            except ValueError:
+                merged_dwca.extensions.append(deepcopy(extension))
+        for extension in second_archive.extensions:
+            if extension.uri not in first_extensions:
+                merged_dwca.extensions.append(deepcopy(extension))
+        merged_dwca.__metadata__ = eml
+        if eml is not None:
+            merged_dwca.__meta__.__metadata__ = eml_filename
+            merged_dwca.__dataset_meta__["metadata"] = eml
+        if first_archive.metadata is not None:
+            merged_dwca.__dataset_meta__[first_archive.metadata.package_id] = first_archive.metadata
+        if second_archive.metadata is not None:
+            merged_dwca.__dataset_meta__[second_archive.metadata.package_id] = second_archive.metadata
+        for name, metadata in first_archive.dataset_metadata.items():
+            if name != "metadata":
+                merged_dwca.__dataset_meta__[name] = metadata
+        for name, metadata in second_archive.dataset_metadata.items():
+            if name != "metadata":
+                merged_dwca.__dataset_meta__[name] = metadata
+        return merged_dwca
 
     def __repr__(self) -> str:
         return f"<Darwin Core Archive ({self})>"
