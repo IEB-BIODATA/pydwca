@@ -57,7 +57,7 @@ class TestEML(TestXML):
             else:
                 raise AssertionError(f"Unexpected status: {status}")
         except Exception as e:
-            raise AssertionError("Error parsing response status" + str(e))
+            raise AssertionError(f"Error parsing response status: {e}\n\tParsing text:\n\t{text}")
 
     @staticmethod
     def validate(eml: str):

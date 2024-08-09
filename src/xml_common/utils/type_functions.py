@@ -161,6 +161,14 @@ def unformat_type(value: Any, a_type: TypeAlias) -> str:
     str
         Encoded value
     """
+    try:
+        import pandas as pd
+        if pd.isna(value):
+            return ""
+    except ImportError:
+        pass
+    except ValueError:
+        pass
     if value is None:
         return ""
     if a_type == List[str]:

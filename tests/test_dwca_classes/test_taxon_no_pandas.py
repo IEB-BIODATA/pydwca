@@ -5,19 +5,15 @@ import unittest
 from lxml import etree as et
 
 from dwca.classes import Taxon
-from test_xml.test_xml import TestXML
+from test_dwca_classes.test_taxon_common import TestTaxonCommon
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
 
-class TestTaxon(TestXML):
+class TestTaxon(TestTaxonCommon):
     def setUp(self) -> None:
         sys.modules['pandas'] = None
-        with open(os.path.join(PATH, os.pardir, "example_data", "meta.xml"), "r", encoding="utf-8") as file:
-            content = file.read()
-        base_file = et.fromstring(content)
-        self.taxon_xml = base_file.find("core", namespaces=base_file.nsmap)
-        self.text = et.tostring(self.taxon_xml, pretty_print=True).decode("utf-8")
+        self.nmap, self.taxon_xml, self.text = self.read_xml(os.path.join(PATH, os.pardir, "example_data", "meta.xml"))
         self.taxon = None
         return
 
@@ -25,79 +21,32 @@ class TestTaxon(TestXML):
         del sys.modules['pandas']
         return
 
-    def read_pandas(self):
-        self.taxon = Taxon.from_string(self.text)
-        with open(os.path.join(PATH, os.pardir, "example_data", "taxon.txt"), "r", encoding="utf-8") as file:
-            self.taxon.read_file(file.read())
-        return
+    def test_add_field(self):
+        super().__test_add_field__()
+
+    def test_add_field_incorrect_index(self):
+        super().__test_add_field_incorrect_index__()
 
     def test_parse(self):
-        taxon = Taxon.from_string(self.text)
-        self.assertEqual("taxon.txt", taxon.filename, "Files parse incorrectly")
-        self.assertEqual(0, taxon.id, "Files parse incorrectly")
-        self.assertEqual("UTF-8", taxon.__encoding__, "Encoding parse incorrectly")
-        self.assertEqual("\n", taxon.__lines_end__, "Lines end parse incorrectly")
-        self.assertEqual("\t", taxon.__fields_end__, "Field end parse incorrectly")
-        self.assertEqual("", taxon.__fields_enclosed__, "Field enclosed parse incorrectly")
-        self.assertEqual(1, taxon.__ignore_header_lines__, "Ignore header parse incorrectly")
-        self.assertEqual(Taxon.URI, taxon.uri, "Row type parse incorrectly")
-        self.assertEqual(47, len(taxon.__fields__), "Fields parse incorrectly")
-        self.assertEqualTree(self.taxon_xml, taxon.to_element(), "Error on element conversion")
+        super().__test_parse__()
+
+    def test_filter_kingdom_exception(self):
+        super().__test_filter_kingdom_exception__()
 
     def test_get_parents(self):
-        self.read_pandas()
-        parents_set = self.taxon.get_parents(["urn:lsid:example.org:taxname:360"])
-        self.assertEqual(11, len(parents_set), "Incorrect number of parents.")
-        parents_set = self.taxon.get_parents(["urn:lsid:example.org:taxname:366"])
-        self.assertEqual(14, len(parents_set), "Incorrect number of parents.")
-        parents_set = self.taxon.get_parents(["urn:lsid:example.org:taxname:360", "urn:lsid:example.org:taxname:366"])
-        self.assertEqual(14, len(parents_set), "Incorrect number of parents.")
+        super().__test_get_parents__()
 
     def test_get_incorrect_parent(self):
-        self.read_pandas()
-        taxa_id = "urn:lsid:example.org:taxname:300000"
-        with self.assertWarnsRegex(UserWarning, taxa_id):
-            missing = self.taxon.get_parents([taxa_id])
-            self.assertEqual(0, len(missing), "Parent found of invalid taxon id")
+        self.__test_get_incorrect_parent__()
 
     def test_get_synonyms(self):
-        self.read_pandas()
-        first_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10000"])
-        self.assertEqual(2, len(first_synonyms), "Incorrect number of synonyms.")
-        second_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10001"])
-        self.assertEqual(2, len(second_synonyms), "Incorrect number of synonyms.")
-        self.assertCountEqual(
-            first_synonyms, second_synonyms, "Synonyms do not match"
-        )
-        two_synonyms = self.taxon.all_synonyms(
-            ["urn:lsid:example.org:taxname:10000", "urn:lsid:example.org:taxname:100005"])
-        self.assertEqual(3, len(two_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
-        self.assertTrue("urn:lsid:example.org:taxname:100005" in two_synonyms, "Incorrect same synonym")
+        self.__test_get_synonyms__()
 
     def test_get_synonyms_names(self):
-        self.read_pandas()
-        first_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10000"], get_names=True)
-        self.assertEqual(2, len(first_synonyms), "Incorrect number of synonyms.")
-        second_synonyms = self.taxon.all_synonyms(["urn:lsid:example.org:taxname:10001"], get_names=True)
-        self.assertEqual(2, len(second_synonyms), "Incorrect number of synonyms.")
-        self.assertCountEqual(
-            first_synonyms, second_synonyms, "Synonyms do not match"
-        )
-        two_synonyms = self.taxon.all_synonyms([
-            "urn:lsid:example.org:taxname:10000", "urn:lsid:example.org:taxname:100005"
-        ], get_names=True)
-        self.assertEqual(3, len(two_synonyms), "Incorrect number of synonym with a taxa with no synonymous.")
-        self.assertTrue(
-            "Wxjncmbdqbd (Jdhbtbju) oojmaovly var. ushibyxcfc Whhngbhiq" in two_synonyms,
-            "Incorrect same synonym"
-        )
+        super().__test_get_synonyms_names__()
 
     def test_get_incorrect_synonyms(self):
-        self.read_pandas()
-        taxa_id = "urn:lsid:example.org:taxname:300000"
-        with self.assertWarnsRegex(UserWarning, "urn:lsid:example.org:taxname:300000"):
-            synonyms = self.taxon.all_synonyms([taxa_id])
-            self.assertEqual(0, len(synonyms), "Found something of false taxon id.")
+        self.__test_get_incorrect_synonyms__()
 
     def test_filter_kingdom(self):
         self.read_pandas()
@@ -190,7 +139,10 @@ class TestTaxon(TestXML):
         self.assertEqual(24, len(self.taxon), "Filter by all genera.")
 
     def test_none(self):
-        self.assertIsNone(Taxon.parse(None, {}), "Object parsed from nothing")
+        super().__test_none__()
+
+    def test_merge(self):
+        super().__test_merge__()
 
     def test_no_pandas(self):
         self.read_pandas()
