@@ -283,6 +283,9 @@ class DarwinCoreArchive(DarwinCore):
                 zip_file.writestr(self.core.filename, self.core.write_file())
             for extension in self.extensions:
                 zip_file.writestr(extension.filename, extension.write_file())
+            for dataset, metadata in self.dataset_metadata.items():
+                if dataset != "metadata":
+                    zip_file.writestr(f"dataset/{dataset}.xml", metadata.to_xml().encode(encoding))
         with open(path_to_archive, 'wb') as output_file:
             output_file.write(zip_buffer.getvalue())
         zip_buffer.close()
