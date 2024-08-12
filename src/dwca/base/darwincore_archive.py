@@ -38,6 +38,7 @@ class DarwinCoreArchive(DarwinCore):
             Name of the metadata file (e.g.: eml.xml)
         """
         PRINCIPAL_TAG = "archive"
+        xmlns = "http://rs.tdwg.org/dwc/text/"
         """str : Require tag of the metadata"""
         __classes__ = [
             Occurrence, Organism, MaterialEntity, MaterialSample,
@@ -51,6 +52,7 @@ class DarwinCoreArchive(DarwinCore):
             self.__metadata__ = metadata
             self.__core__ = None
             self.__extensions__: List[DataFile] = list()
+            self.__namespace__[None] = self.xmlns
             return
 
         @classmethod
@@ -249,8 +251,11 @@ class DarwinCoreArchive(DarwinCore):
             if item.startswith("dataset/"):
                 if item == "dataset/":
                     continue
-                dataset_meta = EML.from_string(read_string(archive.read(item)))
-                darwin_core.__dataset_meta__[dataset_meta.package_id] = dataset_meta
+                try:
+                    dataset_meta = EML.from_string(read_string(archive.read(item)))
+                    darwin_core.__dataset_meta__[dataset_meta.package_id] = dataset_meta
+                except Exception as e:
+                    warn(f"Could not read {item.replace('dataset/', '')}:\n{e}")
         archive.close()
         return darwin_core
 
