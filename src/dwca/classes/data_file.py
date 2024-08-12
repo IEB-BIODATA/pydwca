@@ -438,7 +438,7 @@ class DataFile(XMLObject, ABC):
                     merged.add_field(field)
         try:
             data = merged.pandas
-            merged.pandas = pd.concat([data, data_file.pandas], axis=0)
+            merged.pandas = pd.concat([data, data_file.pandas], axis=0).reset_index(drop=True)
         except ImportError:
             for entry in data_file.__entries__:
                 merged.__entries__.append(entry)

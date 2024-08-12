@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from abc import ABC, abstractmethod
 from typing import Dict, Union
 
@@ -61,7 +62,8 @@ class XMLObject(ABC):
         XMLObject
             Object parsed from the string.
         """
-        root = et.fromstring(text)
+        cleaned_text = re.sub(r'<\?xml\s+version="1.0"\s+encoding="[^"]*"\?>', '', text, count=1).rstrip('</xml>')
+        root = et.fromstring(cleaned_text)
         nmap = dict()
         for prefix, uri in cls.NAMESPACES.items():
             nmap[prefix] = uri
