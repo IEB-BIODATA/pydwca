@@ -62,7 +62,9 @@ class XMLObject(ABC):
         XMLObject
             Object parsed from the string.
         """
-        cleaned_text = re.sub(r'<\?xml\s+version="1.0"\s+encoding="[^"]*"\?>', '', text, count=1).rstrip('</xml>')
+        cleaned_text = re.sub(r'<\?xml\s+version="1.0"\s+encoding="[^"]*"\?>', '', text, count=1)
+        if text != cleaned_text and cleaned_text.endswith("</xml>"):
+            cleaned_text = cleaned_text[:-6]
         root = et.fromstring(cleaned_text)
         nmap = dict()
         for prefix, uri in cls.NAMESPACES.items():

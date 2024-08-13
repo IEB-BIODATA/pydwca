@@ -18,9 +18,9 @@ class TestMetadata(TestXML):
         eml_path = os.path.join(PATH, os.pardir, "example_data", "eml.xml")
         with open(eml_path, "r", encoding="utf-8") as file:
             xml_tree = et.fromstring(file.read()).find("additionalMetadata")
-        add_metadata = EMLAdditionalMetadata.from_string(et.tostring(xml_tree))
+        add_metadata = EMLAdditionalMetadata.from_string(et.tostring(xml_tree).decode("utf-8"))
         metadata_tree = xml_tree.find("metadata")
-        metadata = EMLMetadata.from_string(et.tostring(metadata_tree))
+        metadata = EMLMetadata.from_string(et.tostring(metadata_tree).decode("utf-8"))
         self.assertEqualTree(metadata_tree, metadata.to_element(), "Error on metadata")
         self.assertEqualTree(xml_tree, add_metadata.to_element(), "Error on additional metadata")
 
