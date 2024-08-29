@@ -1,54 +1,59 @@
 import os.path
-import sys
 import unittest
+from unittest.mock import patch
 
-from lxml import etree as et
-
-from dwca.classes import Taxon
 from test_dwca_classes.test_taxon_common import TestTaxonCommon
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
+orig_import = __import__
 
-class TestTaxon(TestTaxonCommon):
-    def setUp(self) -> None:
-        sys.modules['pandas'] = None
-        self.nmap, self.taxon_xml, self.text = self.read_xml(os.path.join(PATH, os.pardir, "example_data", "meta.xml"))
-        self.taxon = None
-        return
 
-    def tearDown(self) -> None:
-        del sys.modules['pandas']
-        return
+def import_mock(name, globals=None, locals=None, fromlist=(), level=0):
+    if name == 'pandas':
+        raise ImportError(f"No module named '{name}'")
+    return orig_import(name, globals, locals, fromlist, level)
 
-    def test_add_field(self):
+
+class TestTaxonNoPandas(TestTaxonCommon):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_add_field(self, mock_import):
         super().__test_add_field__()
 
-    def test_add_field_incorrect_index(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_add_field_incorrect_index(self, mock_import):
         super().__test_add_field_incorrect_index__()
 
-    def test_parse(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_parse(self, mock_import):
         super().__test_parse__()
 
-    def test_filter_kingdom_exception(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_kingdom_exception(self, mock_import):
         super().__test_filter_kingdom_exception__()
 
-    def test_get_parents(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_get_parents(self, mock_import):
         super().__test_get_parents__()
 
-    def test_get_incorrect_parent(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_get_incorrect_parent(self, mock_import):
         self.__test_get_incorrect_parent__()
 
-    def test_get_synonyms(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_get_synonyms(self, mock_import):
         self.__test_get_synonyms__()
 
-    def test_get_synonyms_names(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_get_synonyms_names(self, mock_import):
         super().__test_get_synonyms_names__()
 
-    def test_get_incorrect_synonyms(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_get_incorrect_synonyms(self, mock_import):
         self.__test_get_incorrect_synonyms__()
 
-    def test_filter_kingdom(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_kingdom(self, mock_import):
         self.read_pandas()
         length = len(self.taxon)
         self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
@@ -57,7 +62,8 @@ class TestTaxon(TestTaxonCommon):
         self.taxon.filter_by_kingdom(["Ydhxpqku"])
         self.assertEqual(159490, len(self.taxon), "Filter by first kingdom.")
 
-    def test_filter_phylum(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_phylum(self, mock_import):
         self.read_pandas()
         length = len(self.taxon)
         self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
@@ -70,7 +76,8 @@ class TestTaxon(TestTaxonCommon):
             "Incorrect filter by Ajiwcqftc."
         )
 
-    def test_filter_class(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_class(self, mock_import):
         self.read_pandas()
         length = len(self.taxon)
         self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
@@ -87,7 +94,8 @@ class TestTaxon(TestTaxonCommon):
             "Incorrect filter by Yichyzkbff."
         )
 
-    def test_filter_order(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_order(self, mock_import):
         self.read_pandas()
         length = len(self.taxon)
         self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
@@ -100,7 +108,8 @@ class TestTaxon(TestTaxonCommon):
         self.taxon.filter_by_order(["Rbaliuycliu", "Xlhofowltm"])
         self.assertEqual(39834 + 4, len(self.taxon), "Incorrect filter.")
 
-    def test_filter_family(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_family(self, mock_import):
         self.read_pandas()
         length = len(self.taxon)
         self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
@@ -121,14 +130,16 @@ class TestTaxon(TestTaxonCommon):
         self.taxon.filter_by_family(["Dxaougdpy", "Kvtgqwfmy"])
         self.assertEqual(9969 + 5, len(self.taxon), "Incorrect filter.")
 
-    def test_filter_genus(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_genus(self, mock_import):
         self.read_pandas()
         length = len(self.taxon)
         self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
         self.taxon.filter_by_genus(["Hbqrtfopjuh", "Vbpjkmfqd"])
         self.assertEqual(624 + 11, len(self.taxon), "Incorrect filter.")
 
-    def test_filter_species(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_species(self, mock_import):
         self.read_pandas()
         length = len(self.taxon)
         self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
@@ -138,13 +149,17 @@ class TestTaxon(TestTaxonCommon):
         self.taxon.filter_by_species([species_synonym, variety, cultivar])
         self.assertEqual(24, len(self.taxon), "Filter by all genera.")
 
-    def test_none(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_none(self, mock_import):
         super().__test_none__()
 
-    def test_merge(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_merge(self, mock_import):
+        mock_import.side_effect = import_mock
         super().__test_merge__()
 
-    def test_no_pandas(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_no_pandas(self, mock_import):
         self.read_pandas()
         with self.assertRaisesRegex(ImportError, "Install pandas to use this feature"):
             var = self.taxon.pandas

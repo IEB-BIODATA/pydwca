@@ -1,33 +1,37 @@
 import os
 import sys
 import unittest
+from unittest.mock import patch
 
 from dwca.base import DarwinCoreArchive
 from test_dwca.test_dwca_common import TestDWCACommon
-from xml_common.utils import Language
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
+orig_import = __import__
 
-class TestDWCA(TestDWCACommon):
-    def setUp(self) -> None:
-        sys.modules['pandas'] = None
-        self.object = DarwinCoreArchive.from_file(
-            os.path.join(PATH, os.pardir, "example_data", "example_archive.zip")
-        )
-        return
 
-    def tearDown(self) -> None:
-        del sys.modules['pandas']
-        return
+def import_mock(name, globals=None, locals=None, fromlist=(), level=0):
+    if name == 'pandas':
+        raise ImportError(f"No module named '{name}'")
+    return orig_import(name, globals, locals, fromlist, level)
 
-    def test_attributes(self):
+
+class TestDWCANoPandas(TestDWCACommon):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_minimal(self, mock_import):
+        super().__test_minimal__()
+
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_attributes(self, mock_import):
         super().__test_attributes__()
 
-    def test_merge(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_merge(self, mock_import):
         super().__test_merge__()
 
-    def test_set_core(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_set_core(self, mock_import):
         core = self.object.core
         self.assertEqual(163460, len(core), "Wrong number of entries")
         core.__entries__ = core.__entries__[0:100]

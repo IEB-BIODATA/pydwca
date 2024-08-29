@@ -4,6 +4,8 @@ import unittest
 import zipfile
 
 from dwca.base import DarwinCoreArchive
+from dwca.classes import OutsideClass
+from dwca.terms import OutsideTerm
 from eml import EML
 from eml.resources import EMLResource
 from eml.types import ResponsibleParty, IndividualName
@@ -20,8 +22,21 @@ class TestDWCACommon(TestXML):
         )
         return
 
+    def __test_minimal__(self):
+        minimal_dwca = DarwinCoreArchive.from_file(
+            os.path.join(PATH, os.pardir, "example_data", "minimal.zip")
+        )
+        self.assertIsNone(minimal_dwca.metadata, "Metadata file generated from nowhere.")
+        self.assertIsNone(minimal_dwca.metadata_filename, "Metadata file (name) generated from nowhere.")
+        self.assertEqual(0, len(minimal_dwca.extensions), "Extension from nowhere.")
+        self.assertEqual("minimal_core.txt", minimal_dwca.core.filename, "Wrong filename in core.")
+        minimal_dwca.core = OutsideClass(0, "http://www.example.org/minimalCore", "minimal_core.txt", [
+            OutsideTerm(0, "http://www.example.org/minimalTerm")
+        ])
+
     def __test_attributes__(self):
         self.assertIsNotNone(self.object.metadata, "Doesn't have metadata")
+        self.assertEqual("eml.xml", self.object.metadata_filename, "Wrong file name of metadata")
         self.assertEqual(3, len(self.object.extensions), "Missing or wrong number of extensions")
         self.assertEqual("taxon.txt", self.object.core.filename, "Wrong filename in Core")
         self.assertEqual("Core:"

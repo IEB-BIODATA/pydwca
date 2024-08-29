@@ -1,30 +1,32 @@
 import os.path
 import sys
 import unittest
+from unittest.mock import patch
 
-from dwca.classes import OutsideClass
 from test_dwca_classes.test_outside_class_common import TestOutsideCommon
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
+orig_import = __import__
 
-class TestOutside(TestOutsideCommon):
-    def setUp(self) -> None:
-        sys.modules['pandas'] = None
-        self.outside_xml, self.text = self.read_xml(os.path.join(PATH, os.pardir, "example_data", "meta.xml"))
-        return
 
-    def tearDown(self) -> None:
-        del sys.modules['pandas']
-        return
+def import_mock(name, globals=None, locals=None, fromlist=(), level=0):
+    if name == 'pandas':
+        raise ImportError(f"No module named '{name}'")
+    return orig_import(name, globals, locals, fromlist, level)
 
-    def test_parse(self):
+
+class TestOutsideNoPandas(TestOutsideCommon):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_parse(self, mock_import):
         super().__test_parse__()
 
-    def test_none(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_none(self, mock_import):
         super().__test_none__()
 
-    def test_merge(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_merge(self, mock_import):
         super().__test_merge__()
 
 

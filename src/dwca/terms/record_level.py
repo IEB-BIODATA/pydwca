@@ -85,6 +85,22 @@ class DWCLanguage(Field):
         """
         return Language.get_language(value)
 
+    def unformat(self, value: Language) -> str:
+        """
+        Encode value from Language to a standard string.
+
+        Parameters
+        ----------
+        value : Language
+            An instance of Language to be represented as a string.
+
+        Returns
+        -------
+        str
+            String representation of Language.
+        """
+        return value.name.lower()
+
 
 class DWCLicense(Field):
     """

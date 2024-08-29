@@ -249,7 +249,7 @@ class ResponsibleParty(EMLObject, _NoTagObject):
             link = "https://eml.ecoinformatics.org/schema/eml-party_xsd.html#RoleType"
             warn(f"Role {role_elem.text} is not supported, "
                  f"check {link} for the full list of choices. "
-                 f"Using contentProvider as default.")
+                 f"Using contentProvider as default.", category=SyntaxWarning)
             return Role.CONTENT_PROVIDER
 
     def __str__(self) -> str:

@@ -2,6 +2,7 @@ import os
 import tempfile
 import unittest
 import zipfile
+from unittest.mock import patch
 
 from dwca.base import DarwinCoreArchive
 from eml import EML
@@ -10,18 +11,30 @@ from test_dwca.test_dwca_common import TestDWCACommon
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
+orig_import = __import__
 
-class TestDWCA(TestDWCACommon):
-    def test_minimal(self):
+
+def import_mock(name, globals=None, locals=None, fromlist=(), level=0):
+    if name == 'polars':
+        raise ImportError(f"No module named '{name}'")
+    return orig_import(name, globals, locals, fromlist, level)
+
+
+class TestDWCANoPolars(TestDWCACommon):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_minimal(self, mock_import):
         super().__test_minimal__()
 
-    def test_attributes(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_attributes(self, mock_import):
         super().__test_attributes__()
 
-    def test_merge(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_merge(self, mock_import):
         super().__test_merge__()
 
-    def test_as_pandas(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_as_pandas(self, mock_import):
         df = self.object.core.as_pandas()
         self.assertEqual(163460, len(df), "Wrong number of rows")
         self.assertEqual(len(self.object.core.__fields__), len(df.columns), "Wrong number of fields")
@@ -30,7 +43,8 @@ class TestDWCA(TestDWCACommon):
             self.assertEqual(rows, len(df), f"Wrong number of rows at {extension.__class__.__name__}")
             self.assertEqual(len(extension.__fields__), len(df.columns), "Wrong number of fields")
 
-    def test_set_pandas_core(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_set_pandas_core(self, mock_import):
         df = self.object.core.as_pandas()
         self.assertEqual(163460, len(df), "Wrong number of rows")
         df = df[0:100]
@@ -40,7 +54,8 @@ class TestDWCA(TestDWCACommon):
         for extension in self.object.extensions:
             self.assertGreaterEqual(100, len(extension), f"Wrong number of rows set at {extension.__class__.__name__}")
 
-    def test_generate_eml(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_generate_eml(self, mock_import):
         new_dwca = DarwinCoreArchive("Empty Darwin Core")
         new_dwca.generate_eml()
         eml = new_dwca.metadata
@@ -51,7 +66,8 @@ class TestDWCA(TestDWCACommon):
             "Empty Darwin Core", eml.package_id, "Wrong EML id"
         )
 
-    def test_to_file(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_to_file(self, mock_import):
         with tempfile.NamedTemporaryFile("wb") as file:
             self.object.to_file(file.name)
             with zipfile.ZipFile(file.name, "r") as zip_file:
@@ -96,14 +112,25 @@ class TestDWCA(TestDWCACommon):
                     "Incorrect file saved"
                 )
 
-    def test_str(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_from_file_lazy(self, mock_import):
+        self.assertRaises(
+            ImportError,
+            DarwinCoreArchive.from_file,
+            os.path.join(PATH, os.pardir, "example_data", "example_archive.zip"),
+            lazy=True
+        )
+
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_str(self, mock_import):
         self.assertEqual(
             "Example Package [Core: http://rs.tdwg.org/dwc/terms/Taxon, Entries: 163460]",
             str(self.object),
             "Error on DwCA string."
         )
 
-    def test_repr(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_repr(self, mock_import):
         self.assertEqual(
             "<Darwin Core Archive (Example Package [Core: http://rs.tdwg.org/dwc/terms/Taxon, Entries: 163460])>",
             repr(self.object),

@@ -313,7 +313,7 @@ class Resource(EMLObject, ABC):
             try:
                 kwargs["keyword_set"].append(EMLKeywordSet.parse(keyword_elem, nmap))
             except ValueError as e:
-                warn(str(e))
+                warn(str(e), category=SyntaxWarning)
                 pass
         kwargs["additional_info"] = list()
         for add_info in element.findall("additionalInfo", nmap):
@@ -332,7 +332,7 @@ class Resource(EMLObject, ABC):
             try:
                 kwargs["coverage"] = EMLCoverage.parse(cover_elem, nmap)
             except TypeError as e:
-                warn(str(e))
+                warn(str(e), category=SyntaxWarning)
                 pass
         kwargs["annotation"] = list()
         for annotation_elem in element.findall("annotation", nmap):

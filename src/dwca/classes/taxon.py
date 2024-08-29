@@ -11,10 +11,14 @@ from dwca.terms import Field, TaxonID, ScientificNameID, AcceptedNameUsageID, Pa
     DWCClass, Order, Superfamily, Family, Subfamily, Tribe, Subtribe, Genus, GenericName, Subgenus, \
     InfragenericEpithet, SpecificEpithet, InfraspecificEpithet, CultivarEpithet, TaxonRank, VerbatimTaxonRank, \
     ScientificNameAuthorship, VernacularName, NomenclaturalCode, TaxonomicStatus, NomenclaturalStatus, TaxonRemarks
-from xml_common.utils import iterate_with_bar, OptionalTqdm
+from xml_common.utils import OptionalTqdm
 
 try:
     import pandas as pd
+except ImportError:
+    pd = None
+try:
+    import polars as pl
 except ImportError:
     pd = None
 
@@ -321,14 +325,14 @@ class Taxon(DataFile):
             if len(current_taxa) != len(taxa_id):
                 candidates = pd.Series(taxa_id)
                 not_present = candidates[~candidates.isin(df[TaxonID.name_cls()])]
-                warn(f"{', '.join(list(not_present))} not found in data file.")
+                warn(f"{', '.join(list(not_present))} not found in data file.", category=RuntimeWarning)
             return current_taxa
         except ImportError:
             entries = self.__get_entries__(**{f"{TaxonID.name_cls()}__isin": taxa_id})
             if len(entries) != len(taxa_id):
                 found_taxa = [getattr(entry, TaxonID.name_cls()) for entry in entries]
                 not_present = list(filter(lambda candid: candid not in found_taxa, taxa_id))
-                warn(f"{', '.join(not_present)} not found in data file.")
+                warn(f"{', '.join(not_present)} not found in data file.", category=RuntimeWarning)
             return entries
 
     def __get_entry__(self, **kwargs) -> DataFile.Entry | None:

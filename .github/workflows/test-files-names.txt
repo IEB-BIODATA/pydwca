@@ -9,6 +9,7 @@ extension_example2.txt
 identification.txt
 merged_dataset.zip
 meta.xml
+minimal.zip
 reference.txt
 speciesprofile.txt
 taxon.txt
