@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-import logging
+import os
 import sys
+import tempfile
 import warnings
 from abc import ABC
 from copy import deepcopy
@@ -16,12 +17,16 @@ from dwca.terms import Field, DWCType, DWCModified, DWCLanguage, DWCLicense, DWC
     DWCCollectionCode, DWCDatasetName, DWCOwnerInstitutionCode, DWCBasisOfRecord, DWCInformationWithheld, \
     DWCDataGeneralizations, DWCDynamicProperties, OutsideTerm
 from xml_common import XMLObject
-from xml_common.utils import iterate_with_bar
+from xml_common.utils import iterate_with_bar, type_to_pl
 
 try:
     import pandas as pd
 except Exception:
     pd = None
+try:
+    import polars as pl
+except Exception:
+    pl = None
 
 
 class DataFileType(Enum):
@@ -101,6 +106,8 @@ class DataFile(XMLObject, ABC):
         self.PRINCIPAL_TAG = self.__type__.name.lower()
         self.__entries__: List[DataFile.Entry] = list()
         self.__data__ = None
+        self.__lazy__ = False
+        self.__temp_file__ = ""
         self.__observers__: List[Tuple[int, DarwinCoreArchive]] = list()
         return
 
@@ -118,6 +125,17 @@ class DataFile(XMLObject, ABC):
     def filename(self) -> str:
         """str: Filename of the Data File entity."""
         return self.__files__
+
+    def is_lazy(self) -> bool:
+        """
+        Check if data file load its data as a Lazy Frame.
+
+        Returns
+        -------
+        bool
+            True when file read as a Lazy Frame, False otherwise.
+        """
+        return self.__lazy__
 
     @property
     def fields(self) -> List[str]:
@@ -142,12 +160,17 @@ class DataFile(XMLObject, ABC):
             field.index = len(self.__fields__)
         field.__namespace__ = self.__namespace__
         self.__fields__.append(field)
-        if len(self.__entries__) > 0:
+        if self.is_lazy():
+            self.__data__ = self.__data__.with_columns(
+                pl.lit(
+                    None if field.default is None else field.default
+                ).alias(field.name)
+            )
+        elif len(self.__entries__) > 0:
             self.__data__ = None
             for entry in self.__entries__:
-                setattr(entry, field.name, None if field.default is None else field.format(field.default))
+                setattr(entry, field.name, None if field.default is None else field.default)
         return
-
 
     @property
     def pandas(self) -> pd.DataFrame:
@@ -170,12 +193,25 @@ class DataFile(XMLObject, ABC):
                 observer.extensions[i] = self
         return
 
+    @property
+    def polars(self) -> pl.DataFrame:
+        """polars.DataFrame: Data of this DataFile as polars.DataFrame."""
+        if self.__data__ is None or self.is_lazy():
+            self.as_polars()
+        return self.__data__
+
     def _register_darwin_core_(self, _on: int, dwca: DarwinCoreArchive) -> None:
         self.__observers__.append((_on, dwca))
         return
 
     def __len__(self) -> int:
-        return len(self.__entries__)
+        if self.__data__ is not None:
+            try:
+                return len(self.__data__)
+            except TypeError:
+                return self.__data__.select(pl.len()).collect().item()
+        else:
+            return len(self.__entries__)
 
     @classmethod
     def get_term_class(cls, element: et.Element) -> Type[Field]:
@@ -222,7 +258,7 @@ class DataFile(XMLObject, ABC):
             try:
                 fields.append(cls.get_term_class(field_tree).parse(field_tree, nmap))
             except TypeError as e:
-                warn(f"Error on field {et.tostring(field_tree)}: {e}")
+                warn(f"Error on field {et.tostring(field_tree)}: {e}", category=SyntaxWarning)
                 pass
         assert len(fields) >= 1, "A Data File must contain at least one field"
         df_type = DataFileType[et.QName(element).localname.upper()]
@@ -356,7 +392,7 @@ class DataFile(XMLObject, ABC):
         self.__fields__ = ordered_fields
         return
 
-    def read_file(self, content: str) -> None:
+    def read_file(self, content: str, lazy: bool = False) -> None:
         """
         Read the content of the file specified in `files` parameters (:meth:`filename`).
 
@@ -364,7 +400,26 @@ class DataFile(XMLObject, ABC):
         ----------
         content : str
             Content of the file
+        lazy : bool, optional
+            Read the file in lazy evaluation mode. Default `False`.
         """
+        if lazy:
+            try:
+                import polars as pl
+                with tempfile.NamedTemporaryFile(delete=False) as file:
+                    file.write(content.encode())
+                    self.__data__ = pl.scan_csv(
+                        file.name,
+                        skip_rows=self.__ignore_header_lines__,
+                        separator=self.__fields_end__,
+                        schema={field.name: type_to_pl(field.TYPE, lazy=True) for field in self.__fields__},
+                    )
+                    self.__lazy__ = True
+                    self.__temp_file__ = file.name
+                    warn("Reading in lazy evaluation mode generates a temporal file, make sure to call close() to "
+                         "delete it")
+            except ImportError:
+                raise ImportError("Cannot read lazy without polars installed.")
         lines = content.split(self.__lines_end__)
         lines = list(filter(lambda x: x != "", lines))
         for line in iterate_with_bar(
@@ -376,6 +431,7 @@ class DataFile(XMLObject, ABC):
                 kwargs[field.name] = field.format(value)
             self.__entries__.append(DataFile.Entry(**kwargs))
         return
+
 
     def write_file(self) -> str:
         """
@@ -412,7 +468,7 @@ class DataFile(XMLObject, ABC):
         try:
             import pandas as pd
         except ImportError:
-            raise ImportError("Install pandas to use this feature")
+            raise ImportError("Install pandas to use this feature.")
         fields = list()
         for field in self.__fields__:
             fields.append(field.name)
@@ -425,6 +481,38 @@ class DataFile(XMLObject, ABC):
                 entries.append(entry.to_dict())
         self.__data__ = pd.DataFrame(entries, columns=fields)
         return self.__data__
+
+    def as_polars(self, _no_interaction: bool = False) -> pl.DataFrame:
+        """
+        Convert information in this DataFile in a polars DataFrame.
+
+        Returns
+        -------
+        DataFrame:
+            Information as a polars.DataFrame.
+        """
+        try:
+            import polars as pl
+        except ImportError:
+            raise ImportError("Install polars to use this feature.")
+        if self.is_lazy():
+            self.__data__ = self.__data__.collect()
+            self.__lazy__ = False
+            self.close()
+            return self.__data__
+        else:
+            fields = list()
+            for field in self.__fields__:
+                fields.append((field.name, type_to_pl(field.TYPE)))
+            entries = list()
+            if _no_interaction:
+                for entry in self.__entries__:
+                    entries.append(entry.to_dict())
+            else:
+                for entry in iterate_with_bar(self.__entries__, desc="Converting to polars", unit="entry"):
+                    entries.append(entry.to_dict())
+            self.__data__ = pl.DataFrame(entries, schema=fields)
+            return self.__data__
 
     def merge(self, data_file: DataFile) -> DataFile:
         assert self.uri == data_file.uri, "Cannot merge two different classes: `{}` and `{}`".format(
@@ -443,6 +531,13 @@ class DataFile(XMLObject, ABC):
             for entry in data_file.__entries__:
                 merged.__entries__.append(entry)
         return merged
+
+    def close(self) -> None:
+        if self.is_lazy():
+            os.remove(self.__temp_file__)
+            self.__temp_file__ = ""
+            self.__lazy__ = False
+        return
 
     def __str__(self) -> str:
         role = self.__type__.name.lower().capitalize()

@@ -95,7 +95,7 @@ class Field(XMLObject, ABC):
         try:
             return format_to_type(value, self.TYPE)
         except Exception as e:
-            raise type(e)(f"{e}. Must overwrite `Field.format` method to use this field.")
+            raise type(e)(f"{e} Must overwrite `Field.format` method to use this field.")
 
     def unformat(self, value: TYPE) -> str:
         """
@@ -139,6 +139,8 @@ class Field(XMLObject, ABC):
             default=element.get("default", None),
             vocabulary=element.get("vocabulary", None)
         )
+        if field.__default__ is not None:
+            field.__default__ = field.format(field.__default__)
         field.__namespace__ = nmap
         return field
 
@@ -156,7 +158,7 @@ class Field(XMLObject, ABC):
         if self.__index__ is not None:
             element.set("index", str(self.__index__))
         if self.__default__ is not None:
-            element.set("default", self.__default__)
+            element.set("default", self.unformat(self.__default__))
         if self.__vocabulary__ is not None:
             element.set("vocabulary", self.__vocabulary__)
         return element

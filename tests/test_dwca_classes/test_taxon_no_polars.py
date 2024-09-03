@@ -1,7 +1,7 @@
 import os.path
 import sys
-import tempfile
 import unittest
+from unittest.mock import patch
 
 import pandas as pd
 from lxml import etree as et
@@ -13,26 +13,28 @@ from xml_common.utils import Language
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
+orig_import = __import__
 
-class TestTaxon(TestTaxonCommon):
-    def setUp(self) -> None:
-        self.nmap, self.taxon_xml, self.text = self.read_xml(os.path.join(PATH, os.pardir, "example_data", "meta.xml"))
-        self.taxon = None
-        return
 
-    def tearDown(self) -> None:
-        if self.taxon is not None and self.taxon.is_lazy():
-            self.taxon.close()
+def import_mock(name, globals=None, locals=None, fromlist=(), level=0):
+    if name == 'polars':
+        raise ImportError(f"No module named '{name}'")
+    return orig_import(name, globals, locals, fromlist, level)
 
-    def test_add_field(self):
+
+class TestTaxonNoPolars(TestTaxonCommon):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_add_field(self, mock_import):
         super().__test_add_field__()
 
-    def test_add_field_incorrect_index(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_add_field_incorrect_index(self, mock_import):
         super().__test_add_field_incorrect_index__()
 
-    def test_add_field_data(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_add_field_data(self, mock_import):
         self.read_pandas()
-        df = self.taxon.polars
+        df = self.taxon.pandas
         self.assertEqual(47, len(df.columns), "Wrong number of initial columns")
         self.assertRaisesRegex(
             AttributeError, "language",
@@ -46,63 +48,47 @@ class TestTaxon(TestTaxonCommon):
             self.taxon.__entries__[0].language,
             "Language not write on all entries"
         )
-        df = self.taxon.polars
+        df = self.taxon.pandas
         self.assertEqual(48, len(df.columns), "Wrong number of columns after set")
         self.assertEqual(48, len(self.taxon.fields), "Fields not set")
         self.text = self.text.replace(
             """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>""",
             """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>
     <field index="47" default="eng" term="http://purl.org/dc/elements/1.1/language"/>""")
-        self.assertEqual(Language.ENG, self.taxon.polars.item(7, "language"), "Wrong set default on polars.")
+        self.assertEqual(Language.ENG, self.taxon.pandas.loc[7, "language"], "Wrong set default on pandas.")
         self.assertEqual(Language.ENG, self.taxon.__entries__[7].language, "Wrong set default on entries.")
         self.assertEqualTree(et.fromstring(self.text), self.taxon.to_element(), "Error on element conversion with new field")
 
-    def test_add_field_lazy(self):
-        self.read_pandas(lazy=True)
-        self.assertRaisesRegex(
-            AttributeError, "language",
-            getattr,
-            self.taxon.__entries__[0],
-            "language"
-        )
-        df = self.taxon.polars
-        self.assertEqual(47, len(df.columns), "Wrong number of initial columns")
-        self.read_pandas(lazy=True)
-        self.taxon.add_field(DWCLanguage(index=47, default=Language.ENG))
-        df = self.taxon.polars
-        self.assertEqual(48, len(df.columns), "Wrong number of columns after set")
-        self.assertEqual(48, len(self.taxon.fields), "Fields not set")
-        self.text = self.text.replace(
-            """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>""",
-            """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>
-    <field index="47" default="eng" term="http://purl.org/dc/elements/1.1/language"/>""")
-        self.assertEqual(Language.ENG.value, self.taxon.polars.item(7, "language"), "Wrong set default on polars.")
-        self.assertEqualTree(et.fromstring(self.text), self.taxon.to_element(),
-                             "Error on element conversion with new field")
-
-
-    def test_parse(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_parse(self, mock_import):
         super().__test_parse__()
 
-    def test_filter_kingdom_exception(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_kingdom_exception(self, mock_import):
         super().__test_filter_kingdom_exception__()
 
-    def test_get_parents(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_get_parents(self, mock_import):
         super().__test_get_parents__()
 
-    def test_get_incorrect_parent(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_get_incorrect_parent(self, mock_import):
         self.__test_get_incorrect_parent__()
 
-    def test_get_synonyms(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_get_synonyms(self, mock_import):
         self.__test_get_synonyms__()
 
-    def test_get_synonyms_names(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_get_synonyms_names(self, mock_import):
         super().__test_get_synonyms_names__()
 
-    def test_get_incorrect_synonyms(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_get_incorrect_synonyms(self, mock_import):
         self.__test_get_incorrect_synonyms__()
 
-    def test_filter_kingdom(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_kingdom(self, mock_import):
         self.read_pandas()
         df = self.taxon.pandas
         length_df = len(df)
@@ -115,8 +101,8 @@ class TestTaxon(TestTaxonCommon):
         self.taxon.filter_by_kingdom([first_kingdom])
         self.assertEqual(kingdom_summary[first_kingdom], len(self.taxon), "Filter by first kingdom.")
 
-
-    def test_filter_phylum_exception(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_phylum_exception(self, mock_import):
         taxon = Taxon(0, "file.txt", [])
         self.assertRaisesRegex(
             AssertionError,
@@ -125,7 +111,8 @@ class TestTaxon(TestTaxonCommon):
             []
         )
 
-    def test_filter_phylum(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_phylum(self, mock_import):
         self.read_pandas()
         df = self.taxon.pandas
         length_df = len(df)
@@ -148,7 +135,8 @@ class TestTaxon(TestTaxonCommon):
             f"Incorrect filter by {phylum_list[0]}."
         )
 
-    def test_filter_class(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_class(self, mock_import):
         self.read_pandas()
         df = self.taxon.pandas
         length_df = len(df)
@@ -178,7 +166,8 @@ class TestTaxon(TestTaxonCommon):
             f"Incorrect filter by {class_list[2]}."
         )
 
-    def test_filter_order(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_order(self, mock_import):
         self.read_pandas()
         df = self.taxon.pandas
         length_df = len(df)
@@ -200,7 +189,8 @@ class TestTaxon(TestTaxonCommon):
         print(f"Expected: with order {with_order} and parents {parents}", file=sys.stderr)
         self.assertEqual(with_order + parents, len(self.taxon), "Incorrect filter.")
 
-    def test_filter_family(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_family(self, mock_import):
         self.read_pandas()
         df = self.taxon.pandas
         length_df = len(df)
@@ -222,7 +212,8 @@ class TestTaxon(TestTaxonCommon):
         print(f"Expected: with family {with_family} and parents {parents}", file=sys.stderr)
         self.assertEqual(with_family + parents, len(self.taxon), "Incorrect filter.")
 
-    def test_filter_genus(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_genus(self, mock_import):
         self.read_pandas()
         df = self.taxon.pandas
         length_df = len(df)
@@ -244,7 +235,8 @@ class TestTaxon(TestTaxonCommon):
         print(f"Expected: with genus {with_genus} and parents {parents}", file=sys.stderr)
         self.assertEqual(with_genus + parents, len(self.taxon), "Incorrect filter.")
 
-    def test_filter_species(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_species(self, mock_import):
         self.read_pandas()
         df = self.taxon.pandas
         length_df = len(df)
@@ -286,13 +278,16 @@ class TestTaxon(TestTaxonCommon):
             "Filter by all genera."
         )
 
-    def test_none(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_none(self, mock_import):
         super().__test_none__()
 
-    def test_merge(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_merge(self, mock_import):
         super().__test_merge__()
 
-    def test_missing_field(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_missing_field(self, mock_import):
         self.assertRaises(
             AssertionError,
             Taxon.from_string,
@@ -309,7 +304,8 @@ class TestTaxon(TestTaxonCommon):
             """
         )
 
-    def test_field_twice(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_field_twice(self, mock_import):
         self.assertRaises(
             AssertionError,
             Taxon.from_string,
@@ -329,7 +325,8 @@ class TestTaxon(TestTaxonCommon):
             """
         )
 
-    def test_parse_invalid(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_parse_invalid(self, mock_import):
         self.assertRaises(
             AssertionError,
             Taxon.from_string,
@@ -345,7 +342,8 @@ class TestTaxon(TestTaxonCommon):
             """
         )
 
-    def test_set_pandas(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_set_pandas(self, mock_import):
         self.read_pandas()
         df = self.taxon.pandas
         self.assertEqual(163460, len(self.taxon), "Data incorrectly read.")
@@ -355,7 +353,8 @@ class TestTaxon(TestTaxonCommon):
         self.assertEqual(100, len(df), "DataFrame incorrectly set.")
         self.assertEqual(100, len(self.taxon), "Data incorrectly set.")
 
-    def test_write_file(self):
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_write_file(self, mock_import):
         self.read_pandas()
         plain_text = self.taxon.write_file()
         self.maxDiff = None
@@ -367,21 +366,19 @@ class TestTaxon(TestTaxonCommon):
                     "File written incorrectly."
                 )
 
-    def test_read_lazy(self):
-        self.read_pandas(lazy=True)
-        self.assertEqual(
-            163460, len(self.taxon), "Data incorrectly read."
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_read_lazy(self, mock_import):
+        self.assertRaises(
+            ImportError,
+            self.read_pandas,
+            lazy=True,
         )
 
-    def test_close(self):
-        with tempfile.NamedTemporaryFile(delete=True) as file:
-            temp_folder = os.path.dirname(file.name)
-            temp_files = os.listdir(temp_folder)
-            temp_files.remove(os.path.basename(file.name))
-        self.read_pandas(lazy=True)
-        self.assertTrue(self.taxon.is_lazy(), "`lazy` did not set.")
-        self.taxon.close()
-        self.assertCountEqual(temp_files, os.listdir(temp_folder), "File was not deleted.")
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_no_polars(self, mock_import):
+        self.read_pandas()
+        with self.assertRaisesRegex(ImportError, "Install polars to use this feature"):
+            var = self.taxon.polars
 
 
 if __name__ == '__main__':

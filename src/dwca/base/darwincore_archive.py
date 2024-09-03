@@ -213,7 +213,7 @@ class DarwinCoreArchive(DarwinCore):
         return
 
     @classmethod
-    def from_file(cls, path_to_archive: str) -> DarwinCoreArchive:
+    def from_file(cls, path_to_archive: str, lazy: bool = False) -> DarwinCoreArchive:
         """
         Generate a Darwin Core Archive instance from an archive file (`.zip`).
 
@@ -221,6 +221,8 @@ class DarwinCoreArchive(DarwinCore):
         ----------
         path_to_archive : str
             Path of the archive file.
+        lazy : bool, optional
+            Read the archive lazy. Default `False`.
 
         Returns
         -------
@@ -234,16 +236,16 @@ class DarwinCoreArchive(DarwinCore):
             metadata_content = archive.read(metadata.__metadata__)
             eml = EML.from_string(read_string(metadata_content))
             darwin_core = DarwinCoreArchive(_id=eml.package_id)
+            darwin_core.__metadata__ = eml
         else:
             darwin_core = DarwinCoreArchive()
         darwin_core.__meta__ = metadata
-        darwin_core.__metadata__ = eml
         core_file = archive.read(darwin_core.core.filename)
-        darwin_core.__meta__.__core__.read_file(core_file.decode(encoding=metadata.__core__.__encoding__))
+        darwin_core.__meta__.__core__.read_file(core_file.decode(encoding=metadata.__core__.__encoding__), lazy=lazy)
         darwin_core.__meta__.__core__._register_darwin_core_(0, darwin_core)
         for i, extension in enumerate(darwin_core.extensions):
             extension_file = archive.read(extension.filename)
-            darwin_core.__meta__.__extensions__[i].read_file(extension_file.decode())
+            darwin_core.__meta__.__extensions__[i].read_file(extension_file.decode(), lazy=lazy)
         darwin_core.__dataset_meta__ = {
             "metadata": darwin_core.__metadata__
         }
@@ -255,7 +257,7 @@ class DarwinCoreArchive(DarwinCore):
                     dataset_meta = EML.from_string(read_string(archive.read(item)))
                     darwin_core.__dataset_meta__[dataset_meta.package_id] = dataset_meta
                 except Exception as e:
-                    warn(f"Could not read {item.replace('dataset/', '')}:\n{e}")
+                    warn(f"Could not read {item.replace('dataset/', '')}:\n{e}", category=RuntimeWarning)
         archive.close()
         return darwin_core
 

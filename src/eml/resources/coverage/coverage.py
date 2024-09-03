@@ -120,17 +120,17 @@ class EMLCoverage(EMLObject):
         try:
             geographic = GeographicCoverage.parse(element.find("geographicCoverage", nmap), nmap)
         except ValueError as e:
-            warn(str(e))
+            warn(str(e), category=SyntaxWarning)
             geographic = None
         try:
             temporal = TemporalCoverage.parse(element.find("temporalCoverage", nmap), nmap)
         except ValueError as e:
-            warn(str(e))
+            warn(str(e), category=SyntaxWarning)
             temporal = None
         try:
             taxonomic = TaxonomicCoverage.parse(element.find("taxonomicCoverage", nmap), nmap)
         except ValueError as e:
-            warn(str(e))
+            warn(str(e), category=SyntaxWarning)
             taxonomic = None
         return EMLCoverage(
             geographic=geographic,

@@ -1,7 +1,7 @@
 import datetime as dt
 from datetime import datetime
 from datetime_interval import Interval
-from typing import TypeAlias, get_args, List, Any, Union
+from typing import TypeAlias, get_args, List, Any, Union, get_origin
 from warnings import warn
 
 POSSIBLE_DATETIME_FORMATS = [
@@ -49,8 +49,10 @@ def format_to_type(value: str, a_type: TypeAlias, address_value: bool = True) ->
             return None
         else:
             raise e
-    except TypeError:
+    except TypeError as e:
         if a_type == List[str]:
+            if value is None:
+                return None
             return value.split(" | ")
         elif a_type.__name__ == "Tuple":
             return tuple([
@@ -130,7 +132,7 @@ def format_datetime(value: str) -> dt.datetime | None:
         Datetime object from value.
     """
     previous_exception = None
-    if value == "":
+    if value == "" or value is None:
         return
     for dt_format in POSSIBLE_DATETIME_FORMATS:
         try:
@@ -223,3 +225,45 @@ def unformat_datetime(value: dt.datetime) -> str:
             return value.strftime(f"%Y-%m-%dT%H:%M{z}")
     else:
         return value.strftime(f"%Y-%m-%dT%H:%M:%S{z}")
+
+
+def type_to_pl(a_type: TypeAlias, lazy: bool = False) -> TypeAlias:
+    """
+    Equivalent to a_type in the polars dtype.
+
+    Parameters
+    ----------
+    a_type : TypeAlias
+        Any available type.
+    lazy : bool
+        When used to inference the types in lazy mode.
+
+    Returns
+    -------
+    TypeAlias
+        polars dtype.
+    """
+    try:
+        import polars as pl
+    except ImportError:
+        raise ImportError("polars not installed.")
+    if a_type == str:
+        return pl.String
+    elif get_origin(a_type) == list:
+        if lazy:
+            return pl.String
+        inner_type = get_args(a_type)
+        if len(inner_type) == 1:
+            return pl.List(type_to_pl(get_args(a_type)[0]))
+        else:
+            return pl.List(pl.Object)
+    elif a_type == int:
+        return pl.Int64
+    elif a_type == float:
+        return pl.Float64
+    elif a_type == dt.datetime:
+        return pl.Datetime
+    else:
+        if lazy:
+            return pl.String
+        return pl.Object

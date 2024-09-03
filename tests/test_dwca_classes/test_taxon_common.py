@@ -30,15 +30,15 @@ class TestTaxonCommon(TestXML):
         self.taxon = None
         return
 
-    def read_pandas(self):
+    def read_pandas(self, lazy: bool = False):
         self.taxon = Taxon.from_string(self.text)
         with open(os.path.join(PATH, os.pardir, "example_data", "taxon.txt"), "r", encoding="utf-8") as file:
-            self.taxon.read_file(file.read())
+            self.taxon.read_file(file.read(), lazy=lazy)
         return
 
     def __test_add_field__(self):
         taxon = Taxon.from_string(self.text)
-        taxon.add_field(DWCLanguage(index=47, default="eng"))
+        taxon.add_field(DWCLanguage(index=47, default=Language.ENG))
         self.assertEqual(48, len(taxon.__fields__), "Fields not set")
         self.text = self.text.replace(
             """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>""",
@@ -49,7 +49,7 @@ class TestTaxonCommon(TestXML):
     def __test_add_field_incorrect_index__(self):
         taxon = Taxon.from_string(self.text)
         with self.assertWarnsRegex(UserWarning, "index"):
-            taxon.add_field(DWCLanguage(index=3, default="eng"))
+            taxon.add_field(DWCLanguage(index=3, default=Language.ENG))
         self.assertEqual(48, len(taxon.__fields__), "Fields not set")
         self.text = self.text.replace(
             """<field index="46" default="EXAMPLE" term="http://rs.tdwg.org/dwc/terms/institutionCode"/>""",
@@ -91,7 +91,7 @@ class TestTaxonCommon(TestXML):
     def __test_get_incorrect_parent__(self):
         self.read_pandas()
         taxa_id = "urn:lsid:example.org:taxname:300000"
-        with self.assertWarnsRegex(UserWarning, taxa_id):
+        with self.assertWarnsRegex(RuntimeWarning, taxa_id):
             missing = self.taxon.get_parents([taxa_id])
             self.assertEqual(0, len(missing), "Parent found of invalid taxon id")
 
@@ -129,7 +129,7 @@ class TestTaxonCommon(TestXML):
     def __test_get_incorrect_synonyms__(self):
         self.read_pandas()
         taxa_id = "urn:lsid:example.org:taxname:300000"
-        with self.assertWarnsRegex(UserWarning, "urn:lsid:example.org:taxname:300000"):
+        with self.assertWarnsRegex(RuntimeWarning, "urn:lsid:example.org:taxname:300000"):
             synonyms = self.taxon.all_synonyms([taxa_id])
             self.assertEqual(0, len(synonyms), "Found something of false taxon id.")
 
