@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List
 
 from dwca.classes import DataFile, DataFileType
 from dwca.terms import ResourceRelationshipID, ResourceID, RelationshipOfResourceID, RelatedResourceID, \

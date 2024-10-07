@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Union
+from typing import List
 
 from dwca.classes import DataFile, DataFileType
 from dwca.terms import Field, OccurrenceID, CatalogNumber, RecordNumber, RecordedBy, RecordedByID, IndividualCount, \

@@ -20,7 +20,7 @@ except ImportError:
 try:
     import polars as pl
 except ImportError:
-    pd = None
+    pl = None
 
 
 class Taxon(DataFile):
