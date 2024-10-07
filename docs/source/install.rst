@@ -7,7 +7,7 @@ Binary installers for the latest released version are available at the Python Pa
 
     pip install pydwca
 
-This will install the library and the dependencies listed on [`requirements`](https://github.com/IEB-BIODATA/pydwca/blob/main/requirements.txt). This will give you a basic usage.
+This will install the library and the dependencies listed on `requirements <https://github.com/IEB-BIODATA/pydwca/blob/main/requirements.txt>`_. This will give you a basic usage.
 
 If you want all the available features install the optional dependencies:
 

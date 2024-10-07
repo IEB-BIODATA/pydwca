@@ -1,69 +1,69 @@
 xml\_common.utils package
 =========================
 
-Submodules
-----------
+CamelCase Enum
+--------------
 
-xml\_common.utils.enum module
------------------------------
+This implementation of the `Enum Python Class <https://docs.python.org/3/library/enum.html>`_ supports the conversation from EML types to Python Enum.
 
 .. automodule:: xml_common.utils.enum
    :members:
    :undoc-members:
    :show-inheritance:
 
-xml\_common.utils.establishment\_means module
----------------------------------------------
+Language Class
+--------------
 
-.. automodule:: xml_common.utils.establishment_means
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-xml\_common.utils.gpolygon module
----------------------------------
-
-.. automodule:: xml_common.utils.gpolygon
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-xml\_common.utils.iteratate module
-----------------------------------
-
-.. automodule:: xml_common.utils.iteratate
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-xml\_common.utils.language module
----------------------------------
+Language type for various EML objects.
 
 .. automodule:: xml_common.utils.language
    :members:
    :undoc-members:
    :show-inheritance:
 
-xml\_common.utils.length\_unit module
--------------------------------------
+Defined Values
+--------------
+
+These are helpful predefined types.
 
 .. automodule:: xml_common.utils.length_unit
    :members:
    :undoc-members:
    :show-inheritance:
 
-xml\_common.utils.type\_functions module
-----------------------------------------
+.. automodule:: xml_common.utils.establishment_means
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Type Function
+-------------
+
+Functions for type conversion, from XML defined to Python data types.
 
 .. automodule:: xml_common.utils.type_functions
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+Iteration
+---------
 
-.. automodule:: xml_common.utils
+Iteration functions.
+
+`OptionalTqdm` support having `tqdm <https://tqdm.github.io/>`_ installed or not.
+
+.. automodule:: xml_common.utils.iteratate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+GPolygon
+--------
+
+GPolygon support functions.
+
+.. automodule:: xml_common.utils.gpolygon
    :members:
    :undoc-members:
    :show-inheritance:

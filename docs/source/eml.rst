@@ -3,25 +3,8 @@ eml package
 
 Package for reading and writing `Ecological Metadata Language <https://eml.ecoinformatics.org/>`_.
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   eml.resources
-   eml.types
-
-Module contents
----------------
-
-.. automodule:: eml
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 EML Class
-~~~~~~~~~
+---------
 
 .. automodule:: eml.base.eml
    :members:
@@ -29,7 +12,7 @@ EML Class
    :show-inheritance:
 
 EMLVersion Class
-~~~~~~~~~~~~~~~~
+----------------
 
 .. automodule:: eml.base.version
    :members:
@@ -37,9 +20,18 @@ EMLVersion Class
    :show-inheritance:
 
 EMLObject Base Class
-~~~~~~~~~~~~~~~~~~~~
+--------------------
 
 .. automodule:: eml.types.eml_object
    :members:
    :undoc-members:
    :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   eml.types
+   eml.resources
