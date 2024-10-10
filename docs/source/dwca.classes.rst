@@ -3,6 +3,10 @@ dwca.classes package
 
 This module corresponds to the "class" type terms defined in the https://dwc.tdwg.org/list/#31-index-by-term-name "Classes" section, excluding the deprecated ones. These Python classes represent a complete file in a Darwin Core Archive.
 
+This classes are the ones listed in the description of `rowType` in the `Attributes section <https://dwc.tdwg.org/text/#221-attributes>`_ for a `<core>` or `<extension>` element. Presented below:
+
+    (...) For convenience the URIs for classes defined by the Darwin Core are: dwc:Occurrence: http://rs.tdwg.org/dwc/terms/Occurrence, dwc:Organism: http://rs.tdwg.org/dwc/terms/Organism, dwc:MaterialEntity: http://rs.tdwg.org/dwc/terms/MaterialEntity, dwc:MaterialSample: http://rs.tdwg.org/dwc/terms/MaterialSample, dwc:Event: http://rs.tdwg.org/dwc/terms/Event, dcterms:Location: http://purl.org/dc/terms/Location, dwc:GeologicalContext: http://purl.org/dc/terms/GeologicalContext, dwc:Identification: http://rs.tdwg.org/dwc/terms/Identification, dwc:Taxon: http://rs.tdwg.org/dwc/terms/Taxon, dwc:ResourceRelationship: http://rs.tdwg.org/dwc/terms/ResourceRelationship, dwc:MeasurementOrFact: http://rs.tdwg.org/dwc/terms/MeasurementOrFact, chrono:ChronometricAge: http://rs.tdwg.org/chrono/terms/ChronometricAge,
+
 DataFile Class
 --------------
 
