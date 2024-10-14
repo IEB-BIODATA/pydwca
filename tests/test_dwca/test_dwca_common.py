@@ -72,7 +72,7 @@ class TestDWCACommon(TestXML):
         dataset2 = DarwinCoreArchive.from_file(
             os.path.join(PATH, os.pardir, "example_data", "dataset_2.zip")
         )
-        expected = DarwinCoreArchive.from_file(
+        original_expected = DarwinCoreArchive.from_file(
             os.path.join(PATH, os.pardir, "example_data", "merged_dataset.zip")
         )
         metadata = EML(
@@ -89,27 +89,58 @@ class TestDWCACommon(TestXML):
                 individual_name=IndividualName("Doe", "Jane")
             )],
         )
-        actual = DarwinCoreArchive.merge(
+        actual_12 = DarwinCoreArchive.merge(
             dataset1, dataset2, eml=metadata
         )
-        self.assertEqualTree(
-            actual.metadata.to_element(),
-            expected.metadata.to_element(),
-            "Incorrect EML set"
+        actual_21 = DarwinCoreArchive.merge(
+            dataset2, dataset1, eml=metadata
         )
-        self.assertEqual(
-            len(expected.core), len(actual.core), f"Wrong number of values on core"
+        actual_121 = DarwinCoreArchive.merge(
+            actual_12, dataset1, eml=metadata
         )
-        self.assertEqual(len(expected.extensions), len(actual.extensions), "Not the same extensions")
-        for exp_ext, act_ext in zip(expected.extensions, actual.extensions):
-            self.assertEqual(
-                len(exp_ext), len(act_ext), f"Wrong number of values on extension: {act_ext}"
+        actual_112 = DarwinCoreArchive.merge(
+            dataset1, actual_12, eml=metadata
+        )
+        new_expected = DarwinCoreArchive.merge(
+            original_expected, dataset1, eml=metadata
+        )
+        for actual, expected, name in [
+            (actual_12, original_expected, "1 + 2"),
+            (actual_21, original_expected, "2 + 1"),
+            (actual_121, new_expected, "1 + 2 + 1"),
+            (actual_112, new_expected, "1 + 1 + 2"),
+        ]:
+            self.assertEqualTree(
+                actual.metadata.to_element(),
+                expected.metadata.to_element(),
+                f"Incorrect EML set ({name})"
             )
-        self.assertDictEqual(
-            expected.dataset_metadata,
-            actual.dataset_metadata,
-            "Different metadata of datasets"
-        )
+            self.assertEqual(
+                len(expected.core), len(actual.core), f"Wrong number of values on core ({name})"
+            )
+            self.assertEqual(len(expected.extensions), len(actual.extensions), f"Not the same extensions ({name})")
+            for exp_ext, act_ext in zip(expected.extensions, actual.extensions):
+                self.assertEqual(
+                    len(exp_ext), len(act_ext), f"Wrong number of values on extension: {act_ext} ({name})"
+                )
+            self.assertDictEqual(
+                expected.dataset_metadata,
+                actual.dataset_metadata,
+                f"Different metadata of datasets ({name})"
+            )
+            with tempfile.NamedTemporaryFile("wb") as file:
+                actual.to_file(file.name)
+                with zipfile.ZipFile(file.name, "r") as zip_file:
+                    self.assertEqual(5 + len(actual.dataset_metadata), len(zip_file.namelist()), "Error writing DwC-A file with metadata.")
+                    datasets = ["eml.xml"]
+                    for dataset in actual.dataset_metadata.keys():
+                        if dataset != "metadata":
+                            datasets.append("dataset/" + dataset + ".xml")
+                    self.assertCountEqual(
+                        ['meta.xml', 'taxon.txt', 'reference.txt', 'extension1.txt', 'extension2.txt'] + datasets,
+                        zip_file.namelist(),
+                        "Incorrect file saved"
+                    )
 
 
 if __name__ == '__main__':

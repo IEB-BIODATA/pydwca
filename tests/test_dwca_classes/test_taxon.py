@@ -7,7 +7,7 @@ import pandas as pd
 from lxml import etree as et
 
 from dwca.classes import Taxon
-from dwca.terms import DWCLanguage
+from dwca.terms import DWCLanguage, TaxonID
 from test_dwca_classes.test_taxon_common import TestTaxonCommon
 from xml_common.utils import Language
 
@@ -59,11 +59,15 @@ class TestTaxon(TestTaxonCommon):
 
     def test_add_field_lazy(self):
         self.read_pandas(lazy=True)
-        self.assertRaisesRegex(
-            AttributeError, "language",
-            getattr,
-            self.taxon.__entries__[0],
-            "language"
+        self.assertNotIn(
+            DWCLanguage(0).uri,
+            self.taxon.fields,
+            "Language in fields"
+        )
+        self.assertIn(
+            TaxonID(0).uri,
+            self.taxon.fields,
+            "TaxonID not in fields"
         )
         df = self.taxon.polars
         self.assertEqual(47, len(df.columns), "Wrong number of initial columns")
