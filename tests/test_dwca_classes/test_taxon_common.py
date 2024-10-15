@@ -32,8 +32,11 @@ class TestTaxonCommon(TestXML):
 
     def read_pandas(self, lazy: bool = False):
         self.taxon = Taxon.from_string(self.text)
-        with open(os.path.join(PATH, os.pardir, "example_data", "taxon.txt"), "r", encoding="utf-8") as file:
-            self.taxon.read_file(file.read(), lazy=lazy)
+        with open(os.path.join(PATH, os.pardir, "example_data", "taxon.txt"), "rb") as file:
+            if lazy:
+                self.taxon.read_file("", source_file=file, lazy=lazy)
+            else:
+                self.taxon.read_file(file.read().decode(encoding="utf-8"))
         return
 
     def __test_add_field__(self):

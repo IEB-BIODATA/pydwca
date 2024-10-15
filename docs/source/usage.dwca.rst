@@ -73,11 +73,24 @@ And you can work with this data as an array of ``Python objects``, as ``numpy ar
 
 .. code-block:: python
 
-    darwin_core.core.data.as_pandas()
+    darwin_core.core.data.pandas
 
 .. code-block:: python
 
-    Pending...
+        taxonID  ... institutionCode
+    0            urn:lsid:example.org:taxname:0  ...            DCAE
+    1            urn:lsid:example.org:taxname:1  ...            DCAE
+    2            urn:lsid:example.org:taxname:2  ...            DCAE
+    3            urn:lsid:example.org:taxname:3  ...            DCAE
+    4            urn:lsid:example.org:taxname:4  ...            DCAE
+    ...                                     ...  ...             ...
+    163455  urn:lsid:example.org:taxname:292941  ...            DCAE
+    163456  urn:lsid:example.org:taxname:292942  ...            DCAE
+    163457  urn:lsid:example.org:taxname:292944  ...            DCAE
+    163458  urn:lsid:example.org:taxname:292945  ...            DCAE
+    163459  urn:lsid:example.org:taxname:292946  ...            DCAE
+
+    [163460 rows x 47 columns]
 
 Writing a DwCA archive
 ----------------------

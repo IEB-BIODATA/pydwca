@@ -21,6 +21,22 @@ class TestDWCA(TestDWCACommon):
     def test_merge(self):
         super().__test_merge__()
 
+    def test_read_lazy(self):
+        lazy_dwca = DarwinCoreArchive.from_file(os.path.join(PATH, os.pardir, "example_data", "example_archive.zip"), lazy=True)
+        self.assertEqual(
+            0, len(lazy_dwca.core.__entries__), "Entries populated in core."
+        )
+        self.assertNotEqual(
+            0, len(lazy_dwca.core), "Laziness do not load length in core."
+        )
+        for extension in lazy_dwca.extensions:
+            self.assertEqual(
+                0, len(extension.__entries__), f"Entries populated in extension {extension.uri}."
+            )
+            self.assertNotEqual(
+                0, len(extension), f"Laziness do not load length in extension {extension.uri}."
+            )
+
     def test_as_pandas(self):
         df = self.object.core.as_pandas()
         self.assertEqual(163460, len(df), "Wrong number of rows")

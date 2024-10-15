@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 import os
+import shutil
 import sys
 import tempfile
 import warnings
 from abc import ABC
 from copy import deepcopy
 from enum import Enum
-from typing import List, Dict, Type, Tuple
+from typing import List, Dict, Type, Tuple, BinaryIO
 from warnings import warn
+from zipfile import ZipExtFile
 
 from lxml import etree as et
 
@@ -392,7 +394,7 @@ class DataFile(XMLObject, ABC):
         self.__fields__ = ordered_fields
         return
 
-    def read_file(self, content: str, lazy: bool = False) -> None:
+    def read_file(self, content: str, source_file: BinaryIO = None, lazy: bool = False) -> None:
         """
         Read the content of the file specified in `files` parameters (:meth:`filename`).
 
@@ -400,6 +402,8 @@ class DataFile(XMLObject, ABC):
         ----------
         content : str
             Content of the file
+        source_file : BinaryIO, optional
+            File to read in case of laziness.
         lazy : bool, optional
             Read the file in lazy evaluation mode. Default `False`.
         """
@@ -407,7 +411,7 @@ class DataFile(XMLObject, ABC):
             try:
                 import polars as pl
                 with tempfile.NamedTemporaryFile(delete=False) as file:
-                    file.write(content.encode())
+                    shutil.copyfileobj(source_file, file)
                     self.__data__ = pl.scan_csv(
                         file.name,
                         skip_rows=self.__ignore_header_lines__,
@@ -450,6 +454,8 @@ class DataFile(XMLObject, ABC):
             for field in self.__fields__:
                 try:
                     line.append(field.unformat(getattr(entry, field.name)))
+                except AssertionError:  # In case the type got lost in pandas
+                    line.append(field.unformat(field.TYPE(getattr(entry, field.name))))
                 except Exception as e:
                     print(f"Error on {field.name} with value {getattr(entry, field.name)}", file=sys.stderr)
                     raise e
@@ -530,6 +536,12 @@ class DataFile(XMLObject, ABC):
         except ImportError:
             for entry in data_file.__entries__:
                 merged.__entries__.append(entry)
+            for i, entry in enumerate(merged.__entries__):
+                for field in merged.__fields__:
+                    try:
+                        getattr(entry, field.name)
+                    except AttributeError:
+                        setattr(merged.__entries__[i], field.name, field.default)
         return merged
 
     def close(self) -> None:
@@ -544,4 +556,4 @@ class DataFile(XMLObject, ABC):
         return (f"{role}:"
                 f"\n\tclass: {self.uri}"
                 f"\n\tfilename: {self.filename}"
-                f"\n\tcontent: {len(self.__entries__)} entries")
+                f"\n\tcontent: {self.__len__()} entries")

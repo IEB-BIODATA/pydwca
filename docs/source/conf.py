@@ -65,5 +65,6 @@ html_theme_options = {
             "url": "https://pypi.org/project/pydwca/",
             "icon": "fa-custom fa-pypi",
         },
-    ]
+    ],
+    "show_toc_level": 3
 }

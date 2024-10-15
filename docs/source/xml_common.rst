@@ -1,29 +1,20 @@
 xml\_common package
 ===================
 
-Subpackages
------------
+Util functionalities used across all library.
 
-.. toctree::
-   :maxdepth: 4
-
-   xml_common.utils
-
-Submodules
-----------
-
-xml\_common.xml\_object module
-------------------------------
+XMLObject Abstract Base Class
+-----------------------------
 
 .. automodule:: xml_common.xml_object
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+Utils Module
+------------
 
-.. automodule:: xml_common
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. toctree::
+   :maxdepth: 4
+
+   xml_common.utils

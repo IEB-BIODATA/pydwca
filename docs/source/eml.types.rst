@@ -1,14 +1,6 @@
 eml.types package
 =================
 
-Module contents
----------------
-
-.. automodule:: eml.types
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Classes with no predefine Principal Tag
 ---------------------------------------
 

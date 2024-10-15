@@ -1,22 +1,10 @@
 eml.resources package
 =====================
 
-Subpackages
------------
+Resources
+---------
 
-.. toctree::
-   :maxdepth: 4
-
-   eml.resources.coverage
-   eml.resources.distribution
-
-Module contents
----------------
-
-.. automodule:: eml.resources
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Representation of resource objects in the Ecological Metadata Language.
 
 Resource Type
 ~~~~~~~~~~~~~
@@ -30,22 +18,6 @@ Resource Base Class
 ~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: eml.resources.resource
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-KeywordSet Class
-~~~~~~~~~~~~~~~~
-
-.. automodule:: eml.resources.keyword_set
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-License Class
-~~~~~~~~~~~~~
-
-.. automodule:: eml.resources.licence
    :members:
    :undoc-members:
    :show-inheritance:
@@ -81,3 +53,56 @@ Software Resource
    :members:
    :undoc-members:
    :show-inheritance:
+
+Resource Group
+--------------
+
+Representation of resource group objects that are defined as children of a Resource object.
+
+KeywordSet Class
+~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.resources.keyword_set
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+License Class
+~~~~~~~~~~~~~
+
+.. automodule:: eml.resources.licence
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Distribution Class
+~~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.resources.distribution.distribution
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Distribution accessory classes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 4
+
+   eml.resources.distribution
+
+Coverage Class
+~~~~~~~~~~~~~~
+
+.. automodule:: eml.resources.coverage.coverage
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Coverage accessory classes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 4
+
+   eml.resources.coverage
