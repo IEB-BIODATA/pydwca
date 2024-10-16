@@ -164,6 +164,10 @@ class TestTaxonNoPandas(TestTaxonCommon):
         with self.assertRaisesRegex(ImportError, "Install pandas to use this feature"):
             var = self.taxon.pandas
 
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_set_core_field(self, mock_import):
+        self.__test_set_core_field__()
+
 
 if __name__ == '__main__':
     unittest.main()

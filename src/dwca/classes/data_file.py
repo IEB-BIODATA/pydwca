@@ -520,6 +520,14 @@ class DataFile(XMLObject, ABC):
             self.__data__ = pl.DataFrame(entries, schema=fields)
             return self.__data__
 
+    def set_core_field(self, field: Field) -> None:
+        if self.__type__ == DataFileType.CORE:
+            raise AttributeError(f"Core DataField cannot change primary field.")
+        self.__fields__[self.id] = field
+        self.__fields__[self.id].__index__ = self.id
+
+        return
+
     def merge(self, data_file: DataFile) -> DataFile:
         assert self.uri == data_file.uri, "Cannot merge two different classes: `{}` and `{}`".format(
             self.uri, data_file.uri

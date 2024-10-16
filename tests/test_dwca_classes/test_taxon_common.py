@@ -7,7 +7,7 @@ import pandas as pd
 from lxml import etree as et
 
 from dwca.classes import Taxon
-from dwca.terms import DWCLanguage
+from dwca.terms import DWCLanguage, TaxonID
 from test_xml.test_xml import TestXML
 from xml_common.utils import Language
 
@@ -168,6 +168,15 @@ class TestTaxonCommon(TestXML):
             merged_taxon.fields,
             taxon2.fields,
             "Incorrect number of fields"
+        )
+
+    def __test_set_core_field__(self):
+        self.read_pandas()
+        self.assertRaisesRegex(
+            AttributeError,
+            "Core",
+            self.taxon.set_core_field,
+            TaxonID(0)
         )
 
 
