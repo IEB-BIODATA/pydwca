@@ -23,34 +23,34 @@ class PlFormatTest(unittest.TestCase):
         self.assertRaisesRegex(ImportError, "polars not installed", type_to_pl, int)
 
     def test_int(self):
-        self.assertEqual(type_to_pl(int), pl.Int64, "Incorrect type (int) to polars type.")
+        self.assertEqual(pl.Int64, type_to_pl(int), "Incorrect type (int) to polars type.")
 
     def test_float(self):
-        self.assertEqual(type_to_pl(float), pl.Float64, "Incorrect type (float) to polars type.")
+        self.assertEqual(pl.Float64, type_to_pl(float), "Incorrect type (float) to polars type.")
 
     def test_datetime(self):
-        self.assertEqual(type_to_pl(dt.datetime), pl.Datetime, "Incorrect type (datatime) to polars type.")
+        self.assertEqual(pl.Datetime, type_to_pl(dt.datetime), "Incorrect type (datatime) to polars type.")
 
     def test_str(self):
-        self.assertEqual(type_to_pl(str), pl.String, "Incorrect type (str) to polars type.")
+        self.assertEqual(pl.String, type_to_pl(str), "Incorrect type (str) to polars type.")
 
     def test_list(self):
-        self.assertEqual(type_to_pl(List[str]), pl.List(pl.String), "Incorrect type (List[str]) to polars type.")
-        self.assertEqual(type_to_pl(List[TestType]), pl.List(pl.Object), "Incorrect type (List[obj]) to polars type.")
-        self.assertEqual(type_to_pl(List), pl.List(pl.Object), "Incorrect type (List[obj]) to polars type.")
-        self.assertEqual(type_to_pl(List[str], lazy=True), pl.String, "Incorrect type [lazy] (List[str]) to polars type.")
+        self.assertEqual(pl.List(pl.String), type_to_pl(List[str]), "Incorrect type (List[str]) to polars type.")
+        self.assertEqual(pl.List(pl.Object), type_to_pl(List[TestType]), "Incorrect type (List[obj]) to polars type.")
+        self.assertEqual(pl.List(pl.Object), type_to_pl(List), "Incorrect type (List[obj]) to polars type.")
+        self.assertEqual(pl.String, type_to_pl(List[str], lazy=True), "Incorrect type [lazy] (List[str]) to polars type.")
 
     def test_nested_list(self):
-        self.assertEqual(type_to_pl(List[List[str]]), pl.List(pl.List(pl.String)), "Incorrect type (List[List[str]]) to polars type.")
-        self.assertEqual(type_to_pl(List[List[TestType]]), pl.List(pl.List(pl.Object)), "Incorrect type (List[List[obj]]) to polars type.")
-        self.assertEqual(type_to_pl(List[List[List[int]]]), pl.List(pl.List(pl.List(pl.Int64))),
+        self.assertEqual(pl.List(pl.List(pl.String)), type_to_pl(List[List[str]]), "Incorrect type (List[List[str]]) to polars type.")
+        self.assertEqual(pl.List(pl.List(pl.Object)), type_to_pl(List[List[TestType]]), "Incorrect type (List[List[obj]]) to polars type.")
+        self.assertEqual(pl.List(pl.List(pl.List(pl.Int64))), type_to_pl(List[List[List[int]]]),
                          "Incorrect type (List[List[List[int]]]) to polars type.")
-        self.assertEqual(type_to_pl(List[List[List[int]]], lazy=True), pl.String,
+        self.assertEqual(pl.String, type_to_pl(List[List[List[int]]], lazy=True),
                          "Incorrect type [lazy] (List[List[List[int]]]) to polars type.")
 
     def test_obj(self):
-        self.assertEqual(type_to_pl(TestType), pl.Object, "Incorrect type (obj) to polars type.")
-        self.assertEqual(type_to_pl(TestType, lazy=True), pl.String, "Incorrect type [lazy] (obj) to polars type.")
+        self.assertEqual(pl.Object, type_to_pl(TestType), "Incorrect type (obj) to polars type.")
+        self.assertEqual(pl.String, type_to_pl(TestType, lazy=True), "Incorrect type [lazy] (obj) to polars type.")
 
 
 
