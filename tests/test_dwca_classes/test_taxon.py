@@ -387,6 +387,9 @@ class TestTaxon(TestTaxonCommon):
         self.taxon.close()
         self.assertCountEqual(temp_files, os.listdir(temp_folder), "File was not deleted.")
 
+    def test_set_core_field(self):
+        self.__test_set_core_field__()
+
 
 if __name__ == '__main__':
     unittest.main()

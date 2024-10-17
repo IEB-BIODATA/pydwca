@@ -4,6 +4,7 @@ import unittest
 from lxml import etree as et
 
 from dwca.classes import Identification
+from dwca.terms import TaxonID
 from test_xml.test_xml import TestXML
 
 PATH = os.path.abspath(os.path.dirname(__file__))
@@ -30,6 +31,13 @@ class TestIdentification(TestXML):
         self.assertEqual(Identification.URI, identification.uri, "Row type parse incorrectly")
         self.assertEqual(13, len(identification.__fields__), "Fields parse incorrectly")
         self.assertEqualTree(self.identification_xml, identification.to_element(), "Error on element conversion")
+
+    def test_set_core_field(self):
+        identification = Identification.from_string(self.text)
+        self.assertEqual("", identification.fields[0], "Field from nowhere.")
+        identification.set_core_field(TaxonID(3))
+        self.assertEqual(TaxonID(3).uri, identification.fields[0], "Field not set.")
+        self.assertEqual(0, identification.__fields__[0].index, "Field not changed on set.")
 
     def test_none(self):
         self.assertIsNone(Identification.parse(None, {}), "Object parsed from nothing")

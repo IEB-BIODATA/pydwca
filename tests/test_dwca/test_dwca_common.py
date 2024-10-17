@@ -63,6 +63,12 @@ class TestDWCACommon(TestXML):
                          "\n\tfilename: identification.txt"
                          "\n\tcontent: 7617 entries", str(self.object.extensions[2]),
                          "Wrong string of extension (identification)")
+        for ext in self.object.extensions:
+            self.assertEqual(
+                "http://rs.tdwg.org/dwc/terms/taxonID",
+                ext.fields[0],
+                f"Core id not set in extension {ext.uri}"
+            )
         self.assertEqual(Language.ENG, self.object.language, "Wrong language")
 
     def __test_merge__(self):

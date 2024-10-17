@@ -267,3 +267,34 @@ def type_to_pl(a_type: TypeAlias, lazy: bool = False) -> TypeAlias:
         if lazy:
             return pl.String
         return pl.Object
+
+def type_to_sql(a_type: TypeAlias) -> str:
+    """
+    Equivalent to a_type in the polars dtype.
+
+    Parameters
+    ----------
+    a_type : TypeAlias
+        Any available type.
+    lazy : bool
+        When used to inference the types in lazy mode.
+
+    Returns
+    -------
+    TypeAlias
+        polars dtype.
+    """
+    if a_type == int:
+        return "INTEGER"
+    elif a_type == float:
+        return "REAL"
+    elif a_type == str:
+        return "VARCHAR"
+    elif a_type == bool:
+        return "BOOLEAN"
+    elif a_type == bytes:
+        return "BLOB"
+    elif a_type == dt.datetime:
+        return "DATETIME"
+    else:
+        return "VARCHAR"

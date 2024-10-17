@@ -380,6 +380,10 @@ class TestTaxonNoPolars(TestTaxonCommon):
         with self.assertRaisesRegex(ImportError, "Install polars to use this feature"):
             var = self.taxon.polars
 
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_set_core_field(self, mock_import):
+        self.__test_set_core_field__()
+
 
 if __name__ == '__main__':
     unittest.main()
