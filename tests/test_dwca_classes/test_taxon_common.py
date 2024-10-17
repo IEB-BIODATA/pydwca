@@ -179,6 +179,70 @@ class TestTaxonCommon(TestXML):
             TaxonID(0)
         )
 
+    def __test_set_primary_key__(self):
+        self.read_pandas()
+        self.assertRaisesRegex(
+            AttributeError,
+            "Core",
+            self.taxon.set_primary_key,
+            "Taxon"
+        )
+
+    def __test_sql_table__(self):
+        self.read_pandas()
+        self.assertEqual(self.normalize_sql("""
+        CREATE TABLE "Taxon" (
+            "taxonID" VARCHAR,
+            "scientificNameID" VARCHAR,
+            "acceptedNameUsageID" VARCHAR,
+            "parentNameUsageID" VARCHAR,
+            "namePublishedInID" VARCHAR,
+            "originalNameUsageID" VARCHAR,
+            "nameAccordingToID" VARCHAR,
+            "taxonConceptID" VARCHAR,
+            "scientificName" VARCHAR,
+            "acceptedNameUsage" VARCHAR,
+            "parentNameUsage" VARCHAR,
+            "namePublishedIn" VARCHAR,
+            "originalNameUsage" VARCHAR,
+            "nameAccordingTo" VARCHAR,
+            "namePublishedInYear" INTEGER,
+            "higherClassification" VARCHAR,
+            "kingdom" VARCHAR,
+            "phylum" VARCHAR,
+            "class" VARCHAR,
+            "order" VARCHAR,
+            "superfamily" VARCHAR,
+            "family" VARCHAR,
+            "subfamily" VARCHAR,
+            "tribe" VARCHAR,
+            "subtribe" VARCHAR,
+            "genus" VARCHAR,
+            "genericName" VARCHAR,
+            "subgenus" VARCHAR,
+            "infragenericEpithet" VARCHAR,
+            "specificEpithet" VARCHAR,
+            "infraspecificEpithet" VARCHAR,
+            "cultivarEpithet" VARCHAR,
+            "taxonRank" VARCHAR,
+            "verbatimTaxonRank" VARCHAR,
+            "scientificNameAuthorship" VARCHAR,
+            "vernacularName" VARCHAR,
+            "nomenclaturalCode" VARCHAR,
+            "taxonomicStatus" VARCHAR,
+            "nomenclaturalStatus" VARCHAR,
+            "taxonRemarks" VARCHAR,
+            "modified" VARCHAR,
+            "bibliographicCitation" VARCHAR,
+            "references" VARCHAR,
+            "license" VARCHAR,
+            "rightsHolder" VARCHAR,
+            "datasetName" VARCHAR,
+            "institutionCode" VARCHAR,
+            PRIMARY KEY ("taxonID")
+        );
+        """), self.normalize_sql(self.taxon.sql_table), "Wrong SQL table.")
+
 
 if __name__ == '__main__':
     unittest.main()

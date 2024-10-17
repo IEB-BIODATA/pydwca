@@ -24,6 +24,10 @@ class TestTaxon(TestTaxonCommon):
         if self.taxon is not None and self.taxon.is_lazy():
             self.taxon.close()
 
+    def test_name(self):
+        taxon = Taxon.from_string(self.text)
+        self.assertEqual("Taxon", taxon.name, "Name parsed incorrectly.")
+
     def test_add_field(self):
         super().__test_add_field__()
 
@@ -389,6 +393,12 @@ class TestTaxon(TestTaxonCommon):
 
     def test_set_core_field(self):
         self.__test_set_core_field__()
+
+    def test_set_primary_key(self):
+        self.__test_set_primary_key__()
+
+    def test_sql_table(self):
+        self.__test_sql_table__()
 
 
 if __name__ == '__main__':

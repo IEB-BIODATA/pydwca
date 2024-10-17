@@ -19,6 +19,11 @@ class TestIdentification(TestXML):
         self.text = et.tostring(self.identification_xml, pretty_print=True).decode("utf-8")
         return
 
+    def test_name(self):
+        taxon = Identification.from_string(self.text)
+        self.assertEqual("Identification", taxon.name, "Name parsed incorrectly.")
+
+
     def test_parse(self):
         identification = Identification.from_string(self.text)
         self.assertEqual("identification.txt", identification.filename, "Files parse incorrectly")
@@ -93,6 +98,49 @@ class TestIdentification(TestXML):
     <field index="0" term=""/>
 </core-id>
             """
+        )
+
+    def test_sql_error(self):
+        identification = Identification.from_string(self.text)
+        with self.assertRaisesRegex(RuntimeError, "Extension"):
+            _ = identification.sql_table
+        identification.set_primary_key("Taxon")
+        with self.assertRaisesRegex(RuntimeError, "Extension"):
+            _ = identification.sql_table
+
+    def test_set_primary_key(self):
+        identification = Identification.from_string(self.text)
+        self.assertIsNone(identification.__primary_key__, "Primary key from nowhere.")
+        identification.set_primary_key("Taxon")
+        self.assertIsNotNone(identification.__primary_key__, "Primary key not set.")
+        self.assertEqual("Taxon", identification.__primary_key__, "Incorrect Primary key.")
+
+    def test_sql_table(self):
+        identification = Identification.from_string(self.text)
+        identification.set_primary_key("Taxon")
+        identification.set_core_field(TaxonID(3))
+        self.assertEqual(
+            self.normalize_sql("""
+            CREATE TABLE "Identification" (
+                "taxonID" VARCHAR,
+                "identificationID" VARCHAR,
+                "verbatimIdentification" VARCHAR,
+                "identificationQualifier" VARCHAR,
+                "typeStatus" VARCHAR,
+                "identifiedBy" VARCHAR,
+                "identifiedByID" VARCHAR,
+                "dateIdentified" VARCHAR,
+                "identificationReferences" VARCHAR,
+                "identificationVerificationStatus" VARCHAR,
+                "identificationRemarks" VARCHAR,
+                "datasetID" VARCHAR,
+                "subject" VARCHAR,
+                PRIMARY KEY ("taxonID"),
+                FOREIGN KEY ("taxonID") REFERENCES "Taxon"
+            );
+            """),
+            self.normalize_sql(identification.sql_table),
+            "Wrong SQL table."
         )
 
 

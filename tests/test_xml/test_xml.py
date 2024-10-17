@@ -1,4 +1,4 @@
-import logging
+import re
 import unittest
 from copy import deepcopy
 
@@ -31,3 +31,21 @@ class TestXML(unittest.TestCase):
                     self.assertEqualTree(expected_child, actual_child, msg=msg)
         except AssertionError:
             raise AssertionError(f"{et.tostring(expected).decode()} != {et.tostring(actual).decode()} : {msg}")
+
+    @staticmethod
+    def normalize_sql(sql: str) -> str:
+        """
+        Normalize an SQL statement string from comparison purpose.
+
+        Parameters
+        ----------
+        sql : str
+            An SQL statement string.
+
+        Returns
+        -------
+        str
+            The same statement with normalize space.
+        """
+        sql = re.sub(r'\s+', ' ', sql)
+        return sql.strip()

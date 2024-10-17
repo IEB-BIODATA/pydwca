@@ -1,12 +1,8 @@
 import os.path
 import unittest
-from typing import Tuple
-
-from lxml import etree as et
 
 from dwca.classes import OutsideClass
 from test_dwca_classes.test_outside_class_common import TestOutsideCommon
-from test_xml.test_xml import TestXML
 
 PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -15,6 +11,10 @@ class TestOutside(TestOutsideCommon):
     def setUp(self) -> None:
         self.outside_xml, self.text = self.read_xml(os.path.join(PATH, os.pardir, "example_data", "meta.xml"))
         return
+
+    def test_name(self):
+        outside_class = OutsideClass.from_string(self.text)
+        self.assertEqual("SpeciesProfile", outside_class.name, "Name parsed incorrectly.")
 
     def test_parse(self):
         super().__test_parse__()
@@ -77,6 +77,12 @@ class TestOutside(TestOutsideCommon):
 </core-id>
             """
         )
+
+    def test_set_primary_key(self):
+        self.__test_set_primary_key__()
+
+    def test_sql_table(self):
+        self.__test_sql_table__()
 
 
 if __name__ == '__main__':
