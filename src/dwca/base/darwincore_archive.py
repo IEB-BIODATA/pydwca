@@ -250,6 +250,7 @@ class DarwinCoreArchive(DarwinCore):
         darwin_core.__meta__.__core__._register_darwin_core_(0, darwin_core)
         for i, extension in enumerate(darwin_core.extensions):
             extension.set_core_field(darwin_core.core.__fields__[darwin_core.core.id])
+            extension.set_primary_key(darwin_core.core.name)
             if lazy:
                 extension_file = archive.open(extension.filename)
                 darwin_core.__meta__.__extensions__[i].read_file("", source_file=extension_file, lazy=lazy)

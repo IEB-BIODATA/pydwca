@@ -13,6 +13,8 @@ class TestOutsideTerm(TestXML):
 <field index="0" term="http://example.org/terms/example"/>
         """
         term = OutsideTerm.from_string(term_xml)
+        self.assertEqual("example", term.name, "Error parsing name.")
+        self.assertEqual("VARCHAR", term.sql_type, "Wrong SQL type.")
         self.assertEqual(0, term.index, "Index wrongly parsed")
         self.assertIsNone(term.default, "Default value from nowhere")
         self.assertIsNone(term.vocabulary, "Vocabulary from nowhere")
@@ -29,6 +31,8 @@ class TestOutsideTerm(TestXML):
 />
         """
         term = OutsideTerm.from_string(term_xml)
+        self.assertEqual("example", term.name, "Error parsing name.")
+        self.assertEqual("VARCHAR", term.sql_type, "Wrong SQL type.")
         self.assertEqual(0, term.index, "Index wrongly parsed")
         self.assertEqual("Default value", term.default, "Default wrongly parsed")
         self.assertEqual("http://example.org/vocabulary/example", term.vocabulary, "Vocabulary wrongly parsed")

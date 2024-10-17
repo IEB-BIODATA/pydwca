@@ -110,6 +110,8 @@ class DataFile(XMLObject, ABC):
         self.__data__ = None
         self.__lazy__ = False
         self.__temp_file__ = ""
+        self.__sql__ = ""
+        self.__primary_key__ = None
         self.__observers__: List[Tuple[int, DarwinCoreArchive]] = list()
         return
 
@@ -143,6 +145,15 @@ class DataFile(XMLObject, ABC):
     def fields(self) -> List[str]:
         """List[str]: List of terms of this data file."""
         return [field.uri for field in self.__fields__]
+
+    @property
+    def name(self) -> str:
+        """str: The name of the field."""
+        names = self.uri.split("/")
+        if len(names) > 1:
+            return names[-1]
+        else:
+            return names[0]
 
     def add_field(self, field: Field) -> None:
         """
@@ -201,6 +212,13 @@ class DataFile(XMLObject, ABC):
         if self.__data__ is None or self.is_lazy():
             self.as_polars()
         return self.__data__
+
+    @property
+    def sql_table(self) -> str:
+        """str: Data file as CREATE TABLE sql statement."""
+        if len(self.__sql__) == 0:
+            self.generate_sql_table()
+        return self.__sql__
 
     def _register_darwin_core_(self, _on: int, dwca: DarwinCoreArchive) -> None:
         self.__observers__.append((_on, dwca))
@@ -521,12 +539,68 @@ class DataFile(XMLObject, ABC):
             return self.__data__
 
     def set_core_field(self, field: Field) -> None:
+        """
+        Set the Core field in an Extension DataFile.
+
+        Parameters
+        ----------
+        field : Field
+            Primary Key from the Core DataFile.
+
+        Returns
+        -------
+        None
+        """
         if self.__type__ == DataFileType.CORE:
             raise AttributeError(f"Core DataField cannot change primary field.")
         self.__fields__[self.id] = field
         self.__fields__[self.id].__index__ = self.id
-
         return
+
+    def set_primary_key(self, primary_key: str) -> None:
+        """
+        Set the primary key in an Extension DataFile to be referenced on the new SQL table.
+
+        Parameters
+        ----------
+        primary_key : str
+            Name of the Core Data File.
+
+        Returns
+        -------
+        None
+        """
+        if self.__type__ == DataFileType.CORE:
+            raise AttributeError(f"Core DataField cannot be set the primary key.")
+        self.__primary_key__ = primary_key
+        return
+
+    def generate_sql_table(self) -> str:
+        """
+        Generate the CREATE TABLE statement for SQL database.
+
+        Returns
+        -------
+        str
+            CREATE TABLE statement.
+        """
+        if self.__type__ == DataFileType.EXTENSION and self.__primary_key__ is None:
+            raise RuntimeError("`set_primary_key` must be called before `generate_sql_table` in Extension DataFile.")
+        sql_columns = ""
+        for field in self.__fields__:
+            sql_columns += f"\"{field.name}\" {field.sql_type},\n"
+        primary_key = self.__fields__[self.id].name
+        if primary_key == "":
+            raise RuntimeError("Primary key cannot be empty, in case of Extension, called `set_core_field` first.")
+        foreign_key = ""
+        if self.__type__ == DataFileType.EXTENSION:
+            foreign_key = f""",
+            FOREIGN KEY ("{primary_key}") REFERENCES \"{self.__primary_key__}\""""
+        self.__sql__ = f"""CREATE TABLE "{self.name}" (
+            {sql_columns}
+            PRIMARY KEY ("{primary_key}"){foreign_key}
+        );"""
+        return self.__sql__
 
     def merge(self, data_file: DataFile) -> DataFile:
         assert self.uri == data_file.uri, "Cannot merge two different classes: `{}` and `{}`".format(

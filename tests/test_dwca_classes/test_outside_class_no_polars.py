@@ -95,6 +95,14 @@ class TestOutsideNoPolars(TestOutsideCommon):
             lazy=True
         )
 
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_set_primary_key(self, mock_import):
+        self.__test_set_primary_key__()
+
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_sql_table(self, mock_import):
+        self.__test_sql_table__()
+
 
 if __name__ == '__main__':
     unittest.main()
