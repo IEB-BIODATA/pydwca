@@ -12,9 +12,11 @@ class TestTaxon(TestXML):
 <field index="0" term="http://rs.tdwg.org/dwc/terms/taxonID"/>
         """
         term = TaxonID.from_string(term_xml)
-        self.assertEqual(0, term.index, "Index wrongly parsed")
-        self.assertIsNone(term.default, "Default value from nowhere")
-        self.assertIsNone(term.vocabulary, "Vocabulary from nowhere")
+        self.assertEqual("taxonID", term.name, "Name parsed incorrectly.")
+        self.assertEqual("VARCHAR", term.sql_type, "Wrong SQL type.")
+        self.assertEqual(0, term.index, "Index wrongly parsed.")
+        self.assertIsNone(term.default, "Default value from nowhere.")
+        self.assertIsNone(term.vocabulary, "Vocabulary from nowhere.")
         self.assertEqual("http://rs.tdwg.org/dwc/terms/taxonID", term.uri, "URI wrongly parsed")
         self.assertEqualTree(et.fromstring(term_xml), term.to_element(), "Error on to element")
 
@@ -28,6 +30,8 @@ class TestTaxon(TestXML):
 />
         """
         term = TaxonRank.from_string(term_xml)
+        self.assertEqual("taxonRank", term.name, "Name parsed incorrectly.")
+        self.assertEqual("VARCHAR", term.sql_type, "Wrong SQL type.")
         self.assertEqual(0, term.index, "Index wrongly parsed")
         self.assertEqual("species", term.default, "Default wrongly parsed")
         self.assertEqual("https://www.iapt-taxon.org/nomen/pages/main/art_3.html", term.vocabulary, "Vocabulary wrongly parsed")

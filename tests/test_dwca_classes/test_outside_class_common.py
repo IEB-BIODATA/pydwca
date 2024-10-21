@@ -5,6 +5,7 @@ from typing import Tuple
 from lxml import etree as et
 
 from dwca.classes import OutsideClass
+from dwca.terms import TaxonID
 from test_xml.test_xml import TestXML
 
 PATH = os.path.abspath(os.path.dirname(__file__))
@@ -62,6 +63,40 @@ class TestOutsideCommon(TestXML):
             extension1.fields,
             "Incorrect number of fields"
         )
+
+    def __test_set_primary_key__(self):
+        outside_class = OutsideClass.from_string(self.text)
+        self.assertIsNone(outside_class.__primary_key__, "Primary key from nowhere.")
+        outside_class.set_primary_key("Taxon")
+        self.assertIsNotNone(outside_class.__primary_key__, "Primary key not set.")
+        self.assertEqual("Taxon", outside_class.__primary_key__, "Incorrect Primary key.")
+
+    def __test_sql_table__(self):
+        self.outside_xml, self.text = self.read_xml(os.path.join(PATH, os.pardir, "example_data", "meta.xml"))
+        outside_class = OutsideClass.from_string(self.text)
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Extension",
+        ):
+            _ = outside_class.sql_table
+        outside_class.set_primary_key("Taxon")
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Extension",
+        ):
+            _ = outside_class.sql_table
+        outside_class.set_core_field(TaxonID(5))
+        self.assertEqual(self.normalize_sql("""
+        CREATE TABLE "SpeciesProfile" (
+            "taxonID" VARCHAR,
+            "isMarine" VARCHAR,
+            "isFreshwater" VARCHAR,
+            "isTerrestrial" VARCHAR,
+            "isExtinct" VARCHAR,
+            PRIMARY KEY ("taxonID"),
+            FOREIGN KEY ("taxonID") REFERENCES "Taxon"
+        );
+        """), self.normalize_sql(outside_class.sql_table), "Wrong SQL table.")
 
 
 if __name__ == '__main__':

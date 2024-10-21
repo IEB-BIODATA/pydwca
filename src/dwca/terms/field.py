@@ -5,7 +5,7 @@ from typing import Any, Dict
 
 from lxml import etree as et
 
-from xml_common.utils import format_to_type, unformat_type
+from xml_common.utils import format_to_type, unformat_type, type_to_sql
 from xml_common import XMLObject
 
 
@@ -77,6 +77,11 @@ class Field(XMLObject, ABC):
             return names[-1]
         else:
             return names[0]
+
+    @property
+    def sql_type(self) -> str:
+        """str: Type of field in a SQL relational database."""
+        return type_to_sql(self.TYPE)
 
     def format(self, value: str) -> TYPE:
         """

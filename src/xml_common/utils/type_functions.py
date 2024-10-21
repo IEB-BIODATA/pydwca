@@ -276,8 +276,6 @@ def type_to_sql(a_type: TypeAlias) -> str:
     ----------
     a_type : TypeAlias
         Any available type.
-    lazy : bool
-        When used to inference the types in lazy mode.
 
     Returns
     -------
