@@ -1,13 +1,12 @@
 import os.path
-import sys
 import unittest
 from typing import Tuple, Dict
 
-import pandas as pd
 from lxml import etree as et
 
 from dwca.classes import Taxon
 from dwca.terms import DWCLanguage, TaxonID
+from test_dwca.test_dwca_no_pandas import orig_import
 from test_xml.test_xml import TestXML
 from xml_common.utils import Language
 
@@ -136,13 +135,23 @@ class TestTaxonCommon(TestXML):
             synonyms = self.taxon.all_synonyms([taxa_id])
             self.assertEqual(0, len(synonyms), "Found something of false taxon id.")
 
-    def test_filter_phylum_exception(self):
+    def __test_filter_phylum_exception__(self):
         taxon = Taxon(0, "file.txt", [])
         self.assertRaisesRegex(
             AssertionError,
             "Phylum must be in fields",
             taxon.filter_by_phylum,
             []
+        )
+
+    def __test_fuzzy_exception__(self):
+        self.read_pandas()
+        self.assertRaisesRegex(
+            ImportError,
+            "Install rapidfuzz to use this feature.",
+            self.taxon.filter_by_species,
+            [],
+            fuzzy_threshold=90
         )
 
     def __test_none__(self):

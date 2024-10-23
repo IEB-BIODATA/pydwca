@@ -22,6 +22,12 @@ def import_mock(name, globals=None, locals=None, fromlist=(), level=0):
     return orig_import(name, globals, locals, fromlist, level)
 
 
+def import_mock_fuzzy(name, globals=None, locals=None, fromlist=(), level=0):
+    if name == 'rapidfuzz':
+        raise ImportError(f"No module named '{name}'")
+    return orig_import(name, globals, locals, fromlist, level)
+
+
 class TestTaxonNoPolars(TestTaxonCommon):
     @patch('builtins.__import__', side_effect=import_mock)
     def test_add_field(self, mock_import):
@@ -100,16 +106,6 @@ class TestTaxonNoPolars(TestTaxonCommon):
         first_kingdom = list(kingdom_summary.keys())[0]
         self.taxon.filter_by_kingdom([first_kingdom])
         self.assertEqual(kingdom_summary[first_kingdom], len(self.taxon), "Filter by first kingdom.")
-
-    @patch('builtins.__import__', side_effect=import_mock)
-    def test_filter_phylum_exception(self, mock_import):
-        taxon = Taxon(0, "file.txt", [])
-        self.assertRaisesRegex(
-            AssertionError,
-            "Phylum must be in fields",
-            taxon.filter_by_phylum,
-            []
-        )
 
     @patch('builtins.__import__', side_effect=import_mock)
     def test_filter_phylum(self, mock_import):
@@ -279,6 +275,10 @@ class TestTaxonNoPolars(TestTaxonCommon):
         )
 
     @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_phylum_exception(self, mock_import):
+        super().__test_filter_phylum_exception__()
+
+    @patch('builtins.__import__', side_effect=import_mock)
     def test_none(self, mock_import):
         super().__test_none__()
 
@@ -391,6 +391,10 @@ class TestTaxonNoPolars(TestTaxonCommon):
     @patch('builtins.__import__', side_effect=import_mock)
     def test_sql_table(self, mock_import):
         self.__test_sql_table__()
+
+    @patch('builtins.__import__', side_effect=import_mock_fuzzy)
+    def test_fuzzy_exception(self, mock_import):
+        self.__test_fuzzy_exception__()
 
 
 if __name__ == '__main__':

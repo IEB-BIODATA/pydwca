@@ -2,6 +2,7 @@ import os.path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import pandas as pd
 from lxml import etree as et
@@ -12,6 +13,14 @@ from test_dwca_classes.test_taxon_common import TestTaxonCommon
 from xml_common.utils import Language
 
 PATH = os.path.abspath(os.path.dirname(__file__))
+
+orig_import = __import__
+
+
+def import_mock_fuzzy(name, globals=None, locals=None, fromlist=(), level=0):
+    if name == 'rapidfuzz':
+        raise ImportError(f"No module named '{name}'")
+    return orig_import(name, globals, locals, fromlist, level)
 
 
 class TestTaxon(TestTaxonCommon):
@@ -123,16 +132,6 @@ class TestTaxon(TestTaxonCommon):
         self.taxon.filter_by_kingdom([first_kingdom])
         self.assertEqual(kingdom_summary[first_kingdom], len(self.taxon), "Filter by first kingdom.")
 
-
-    def test_filter_phylum_exception(self):
-        taxon = Taxon(0, "file.txt", [])
-        self.assertRaisesRegex(
-            AssertionError,
-            "Phylum must be in fields",
-            taxon.filter_by_phylum,
-            []
-        )
-
     def test_filter_phylum(self):
         self.read_pandas()
         df = self.taxon.pandas
@@ -155,6 +154,54 @@ class TestTaxon(TestTaxonCommon):
             len(self.taxon),
             f"Incorrect filter by {phylum_list[0]}."
         )
+
+    def test_filter_phylum_no_threshold(self):
+        self.read_pandas()
+        df = self.taxon.pandas
+        length_df = len(df)
+        phylum_summary = df.groupby(["kingdom", "phylum"]).size().to_dict()
+        kingdom_list = list()
+        phylum_list = list()
+        for candid in phylum_summary.keys():
+            if candid[1] != "":
+                phylum_list.append(candid[1])
+            else:
+                kingdom_list.append(candid[0])
+        print(f"Phylum Summary: {phylum_summary}", file=sys.stderr)
+        self.assertEqual(length_df, len(self.taxon), "Original length of dataframe.")
+        # Modified phylum 0
+        # Change 2 letter
+        phylum_as_list = list(phylum_list[0])
+        phylum_as_list[4] = "Y"
+        phylum_as_list.pop(3)
+        phylum_list[0] = ''.join(phylum_as_list)
+        self.taxon.filter_by_phylum(phylum_list, fuzzy_threshold=100)
+        self.assertGreater(length_df, len(self.taxon), "Filter by all phylum with no threshold.")
+
+    def test_filter_phylum_threshold(self):
+        self.read_pandas()
+        df = self.taxon.pandas
+        length_df = len(df)
+        phylum_summary = df.groupby(["kingdom", "phylum"]).size().to_dict()
+        kingdom_list = list()
+        phylum_list = list()
+        for candid in phylum_summary.keys():
+            if candid[1] != "":
+                phylum_list.append(candid[1])
+            else:
+                kingdom_list.append(candid[0])
+        print(f"Phylum Summary: {phylum_summary}", file=sys.stderr)
+        self.assertEqual(length_df, len(self.taxon), "Original length of dataframe.")
+        # Modified phylum 0
+        # Change 2 letter
+        phylum_as_list = list(phylum_list[0])
+        phylum_as_list[4] = "Y"
+        phylum_as_list.pop(3)
+        phylum_list[0] = ''.join(phylum_as_list)
+        self.taxon.filter_by_phylum(phylum_list, fuzzy_threshold=50)
+        self.assertEqual(length_df, len(self.taxon), "Filter by all phylum with enough threshold.")
+        self.taxon.filter_by_phylum(phylum_list, fuzzy_threshold=90)
+        self.assertGreater(length_df, len(self.taxon), "Filter by all phylum with not enough threshold.")
 
     def test_filter_class(self):
         self.read_pandas()
@@ -294,6 +341,9 @@ class TestTaxon(TestTaxonCommon):
             "Filter by all genera."
         )
 
+    def test_filter_phylum_exception(self):
+        super().__test_filter_phylum_exception__()
+
     def test_none(self):
         super().__test_none__()
 
@@ -399,6 +449,10 @@ class TestTaxon(TestTaxonCommon):
 
     def test_sql_table(self):
         self.__test_sql_table__()
+
+    @patch('builtins.__import__', side_effect=import_mock_fuzzy)
+    def test_fuzzy_exception(self, mock_import):
+        self.__test_fuzzy_exception__()
 
 
 if __name__ == '__main__':
