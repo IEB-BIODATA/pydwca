@@ -15,6 +15,12 @@ def import_mock(name, globals=None, locals=None, fromlist=(), level=0):
     return orig_import(name, globals, locals, fromlist, level)
 
 
+def import_mock_fuzzy(name, globals=None, locals=None, fromlist=(), level=0):
+    if name == 'rapidfuzz':
+        raise ImportError(f"No module named '{name}'")
+    return orig_import(name, globals, locals, fromlist, level)
+
+
 class TestTaxonNoPandas(TestTaxonCommon):
     @patch('builtins.__import__', side_effect=import_mock)
     def test_add_field(self, mock_import):
@@ -75,6 +81,28 @@ class TestTaxonNoPandas(TestTaxonCommon):
             len(self.taxon),
             "Incorrect filter by Ajiwcqftc."
         )
+
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_phylum_no_threshold(self, mock_import):
+        self.read_pandas()
+        length = len(self.taxon)
+        self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
+        # Modified phylum 0
+        # Change 2 letter
+        self.taxon.filter_by_phylum(["AjiYqftc", "Xpqnzcij", "Gdhevlcsj", "Xtgktcts"], fuzzy_threshold=100)
+        self.assertGreater(length, len(self.taxon), "Filter by all phylum with no threshold.")
+
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_phylum_threshold(self, mock_import):
+        self.read_pandas()
+        length = len(self.taxon)
+        self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
+        # Modified phylum 0
+        # Change 2 letter
+        self.taxon.filter_by_phylum(["AjiYqftc", "Xpqnzcij", "Gdhevlcsj", "Xtgktcts"], fuzzy_threshold=50)
+        self.assertEqual(length, len(self.taxon), "Filter by all phylum with enough threshold.")
+        self.taxon.filter_by_phylum(["AjiYqftc", "Xpqnzcij", "Gdhevlcsj", "Xtgktcts"], fuzzy_threshold=90)
+        self.assertGreater(length, len(self.taxon), "Filter by all phylum with not enough threshold.")
 
     @patch('builtins.__import__', side_effect=import_mock)
     def test_filter_class(self, mock_import):
@@ -147,7 +175,24 @@ class TestTaxonNoPandas(TestTaxonCommon):
         variety = "Rtfkiaicpdng obzninluz var. cebwyzcqoy Glhnskwn"
         cultivar = "Rtfkiaicpdng (Abifwvxqn) gurqtwpof f. prczacpvtdtu 'xzhgezqpaorp'"
         self.taxon.filter_by_species([species_synonym, variety, cultivar])
-        self.assertEqual(24, len(self.taxon), "Filter by all genera.")
+        self.assertEqual(24, len(self.taxon), "Filter by species.")
+
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_species_fuzzy_threshold(self, mock_import):
+        self.read_pandas()
+        length = len(self.taxon)
+        self.assertEqual(length, len(self.taxon), "Original length of dataframe.")
+        species_synonym = "Hqmjhacvb (Azvoxtzhwueu) gupfjmnf"
+        variety = "Rtfkiaicpdng obzninluz var. cebcqoy Glhnskwn"
+        cultivar = "Rtfkiaicpdng (Abifwvxqn) gurqtwpof 'xzhgezqpaorp'"
+        self.taxon.filter_by_species([species_synonym, variety, cultivar], fuzzy_threshold=85)
+        self.assertEqual(24, len(self.taxon), "Filter by species with enough threshold.")
+        self.taxon.filter_by_species([species_synonym, variety, cultivar], fuzzy_threshold=90)
+        self.assertGreater(24, len(self.taxon), "Filter by species with not enough threshold.")
+
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_filter_phylum_exception(self, mock_import):
+        super().__test_filter_phylum_exception__()
 
     @patch('builtins.__import__', side_effect=import_mock)
     def test_none(self, mock_import):
@@ -175,6 +220,10 @@ class TestTaxonNoPandas(TestTaxonCommon):
     @patch('builtins.__import__', side_effect=import_mock)
     def test_sql_table(self, mock_import):
         self.__test_sql_table__()
+
+    @patch('builtins.__import__', side_effect=import_mock_fuzzy)
+    def test_fuzzy_exception(self, mock_import):
+        self.__test_fuzzy_exception__()
 
 
 if __name__ == '__main__':

@@ -87,14 +87,28 @@ class Taxon(DataFile):
             taxa_field: Type[Field],
             taxa_name: str,
             taxa: List[str],
-            filter_with_rank: bool = True
+            filter_with_rank: bool = True,
+            fuzzy_threshold: float = -1,
     ) -> None:
         assert taxa_field.URI in self.fields, f"{taxa_name} must be in fields of this class to use this feature."
         tqdm = OptionalTqdm(total=100)
         tqdm.set_descriptor(desc="Getting Taxon ID")
+        if fuzzy_threshold > 0:
+            try:
+                from rapidfuzz import process
+            except ImportError:
+                raise ImportError("Install rapidfuzz to use this feature.")
         try:
             df = self.pandas
-            mask = df[ScientificName.name_cls()].isin(taxa)
+            if fuzzy_threshold < 0:
+                mask = df[ScientificName.name_cls()].isin(taxa)
+            else:
+                tqdm.reset(total=len(df))
+                def process_with_bar(x: str) -> float:
+                    tqdm.update()
+                    return process.extractOne(x, taxa)[1]
+                matches = df[ScientificName.name_cls()].apply(process_with_bar)
+                mask = matches >= fuzzy_threshold
             if filter_with_rank:
                 mask &= df[TaxonRank.name_cls()].str.lower() == taxa_name.lower()
             taxa_id = df[mask][TaxonID.name_cls()]
@@ -103,23 +117,18 @@ class Taxon(DataFile):
             taxa_id = list()
             if filter_with_rank:
                 for taxon in taxa:
-                    taxa_id.append(
-                        getattr(
-                            self.__get_entry__(**{
-                                ScientificName.name_cls(): taxon,
-                                f"{TaxonRank.name_cls()}__case_insensitive": taxa_name
-                            }), TaxonID.name_cls()
-                        )
-                    )
+                    taxon_found = self.__get_entry__(**{
+                        ScientificName.name_cls(): taxon,
+                        f"{TaxonRank.name_cls()}__case_insensitive": taxa_name
+                    }, fuzzy_threshold=fuzzy_threshold)
+                    if taxon_found is not None:
+                        taxa_id.append(getattr(taxon_found, TaxonID.name_cls()))
                     tqdm.update()
             else:
                 for taxon in taxa:
-                    taxa_id.append(
-                        getattr(
-                            self.__get_entry__(**{ScientificName.name_cls(): taxon}),
-                            TaxonID.name_cls()
-                        )
-                    )
+                    taxon_found = self.__get_entry__(**{ScientificName.name_cls(): taxon}, fuzzy_threshold=fuzzy_threshold)
+                    if taxon_found is not None:
+                        taxa_id.append(getattr(taxon_found, TaxonID.name_cls()))
                     tqdm.update()
             tqdm.reset(total=100)
         tqdm.update(n=10)
@@ -163,7 +172,7 @@ class Taxon(DataFile):
         tqdm.close()
         return
 
-    def filter_by_kingdom(self, kingdoms: List[str]) -> None:
+    def filter_by_kingdom(self, kingdoms: List[str], fuzzy_threshold: float = -1) -> None:
         """
         Filter data by a valid kingdoms.
 
@@ -171,10 +180,12 @@ class Taxon(DataFile):
         ----------
         kingdoms : List[str]
             Kingdom names to filter data.
+        fuzzy_threshold : float, optional
+            If given any value > 0 it will use Levenshtein Distance with that threshold instead of exact match.
         """
-        return self._filter_by_taxa_(Kingdom, "Kingdom", kingdoms)
+        return self._filter_by_taxa_(Kingdom, "Kingdom", kingdoms, fuzzy_threshold=fuzzy_threshold)
 
-    def filter_by_phylum(self, phyla: List[str]) -> None:
+    def filter_by_phylum(self, phyla: List[str], fuzzy_threshold: float = -1) -> None:
         """
         Filter data by a valid phylum.
 
@@ -182,10 +193,12 @@ class Taxon(DataFile):
         ----------
         phyla : List[str]
             Phylum names to filter data.
+        fuzzy_threshold : float, optional
+            If given any value > 0 it will use Levenshtein Distance with that threshold instead of exact match.
         """
-        return self._filter_by_taxa_(Phylum, "Phylum", phyla)
+        return self._filter_by_taxa_(Phylum, "Phylum", phyla, fuzzy_threshold=fuzzy_threshold)
 
-    def filter_by_class(self, classes: List[str]) -> None:
+    def filter_by_class(self, classes: List[str], fuzzy_threshold: float = -1) -> None:
         """
         Filter data by a valid class.
 
@@ -193,10 +206,12 @@ class Taxon(DataFile):
         ----------
         classes : List[str]
             Class names to filter data.
+        fuzzy_threshold : float, optional
+            If given any value > 0 it will use Levenshtein Distance with that threshold instead of exact match.
         """
-        return self._filter_by_taxa_(DWCClass, "Class", classes)
+        return self._filter_by_taxa_(DWCClass, "Class", classes, fuzzy_threshold=fuzzy_threshold)
 
-    def filter_by_order(self, orders: List[str]) -> None:
+    def filter_by_order(self, orders: List[str], fuzzy_threshold: float = -1) -> None:
         """
         Filter data by a valid order.
 
@@ -204,10 +219,12 @@ class Taxon(DataFile):
         ----------
         orders : List[str]
             Order names to filter data.
+        fuzzy_threshold : float, optional
+            If given any value > 0 it will use Levenshtein Distance with that threshold instead of exact match.
         """
-        return self._filter_by_taxa_(Order, "Order", orders)
+        return self._filter_by_taxa_(Order, "Order", orders, fuzzy_threshold=fuzzy_threshold)
 
-    def filter_by_family(self, families: List[str]) -> None:
+    def filter_by_family(self, families: List[str], fuzzy_threshold: float = -1) -> None:
         """
         Filter data by a valid family.
 
@@ -215,10 +232,12 @@ class Taxon(DataFile):
         ----------
         families : List[str]
             Family names to filter data.
+        fuzzy_threshold : float, optional
+            If given any value > 0 it will use Levenshtein Distance with that threshold instead of exact match.
         """
-        return self._filter_by_taxa_(Family, "Family", families)
+        return self._filter_by_taxa_(Family, "Family", families, fuzzy_threshold=fuzzy_threshold)
 
-    def filter_by_genus(self, genera: List[str]) -> None:
+    def filter_by_genus(self, genera: List[str], fuzzy_threshold: float = -1) -> None:
         """
         Filter data by a valid genus.
 
@@ -226,10 +245,12 @@ class Taxon(DataFile):
         ----------
         genera : List[str]
             Class names to filter genus.
+        fuzzy_threshold : float, optional
+            If given any value > 0 it will use Levenshtein Distance with that threshold instead of exact match.
         """
-        return self._filter_by_taxa_(Genus, "Genus", genera)
+        return self._filter_by_taxa_(Genus, "Genus", genera, fuzzy_threshold=fuzzy_threshold)
 
-    def filter_by_species(self, species: List[str]) -> None:
+    def filter_by_species(self, species: List[str], fuzzy_threshold: float = -1) -> None:
         """
         Filer data by species or any rank taxonomy below (subspecies, variety, form, etc.).
 
@@ -244,8 +265,10 @@ class Taxon(DataFile):
         ----------
         species : List[str]
             Scientific Name of species (or rank below) to filter data.
+        fuzzy_threshold : float, optional
+            If given any value > 0 it will use Levenshtein Distance with that threshold instead of exact match.
         """
-        return self._filter_by_taxa_(ScientificName, "Species", species, filter_with_rank=False)
+        return self._filter_by_taxa_(ScientificName, "Species", species, filter_with_rank=False, fuzzy_threshold=fuzzy_threshold)
 
     def get_parents(self, taxa_id: List[str]) -> Set[str]:
         """
@@ -335,23 +358,23 @@ class Taxon(DataFile):
                 warn(f"{', '.join(not_present)} not found in data file.", category=RuntimeWarning)
             return entries
 
-    def __get_entry__(self, **kwargs) -> DataFile.Entry | None:
+    def __get_entry__(self, fuzzy_threshold: float =-1, **kwargs) -> DataFile.Entry | None:
         for candid in self.__entries__:
             found = True
             for key, value in kwargs.items():
-                found &= Taxon.__compare__(candid, key, value)
+                found &= Taxon.__compare__(candid, key, value, fuzzy_threshold=fuzzy_threshold)
                 if not found:
                     break
             if found:
                 return candid
         return None
 
-    def __get_entries__(self, **kwargs) -> List[DataFile.Entry]:
+    def __get_entries__(self, fuzzy_threshold: float =-1, **kwargs) -> List[DataFile.Entry]:
         results = list()
         for candid in self.__entries__:
             found = True
             for key, value in kwargs.items():
-                found &= Taxon.__compare__(candid, key, value)
+                found &= Taxon.__compare__(candid, key, value, fuzzy_threshold=fuzzy_threshold)
                 if not found:
                     break
             if found:
@@ -359,11 +382,26 @@ class Taxon(DataFile):
         return results
 
     @staticmethod
-    def __compare__(candid: DataFile.Entry, key: str, value: Any) -> bool:
+    def __compare__(candid: DataFile.Entry, key: str, value: Any, fuzzy_threshold: float = -1) -> bool:
         match = re.match(r"(\w+)__case_insensitive$", key)
         if match:
+            if fuzzy_threshold > 0:
+                from rapidfuzz import fuzz
+                ratio = fuzz.ratio(getattr(candid, match.group(1)).lower(), value.lower())
+                return ratio >= fuzzy_threshold
             return getattr(candid, match.group(1)).lower() == value.lower()
         match = re.match(r"(\w+)__isin$", key)
         if match:
+            if fuzzy_threshold > 0:
+                from rapidfuzz import process
+                _, ratio = process.extractOne(getattr(candid, match.group(1)), value)
+                return ratio >= fuzzy_threshold
             return getattr(candid, match.group(1)) in value
+        if fuzzy_threshold > 0:
+            from rapidfuzz import fuzz
+            ratio = fuzz.ratio(getattr(candid, key), value)
+            if getattr(candid, key) == "Rtfkiaicpdng (Abifwvxqn) gurqtwpof f. prczacpvtdtu 'xzhgezqpaorp'":
+                import sys
+                print(candid, key, value, ratio, file=sys.stderr)
+            return ratio >= fuzzy_threshold
         return getattr(candid, key) == value
