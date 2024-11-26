@@ -28,6 +28,9 @@ class PlFormatTest(unittest.TestCase):
     def test_float(self):
         self.assertEqual(pl.Float64, type_to_pl(float), "Incorrect type (float) to polars type.")
 
+    def test_bool(self):
+        self.assertEqual(pl.Boolean, type_to_pl(bool), "Incorrect type (bool) to polars type.")
+
     def test_datetime(self):
         self.assertEqual(pl.Datetime, type_to_pl(dt.datetime), "Incorrect type (datatime) to polars type.")
 

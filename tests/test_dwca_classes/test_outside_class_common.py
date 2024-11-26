@@ -98,6 +98,77 @@ class TestOutsideCommon(TestXML):
         );
         """), self.normalize_sql(outside_class.sql_table), "Wrong SQL table.")
 
+    def __test_insert__(self):
+        text_1 = """
+        <extension encoding="UTF-8" linesTerminatedBy="\\n" fieldsTerminatedBy="\\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://example.org/terms/extension1">
+        <files>
+            <location>extension1.txt</location>
+        </files>
+        <coreid index="0" /><field index="1" term="http://example.org/terms/column1"/>
+        <field index="2" term="http://example.org/terms/column2"/>
+        </extension>
+        """
+        extension1 = OutsideClass.from_string(text_1)
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Extension",
+        ):
+            next(extension1.insert_sql)
+        extension1.set_core_field(TaxonID(5))
+        with open(
+                os.path.join(PATH, os.pardir, "example_data", "extension_example1.txt"),
+                "r", encoding="utf-8"
+        ) as file:
+            extension1.read_file(file.read())
+        text_2 = """
+        <extension encoding="UTF-8" linesTerminatedBy="\\n" fieldsTerminatedBy="\\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://example.org/terms/extension2">
+        <files>
+          <location>extension2.txt</location>
+        </files>
+        <coreid index="0" /><field index="1" term="http://example.org/terms/column1"/>
+        </extension>
+        """
+        extension2 = OutsideClass.from_string(text_2)
+        extension2.set_core_field(TaxonID(5))
+        with open(
+                os.path.join(PATH, os.pardir, "example_data", "extension_example2.txt"),
+                "r", encoding="utf-8"
+        ) as file:
+            extension2.read_file(file.read())
+        expected_values_1 = [
+            ("urn:lsid:example.org:taxname:0", "true", "false"),
+            ("urn:lsid:example.org:taxname:8", "false", "true"),
+            ("urn:lsid:example.org:taxname:19", "true", "true")
+        ]
+        self.assertEqual(3, len(list(extension1.insert_sql)), "Not the right amount of rows.")
+        for (statement, values), expected in zip(extension1.insert_sql, expected_values_1):
+            self.assertEqual(
+                self.normalize_sql("""
+                INSERT INTO "extension1" (
+                    "taxonID",
+                    "column1",
+                    "column2"
+                ) VALUES (%s, %s, %s)
+                """), self.normalize_sql(statement), "Statement do not match"
+            )
+            self.assertEqual(expected, values, "Values do not match")
+        expected_values_2 = [
+            ("urn:lsid:example.org:taxname:20", "true"),
+            ("urn:lsid:example.org:taxname:27", "true"),
+            ("urn:lsid:example.org:taxname:41", "false")
+        ]
+        self.assertEqual(3, len(list(extension2.insert_sql)), "Not the right amount of rows.")
+        for (statement, values), expected in zip(extension2.insert_sql, expected_values_2):
+            self.assertEqual(
+                self.normalize_sql("""
+                INSERT INTO "extension2" (
+                    "taxonID",
+                    "column1"
+                ) VALUES (%s, %s)
+                """), self.normalize_sql(statement), "Statement do not match"
+            )
+            self.assertEqual(expected, values, "Values do not match")
+
 
 if __name__ == '__main__':
     unittest.main()

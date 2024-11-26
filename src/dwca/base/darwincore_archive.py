@@ -17,6 +17,11 @@ from eml.resources import EMLResource
 from xml_common import XMLObject
 from xml_common.utils import Language, read_string
 
+try:
+    import psycopg2
+except ImportError:
+    psycopg2 = None
+
 
 class DarwinCoreArchive(DarwinCore):
     """
