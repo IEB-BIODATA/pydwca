@@ -37,6 +37,10 @@ class TestOutsideNoPandas(TestOutsideCommon):
     def test_sql_table(self, mock_import):
         self.__test_sql_table__()
 
+    @patch('builtins.__import__', side_effect=import_mock)
+    def test_insert(self, mock_import):
+        self.__test_insert__()
+
 
 if __name__ == '__main__':
     unittest.main()

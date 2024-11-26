@@ -8,7 +8,7 @@ import warnings
 from abc import ABC
 from copy import deepcopy
 from enum import Enum
-from typing import List, Dict, Type, Tuple, BinaryIO
+from typing import List, Dict, Type, Tuple, BinaryIO, Generator, Any
 from warnings import warn
 from zipfile import ZipExtFile
 
@@ -19,7 +19,7 @@ from dwca.terms import Field, DWCType, DWCModified, DWCLanguage, DWCLicense, DWC
     DWCCollectionCode, DWCDatasetName, DWCOwnerInstitutionCode, DWCBasisOfRecord, DWCInformationWithheld, \
     DWCDataGeneralizations, DWCDynamicProperties, OutsideTerm
 from xml_common import XMLObject
-from xml_common.utils import iterate_with_bar, type_to_pl
+from xml_common.utils import iterate_with_bar, type_to_pl, format_to_sql
 
 try:
     import pandas as pd
@@ -112,6 +112,7 @@ class DataFile(XMLObject, ABC):
         self.__temp_file__ = ""
         self.__sql__ = ""
         self.__primary_key__ = None
+        self.__core_field__ = self.__type__ == DataFileType.CORE
         self.__observers__: List[Tuple[int, DarwinCoreArchive]] = list()
         return
 
@@ -220,6 +221,37 @@ class DataFile(XMLObject, ABC):
             self.generate_sql_table()
         return self.__sql__
 
+    @property
+    def insert_sql(self) -> Generator[str, Tuple[Any]]:
+        """
+        Generate the INSERT INTO sql statement and the values to be inserted.
+        """
+        if self.__type__ == DataFileType.EXTENSION and not self.__core_field__:
+            raise RuntimeError("`set_core_field` must be called before `insert_sql` in Extension DataFile.")
+        statement = f"INSERT INTO \"{self.name}\" (\n"
+        columns = list()
+        types = list()
+        for i, field in enumerate(self.__fields__):
+            columns.append(f"\"{field.name}\"")
+            types.append("%s")
+        statement += ",\n".join(columns)
+        statement += "\n) VALUES ("
+        statement += ", ".join(types)
+        statement += ")\n"
+        if self.is_lazy():
+            for i in range(len(self)):
+                tmp = self.__data__.slice(i, 1).collect()
+                yield statement, tuple([
+                    format_to_sql(tmp.select(field.name).item(), field.TYPE)
+                    for field in self.__fields__
+                ])
+                del tmp
+        for entry in self.__entries__:
+            yield statement, tuple([
+                format_to_sql(getattr(entry, field.name), field.TYPE)
+                for field in self.__fields__
+            ])
+
     def _register_darwin_core_(self, _on: int, dwca: DarwinCoreArchive) -> None:
         self.__observers__.append((_on, dwca))
         return
@@ -229,7 +261,7 @@ class DataFile(XMLObject, ABC):
             try:
                 return len(self.__data__)
             except TypeError:
-                return self.__data__.select(pl.len()).collect().item()
+                return self.__data__.select(pl.len()).collect().item() - self.__ignore_header_lines__
         else:
             return len(self.__entries__)
 
@@ -287,6 +319,7 @@ class DataFile(XMLObject, ABC):
         else:  # df_type == DataFileType.EXTENSION:
             element_id = element.find("coreid", nmap)
         _id = int(element_id.get("index"))
+        fields_enclosed_by = element.get("fieldsEnclosedBy", "")
         return {
             "_id": _id,
             "files": element.find("files", namespaces=nmap).find("location", namespaces=nmap).text,
@@ -432,8 +465,10 @@ class DataFile(XMLObject, ABC):
                     shutil.copyfileobj(source_file, file)
                     self.__data__ = pl.scan_csv(
                         file.name,
+                        has_header=False,
                         skip_rows=self.__ignore_header_lines__,
                         separator=self.__fields_end__,
+                        quote_char=None,
                         schema={field.name: type_to_pl(field.TYPE, lazy=True) for field in self.__fields__},
                     )
                     self.__lazy__ = True
@@ -555,6 +590,7 @@ class DataFile(XMLObject, ABC):
             raise AttributeError(f"Core DataField cannot change primary field.")
         self.__fields__[self.id] = field
         self.__fields__[self.id].__index__ = self.id
+        self.__core_field__ = True
         return
 
     def set_primary_key(self, primary_key: str) -> None:

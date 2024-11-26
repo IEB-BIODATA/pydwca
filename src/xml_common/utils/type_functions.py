@@ -257,6 +257,8 @@ def type_to_pl(a_type: TypeAlias, lazy: bool = False) -> TypeAlias:
             return pl.List(type_to_pl(get_args(a_type)[0]))
         else:
             return pl.List(pl.Object)
+    elif a_type == bool:
+        return pl.Boolean
     elif a_type == int:
         return pl.Int64
     elif a_type == float:
@@ -296,3 +298,48 @@ def type_to_sql(a_type: TypeAlias) -> str:
         return "DATETIME"
     else:
         return "VARCHAR"
+
+
+def format_to_sql(value: Any, a_type: TypeAlias) -> Any:
+    """
+    Format a value to the SQL equivalent.
+
+    Parameters
+    ----------
+    value : Any
+        Value to be formatted.
+    a_type : TypeAlias
+        The type of the value.
+
+    Returns
+    -------
+    Any
+        Value formatted.
+    """
+    given_type = type_to_sql(a_type)
+    if value is None:
+        return None
+    if given_type == "INTEGER":
+        return int(value)
+    elif given_type =="REAL":
+        return float(value)
+    elif given_type == "BOOLEAN":
+        return bool(value)
+    elif given_type == "BLOB":
+        if isinstance(value, bytes):
+            return value
+        elif isinstance(value, str):
+            return bytes(value, encoding="ascii")
+        else:
+            return bytes(value)
+    elif given_type == "DATETIME":
+        if isinstance(value, str):
+            return format_datetime(value)
+        elif isinstance(value, dt.datetime):
+            return value
+        else:
+            raise ValueError(f"{type(value)} is not supported to datetime.")
+    elif given_type == "VARCHAR":
+        return str(value)
+    else:
+        return str(value)
