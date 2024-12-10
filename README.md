@@ -1,3 +1,9 @@
+<picture align="center">
+  <img alt="PyDwCA Logo" src="https://raw.githubusercontent.com/IEB-BIODATA/pydwca/refs/heads/develop/docs/source/favicon.png">
+</picture>
+
+-----------------
+
 # Python DWCA
 
 [![pypi](https://img.shields.io/pypi/v/pydwca?style=plastic&logo=pypi)](https://pypi.org/project/pydwca/)

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import io
-import os.path
 import zipfile
 from copy import deepcopy
 from typing import List, Dict, Type
@@ -17,11 +16,6 @@ from eml.resources import EMLResource
 from xml_common import XMLObject
 from xml_common.utils import Language, read_string
 
-try:
-    import psycopg2
-except ImportError:
-    psycopg2 = None
-
 
 class DarwinCoreArchive(DarwinCore):
     """
@@ -32,7 +26,6 @@ class DarwinCoreArchive(DarwinCore):
     _id : str, optional
         A unique id for this Darwin Core Archive.
     """
-
     class Metadata(XMLObject):
         """
         Metadata class of the Darwin Core Archive storing the file name of the archive elements.
