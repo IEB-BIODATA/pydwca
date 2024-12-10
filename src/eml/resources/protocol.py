@@ -17,10 +17,13 @@ class EMLProtocol(Resource):
     **kwargs : :class:`eml.resources.resource.Resource` parameters.
         The parameters of every type of Resource.
     """
-    def __init__(self, **kwargs) -> None:
-        # To avoid initialization
-        # super().__init__(referencing=True, **kwargs)
-        raise NotImplementedError("Protocol EML class not implemented yet")
+    PRINCIPAL_TAG = "protocol"
+
+    def __init__(
+            self, **kwargs
+    ) -> None:
+        super().__init__(**kwargs)
+        return
 
     @classmethod
     def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLProtocol:
@@ -39,7 +42,14 @@ class EMLProtocol(Resource):
         EMLProtocol
             Object parsed that reference another protocol.
         """
-        pass
+        references = element.find("references", nmap)
+        return EMLProtocol(
+            _id=references.text,
+            scope=cls.get_scope(element),
+            system=element.get("system", None),
+            referencing=True,
+            references_system=references.get("system", None)
+        )
 
     @classmethod
     def get_no_referrer(cls, element: et.Element, nmap: Dict) -> EMLProtocol:
@@ -68,10 +78,7 @@ class EMLProtocol(Resource):
         -------
         lxml.etree.Element
             XML `Element` from this object
-
-        Raises
-        ------
-        NotImplementedError
-            Protocol functionality not implemented yet
         """
-        raise NotImplementedError("Protocol functionality not implemented yet")
+        protocol_elem = super().to_element()
+        protocol_elem = self._to_element_(protocol_elem)
+        return protocol_elem

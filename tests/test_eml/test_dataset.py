@@ -75,11 +75,11 @@ class TestEMLDataset(TestXML):
 </dataset>
         """
         eml_dataset = EMLDataset.from_string(dataset_xml)
-        self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order")
-        self.assertEqual("A Title", eml_dataset.title, "Title not set")
-        self.assertEqual("Un Título Diferente", eml_dataset.titles[2], "Extra titles set in wrong order")
-        self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language")
-        self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element")
+        self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order.")
+        self.assertEqual("A Title", eml_dataset.title, "Title not set.")
+        self.assertEqual("Un Título Diferente", eml_dataset.titles[2], "Extra titles set in wrong order.")
+        self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language.")
+        self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element.")
 
     def test_alternate_identifier(self):
         dataset_xml = """
@@ -216,6 +216,252 @@ class TestEMLDataset(TestXML):
             EMLDataset.from_string,
             reference_dataset_xml
         )
+
+    def test_no_contact(self):
+        dataset_xml = """
+<dataset>
+    <title>A Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
+    <shortName>A short description</shortName>
+</dataset>
+        """
+        with self.assertRaisesRegex(ValueError, "No contact provided."):
+            EMLDataset.from_string(dataset_xml)
+        return
+
+    def test_purpose(self):
+        dataset_xml = """
+<dataset>
+    <title>A Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
+    <shortName>A short description</shortName>
+    <purpose>
+        <para>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec.</para>
+    </purpose>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
+</dataset>
+        """
+        eml_dataset = EMLDataset.from_string(dataset_xml)
+        self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order.")
+        self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language,")
+        self.assertEqual("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec.", eml_dataset.purpose.paragraphs[0], "Purpose not parsed.")
+        self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element.")
+
+    def test_intro(self):
+        dataset_xml = """
+<dataset>
+    <title>A Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
+    <shortName>A short description</shortName>
+    <introduction>
+        <para>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec.</para>
+    </introduction>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
+</dataset>
+        """
+        eml_dataset = EMLDataset.from_string(dataset_xml)
+        self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order.")
+        self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language,")
+        self.assertEqual("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec.",
+                         eml_dataset.introduction.paragraphs[0], "Introduction not parsed.")
+        self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element.")
+
+    def test_getting_started(self):
+        dataset_xml = """
+<dataset>
+    <title>A Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
+    <shortName>A short description</shortName>
+    <gettingStarted>
+        <para>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec.</para>
+    </gettingStarted>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
+</dataset>
+        """
+        eml_dataset = EMLDataset.from_string(dataset_xml)
+        self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order.")
+        self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language,")
+        self.assertEqual("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec.",
+                         eml_dataset.getting_started.paragraphs[0], "Getting Started not parsed.")
+        self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element.")
+
+    def test_acknowledgements(self):
+        dataset_xml = """
+<dataset>
+    <title>A Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
+    <shortName>A short description</shortName>
+    <acknowledgements>
+        <para>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec.</para>
+    </acknowledgements>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
+</dataset>
+        """
+        eml_dataset = EMLDataset.from_string(dataset_xml)
+        self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order.")
+        self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language,")
+        self.assertEqual("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec.",
+                         eml_dataset.acknowledgements.paragraphs[0], "Acknowledgements not parsed.")
+        self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element.")
+
+    def test_maintenance(self):
+        dataset_xml = """
+<dataset>
+    <title>A Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
+    <shortName>A short description</shortName>
+    <maintenance>
+        <description>
+            <para>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec.</para>
+        </description>
+    </maintenance>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
+</dataset>
+        """
+        eml_dataset = EMLDataset.from_string(dataset_xml)
+        self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order.")
+        self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language,")
+        self.assertEqual("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam nec.",
+                         eml_dataset.maintenance.description.paragraphs[0], "Maintenance not parsed.")
+        self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element.")
+
+    def test_publisher(self):
+        dataset_xml = """
+<dataset>
+    <title>A Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
+    <shortName>A short description</shortName>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
+    <publisher>
+        <organizationName>Organization Publisher</organizationName>
+    </publisher>
+</dataset>
+        """
+        eml_dataset = EMLDataset.from_string(dataset_xml)
+        self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order.")
+        self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language,")
+        self.assertEqual("Organization Publisher",
+                         str(eml_dataset.publisher.organization_name),
+                         "Publisher not parsed.")
+        self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element.")
+
+    def test_pub_place(self):
+        dataset_xml = """
+<dataset>
+    <title>A Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
+    <shortName>A short description</shortName>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
+    <pubPlace>San Francisco, CA, USA</pubPlace>
+</dataset>
+        """
+        eml_dataset = EMLDataset.from_string(dataset_xml)
+        self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order.")
+        self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language,")
+        self.assertEqual("San Francisco, CA, USA",
+                         str(eml_dataset.pub_place),
+                         "Publication place not parsed.")
+        self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element.")
+
+    def test_methods(self):
+        dataset_xml = """
+<dataset>
+    <title>A Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
+    <shortName>A short description</shortName>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
+    <methods>
+        <methodStep>
+            <description>
+                <para>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vitae diam nec eros interdum posuere.</para>
+            </description>
+        </methodStep>
+    </methods>
+</dataset>
+        """
+        eml_dataset = EMLDataset.from_string(dataset_xml)
+        self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order.")
+        self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language,")
+        self.assertEqual(
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam vitae diam nec eros interdum posuere.",
+            eml_dataset.methods.method_steps[0].description.paragraphs[0],
+            "Methods not parsed."
+        )
+        self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element.")
+
+    def test_project(self):
+        dataset_xml = """
+<dataset>
+    <title>A Title</title>
+    <creator>
+        <organizationName>Organization Creator</organizationName>
+    </creator>
+    <alternateIdentifier system="http://gbif.org">VCR3465</alternateIdentifier>
+    <shortName>A short description</shortName>
+    <contact>
+        <organizationName>Organization Contact</organizationName>
+    </contact>
+    <project>
+        <title>Example Title</title>
+        <personnel>
+            <organizationName>Example Organization</organizationName>
+            <role>contentProvider</role>
+        </personnel>
+    </project>
+</dataset>
+        """
+        eml_dataset = EMLDataset.from_string(dataset_xml)
+        self.assertNotEqual("Un Título", eml_dataset.title, "Title set in wrong order.")
+        self.assertEqual(Language.ENG, eml_dataset.title.language, "Title set in wrong language,")
+        self.assertEqual(
+            "Example Title",
+            eml_dataset.project.title,
+            "Project not parsed."
+        )
+        self.assertEqualTree(et.fromstring(dataset_xml), eml_dataset.to_element(), "Wrong to element.")
 
 
 if __name__ == '__main__':

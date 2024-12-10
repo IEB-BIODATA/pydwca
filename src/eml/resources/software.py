@@ -17,10 +17,10 @@ class EMLSoftware(Resource):
     **kwargs : :class:`eml.resources.resource.Resource` parameters.
         The parameters of every type of Resource.
     """
+    PRINCIPAL_TAG = "software"
     def __init__(self, **kwargs) -> None:
-        # To avoid initialization
-        # super().__init__(referencing=True, **kwargs)
-        raise NotImplementedError("Software EML class not implemented yet")
+        super().__init__(**kwargs)
+        return
 
     @classmethod
     def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLSoftware:
@@ -39,7 +39,14 @@ class EMLSoftware(Resource):
         EMLSoftware
             Object parsed that reference another software.
         """
-        pass
+        references = element.find("references", nmap)
+        return EMLSoftware(
+            _id=references.text,
+            scope=cls.get_scope(element),
+            system=element.get("system", None),
+            referencing=True,
+            references_system=references.get("system", None)
+        )
 
     @classmethod
     def get_no_referrer(cls, element: et.Element, nmap: Dict) -> EMLSoftware:
@@ -68,10 +75,7 @@ class EMLSoftware(Resource):
         -------
         lxml.etree.Element
             XML `Element` from this object
-
-        Raises
-        ------
-        NotImplementedError
-            Software functionality not implemented yet
         """
-        raise NotImplementedError("Software functionality not implemented yet")
+        software_elem = super().to_element()
+        software_elem = self._to_element_(software_elem)
+        return software_elem

@@ -76,7 +76,7 @@ class ResponsibleParty(EMLObject, _NoTagObject):
         EMLObject.__init__(self, _id, scope, system, referencing, references_system)
         _NoTagObject.__init__(self)
         if not self.referencing:
-            assert_msg = ("At least one of the following must be given: individial_name, "
+            assert_msg = ("At least one of the following must be given: individual_name, "
                           "organization_name or position_name")
             assert individual_name is not None or organization_name is not None or position_name is not None, assert_msg
         self.__individual__ = individual_name

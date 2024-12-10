@@ -10,7 +10,6 @@ from copy import deepcopy
 from enum import Enum
 from typing import List, Dict, Type, Tuple, BinaryIO, Generator, Any
 from warnings import warn
-from zipfile import ZipExtFile
 
 from lxml import etree as et
 
@@ -477,16 +476,17 @@ class DataFile(XMLObject, ABC):
                          "delete it")
             except ImportError:
                 raise ImportError("Cannot read lazy without polars installed.")
-        lines = content.split(self.__lines_end__)
-        lines = list(filter(lambda x: x != "", lines))
-        for line in iterate_with_bar(
-                lines[self.__ignore_header_lines__:],
-                desc=f"Reading file {self.filename}", unit="entry"
-        ):
-            kwargs = dict()
-            for field, value in zip(self.__fields__, line.split(self.__fields_end__)):
-                kwargs[field.name] = field.format(value)
-            self.__entries__.append(DataFile.Entry(**kwargs))
+        else:
+            lines = content.split(self.__lines_end__)
+            lines = list(filter(lambda x: x != "", lines))
+            for line in iterate_with_bar(
+                    lines[self.__ignore_header_lines__:],
+                    desc=f"Reading file {self.filename}", unit="entry"
+            ):
+                kwargs = dict()
+                for field, value in zip(self.__fields__, line.split(self.__fields_end__)):
+                    kwargs[field.name] = field.format(value)
+                self.__entries__.append(DataFile.Entry(**kwargs))
         return
 
 
