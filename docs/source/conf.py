@@ -68,3 +68,5 @@ html_theme_options = {
     ],
     "show_toc_level": 3
 }
+
+html_favicon = "favicon.png"
