@@ -96,6 +96,24 @@ class XMLObject(ABC):
         """
         pass
 
+    def add_namespace(self, prefix: str, uri: str) -> None:
+        """
+        Add a namespace to the XML object.
+
+        Parameters
+        ----------
+        prefix : str
+            Prefix to be associated with the namespace.
+        uri : str
+            URI to be associated with the namespace.
+
+        Returns
+        -------
+        None
+        """
+        self.__namespace__[prefix] = uri
+        return
+
     def to_xml(self) -> str:
         """
         Generates text of an XML file.

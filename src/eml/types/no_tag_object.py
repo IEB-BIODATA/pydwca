@@ -31,7 +31,7 @@ class _NoTagObject(XMLObject, ABC):
         """
         if self.__tag__ is None:
             raise RuntimeError("First, set tag to call `to_element`")
-        return et.Element(self.__tag__)
+        return et.Element(self.__tag__, nsmap=self.__namespace__)
 
     @classmethod
     def check_principal_tag(cls, tag: str, nmap: Dict) -> None:

@@ -27,6 +27,7 @@ class EMLMetadata(XMLObject):
             self.__content__ = et.fromstring(xml)
         else:
             self.__content__ = xml
+        self.__content__.tag = self.get_principal_tag()
         return
 
     @classmethod
@@ -143,12 +144,12 @@ class EMLAdditionalMetadata(XMLObject):
         lxml.etree.Element
             An XML element instance.
         """
-        root = et.Element("additionalMetadata")
-        root.append(self.metadata.to_element())
+        root = super().to_element()
         if self.id is not None:
             root.set("id", self.id)
         for describe in self.describes:
             describe_elem = self.object_to_element("describes")
             describe_elem.text = describe
             root.append(describe_elem)
+        root.append(self.metadata.to_element())
         return root
