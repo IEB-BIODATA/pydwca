@@ -14,6 +14,7 @@ class TestXML(unittest.TestCase):
             expected_text = expected.text.strip() if expected.text is not None else ""
             actual_text = actual.text.strip() if actual.text is not None else ""
             self.assertEqual(expected_text, actual_text, "Not same text")
+            self.assertDictEqual(expected.nsmap, actual.nsmap, "Not same namespaces")
             # Add default values:
             exp_attributes = deepcopy(expected.attrib)
             actual_attributes = deepcopy(actual.attrib)
@@ -31,6 +32,10 @@ class TestXML(unittest.TestCase):
                     self.assertEqualTree(expected_child, actual_child, msg=msg)
         except AssertionError:
             raise AssertionError(f"{et.tostring(expected).decode()} != {et.tostring(actual).decode()} : {msg}")
+
+    def assertNotEqualTree(self, expected: et.ElementTree, actual: et.ElementTree, msg: str) -> None:
+        with self.assertRaises(AssertionError, msg=msg):
+            self.assertEqualTree(expected, actual, msg)
 
     @staticmethod
     def normalize_sql(sql: str) -> str:

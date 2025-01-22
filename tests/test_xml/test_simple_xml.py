@@ -29,7 +29,7 @@ class TestSimpleXML(TestXML):
             return simple
 
         def to_element(self) -> et.Element:
-            simple_element = et.Element(self.PRINCIPAL_TAG)
+            simple_element = super().to_element()
             an_attribute = et.Element("anAttribute")
             an_attribute.text = self.__an_attribute__
             simple_element.append(an_attribute)
@@ -66,6 +66,38 @@ class TestSimpleXML(TestXML):
             f"{simple}",
             "Incorrect representation"
         )
+
+    def test_add_namespace(self):
+        simple = TestSimpleXML.SimpleXML("an_attribute", "another_attribute")
+        expected = """
+        <simple>
+            <anAttribute>an_attribute</anAttribute>
+            <anotherAttribute>another_attribute</anotherAttribute>
+        </simple>
+        """
+        self.assertEqualTree(
+            et.fromstring(expected),
+            simple.to_element(),
+            "Incorrect XML generated"
+        )
+        simple.add_namespace("example", "http://example.com/namespace")
+        self.assertNotEqualTree(
+            et.fromstring(expected),
+            simple.to_element(),
+            "Tree did not change"
+        )
+        expected = """
+        <simple xmlns:example="http://example.com/namespace">
+            <anAttribute>an_attribute</anAttribute>
+            <anotherAttribute>another_attribute</anotherAttribute>
+        </simple>
+        """
+        self.assertEqualTree(
+            et.fromstring(expected),
+            simple.to_element(),
+            "Namespace not added"
+        )
+
 
 
 if __name__ == '__main__':
