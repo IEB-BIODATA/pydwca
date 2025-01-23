@@ -500,8 +500,10 @@ class DataFile(XMLObject, ABC):
             Data File as plain text.
         """
         output_file = ""
-        header = [field.name for field in self.__fields__]
-        output_file += f"{self.__fields_end__}".join(header) + self.__lines_end__
+        if self.__ignore_header_lines__ > 0:
+            output_file += f"###{self.__lines_end__}" * (self.__ignore_header_lines__ - 1)
+            header = [field.name for field in self.__fields__]
+            output_file += f"{self.__fields_end__}".join(header) + self.__lines_end__
         for entry in iterate_with_bar(self.__entries__, desc=f"Writing data {self.uri}", unit="line"):
             line = list()
             for field in self.__fields__:

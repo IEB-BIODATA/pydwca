@@ -15,6 +15,6 @@ def read_string(content: str | bytes, encoding: str = "utf-8") -> str:
         Content as string.
     """
     try:
-        return content.decode()
-    except ValueError:
+        return content.decode(encoding=encoding)
+    except AttributeError:
         return content

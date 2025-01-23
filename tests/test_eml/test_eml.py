@@ -7,6 +7,7 @@ import datetime as dt
 from lxml import etree as et
 
 from eml import EML, EMLVersion
+from eml.base import EMLAdditionalMetadata, EMLMetadata
 from xml_common.utils import Language
 from eml.resources import EMLResource, EMLKeywordSet, EMLLicense, EMLDistribution, EMLCoverage
 from eml.resources.coverage import TemporalCoverage
@@ -36,6 +37,22 @@ class TestEML(TestXML):
             system="http://my.system",
             resource_type=EMLResource.DATASET,
         )
+        self.text_empty = """
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0" xmlns:stmml="http://www.xml-cml.org/schema/stmml-1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packageId="Example package" xsi:schemaLocation="https://eml.ecoinformatics.org/eml-2.2.0 xsd/eml.xsd" system="http://my.system" scope="system" xml:lang="eng">
+  <dataset id="1" scope="document">
+    <title xml:lang="eng">Example Title</title>
+    <creator scope="document">
+      <individualName>
+        <givenName xml:lang="eng">Joe</givenName>
+        <surName xml:lang="eng">Doe</surName>
+      </individualName>
+    </creator>
+    <contact scope="document">
+      <positionName xml:lang="eng">Contact</positionName>
+    </contact>
+  </dataset>
+</eml:eml>
+        """
         return
 
     def initialize_resource(self, **kwargs):
@@ -447,6 +464,54 @@ class TestEML(TestXML):
         self.assertEqual(
             2, len(self.empty_eml.resource.annotation),
             "Annotation did not set"
+        )
+        self.validate(self.empty_eml.to_xml())
+
+    def test_add_additional(self):
+        self.initialize_resource(_id="1")
+        self.assertEqual(0, len(self.empty_eml.additional_metadata), "Additional metadata from nowhere.")
+        self.assertEqualTree(
+            et.fromstring(self.text_empty),
+            self.empty_eml.to_element(),
+            "Pre addition different."
+        )
+        add_meta = et.Element("metadata")
+        add_info = et.SubElement(add_meta, "additionalInfo")
+        add_info.text = "Some new information."
+        metadata = EMLMetadata(add_meta)
+        self.empty_eml.add_additional_metadata(EMLAdditionalMetadata(metadata))
+        self.assertNotEqualTree(
+            et.fromstring(self.text_empty),
+            self.empty_eml.to_element(),
+            "Tree did not change."
+        )
+        new_expected = """
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0" xmlns:stmml="http://www.xml-cml.org/schema/stmml-1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" packageId="Example package" xsi:schemaLocation="https://eml.ecoinformatics.org/eml-2.2.0 xsd/eml.xsd" system="http://my.system" scope="system" xml:lang="eng">
+  <dataset id="1" scope="document">
+    <title xml:lang="eng">Example Title</title>
+    <creator scope="document">
+      <individualName>
+        <givenName xml:lang="eng">Joe</givenName>
+        <surName xml:lang="eng">Doe</surName>
+      </individualName>
+    </creator>
+    <contact scope="document">
+      <positionName xml:lang="eng">Contact</positionName>
+    </contact>
+  </dataset>
+  <additionalMetadata>
+    <metadata>
+      <additionalInfo>
+        Some new information.
+      </additionalInfo>
+    </metadata>
+  </additionalMetadata>
+</eml:eml>
+        """
+        self.assertEqualTree(
+            et.fromstring(new_expected),
+            self.empty_eml.to_element(),
+            "Post addition different."
         )
         self.validate(self.empty_eml.to_xml())
 

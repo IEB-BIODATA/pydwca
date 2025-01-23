@@ -6,7 +6,7 @@ import datetime as dt
 from lxml import etree as et
 
 from xml_common.utils import Language
-from eml.base import EMLMetadata, EMLVersion
+from eml.base import EMLAdditionalMetadata, EMLVersion
 from eml.resources import EMLResource, EMLDataset, EMLCitation, EMLProtocol, EMLSoftware, Resource, EMLKeywordSet, \
     EMLLicense, EMLDistribution, EMLCoverage
 from eml.types import Scope, SemanticAnnotation, AccessType, EMLObject, I18nString, ResponsibleParty, ExtensionString, \
@@ -31,7 +31,7 @@ class EML(EMLObject):
         Language abbreviation to be used, defaults to `"eng"`
     access : AccessType, optional
         Access control rules for the entire resource, which can be overridden by access rules in distribution trees.
-    additional_metadata : List[None], optional
+    additional_metadata : List[EMLAdditionalMetadata], optional
         A flexible field for including any other relevant metadata that pertains to the resource being described.
     annotation: List[Tuple[SemanticAnnotation, str]], optional
         A list of precisely-defined semantic statements about this resource.
@@ -85,7 +85,7 @@ class EML(EMLObject):
             version: EMLVersion = EMLVersion.LATEST,
             language: Language = Language.ENG,
             access: AccessType = None,
-            additional_metadata: List[Any] = None,
+            additional_metadata: List[EMLAdditionalMetadata] = None,
             annotation: List[Tuple[SemanticAnnotation, str]] = None
     ) -> None:
         super().__init__(None, Scope.SYSTEM, system, False)
@@ -158,8 +158,8 @@ class EML(EMLObject):
         return self.__access__
 
     @property
-    def additional_metadata(self) -> List[Any]:
-        """List[Any]: A flexible field for including any other relevant metadata."""
+    def additional_metadata(self) -> List[EMLAdditionalMetadata]:
+        """List[EMLAdditionalMetadata]: A flexible field for including any other relevant metadata."""
         return self.__additional__
 
     @property
@@ -408,6 +408,20 @@ class EML(EMLObject):
         self.resource.annotate(annotation)
         return
 
+    # TODO
+    def add_additional_metadata(self, additional_metadata: EMLAdditionalMetadata) -> None:
+        """
+        Add additional metadata to the resource in the EML.
+
+        Parameters
+        ----------
+        additional_metadata : EMLAdditionalMetadata
+            A flexible field for including any other relevant metadata.
+        """
+        self.__additional__.append(additional_metadata)
+        return
+
+
     @classmethod
     def get_referrer(cls, element: et.Element, nmap: Dict) -> EMLObject:
         """
@@ -451,7 +465,7 @@ class EML(EMLObject):
             access = AccessType.parse(access_elem, nmap)
         additional_metadata = list()
         for add_metadata in element.findall("additionalMetadata", nmap):
-            additional_metadata.append(EMLMetadata.parse(add_metadata, nmap))
+            additional_metadata.append(EMLAdditionalMetadata.parse(add_metadata, nmap))
         annotation = list()
         annotations_elem = element.find("annotations", nmap)
         if annotations_elem is not None:
