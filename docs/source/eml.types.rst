@@ -65,6 +65,30 @@ Semantic Annotation Class
    :undoc-members:
    :show-inheritance:
 
+Research Project Class
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.types.research_project
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Access Classes
+~~~~~~~~~~~~~~
+
+.. automodule:: eml.types.access_type
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Procedure Step Class
+~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.types.procedure_step
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Classes with predefine Principal Tag
 ------------------------------------
 
@@ -112,6 +136,38 @@ Phone Class
 ~~~~~~~~~~~
 
 .. automodule:: eml.types.phone
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Section Class
+~~~~~~~~~~~~~
+
+.. automodule:: eml.types.section
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Maintenance Class
+~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.types.maintenance
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Change History Class
+~~~~~~~~~~~~~~~~~~~~
+
+.. automodule:: eml.types.change_history
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Methods Class
+~~~~~~~~~~~~~
+
+.. automodule:: eml.types.methods
    :members:
    :undoc-members:
    :show-inheritance:

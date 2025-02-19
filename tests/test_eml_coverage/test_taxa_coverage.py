@@ -6,7 +6,7 @@ from eml.resources.coverage import TaxonomicCoverage
 from test_xml.test_xml import TestXML
 
 
-class MyTestCase(TestXML):
+class TestTaxaCoverage(TestXML):
     DEFAULT_TAGS = {
         "scope": "document",
         '{http://www.w3.org/XML/1998/namespace}lang': 'eng',
@@ -83,7 +83,7 @@ class MyTestCase(TestXML):
         self.assertEqual("Green Plants", coverage.classification[0].common_name[0], "Error on parsing xml_common name")
         self.assertEqual(1, len(coverage.classification[0].taxon_id), "Error on parsing taxon id")
         self.assertEqual(
-            33090,
+            "33090",
             coverage.classification[0].taxon_id[0],
             "Error on parsing taxon id"
         )
@@ -257,7 +257,7 @@ class MyTestCase(TestXML):
         self.assertEqual("Green Plants", taxonomic_classification.common_name[0], "Error on parsing xml_common name")
         self.assertEqual(1, len(taxonomic_classification.taxon_id), "Error on parsing taxon id")
         self.assertEqual(
-            33090,
+            "33090",
             taxonomic_classification.taxon_id[0],
             "Error on parsing taxon id"
         )
@@ -283,7 +283,7 @@ class MyTestCase(TestXML):
         self.assertEqual("Green Algae", taxonomic_classification.classification[0].common_name[0], "Error on parsing xml_common name")
         self.assertEqual(1, len(taxonomic_classification.classification[0].taxon_id), "Error on parsing taxon id")
         self.assertEqual(
-            3041,
+            "3041",
             taxonomic_classification.classification[0].taxon_id[0],
             "Error on parsing taxon id"
         )
@@ -305,13 +305,12 @@ class MyTestCase(TestXML):
         )
 
     def test_equal_taxon_id(self):
-        example = TaxonomicCoverage.TaxonID(1, "http://gbif.org")
-        self.assertEqual(1, example, "Not compare to int")
-        same_example = TaxonomicCoverage.TaxonID(1, "http://gbif.org")
+        example = TaxonomicCoverage.TaxonID("1", "http://gbif.org")
+        self.assertEqual("1", example, "Not compare to string")
+        same_example = TaxonomicCoverage.TaxonID("1", "http://gbif.org")
         self.assertEqual(example, same_example, "Same dato, not equals")
-        other_example = TaxonomicCoverage.TaxonID(1, "http://gbif_alternative.org")
+        other_example = TaxonomicCoverage.TaxonID("1", "http://gbif_alternative.org")
         self.assertNotEqual(example, other_example, "Equal different provider")
-        self.assertNotEqual("1", example, "Error on equal implementation")
 
     def test_parse_invalid(self):
         general_taxonomic_coverage = ("All vascular plants were identified "
@@ -362,7 +361,7 @@ class MyTestCase(TestXML):
         self.assertEqual("Green Plants", coverage.classification[0].common_name[0], "Error on parsing xml_common name")
         self.assertEqual(1, len(coverage.classification[0].taxon_id), "Error on parsing taxon id")
         self.assertEqual(
-            33090,
+            "33090",
             coverage.classification[0].taxon_id[0],
             "Error on parsing taxon id"
         )
