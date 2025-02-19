@@ -52,7 +52,7 @@ class GeographicCoverage(EMLObject):
             north_bounding: float,
             south_bounding: float,
             _id: str = None,
-            scope: Scope = None,
+            scope: Scope = Scope.DOCUMENT,
             system: str = None,
             referencing: bool = False,
             references_system: str = None,
