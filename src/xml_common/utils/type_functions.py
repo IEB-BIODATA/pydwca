@@ -1,8 +1,9 @@
 import datetime as dt
 from datetime import datetime
-from datetime_interval import Interval
 from typing import TypeAlias, get_args, List, Any, Union, get_origin
 from warnings import warn
+
+from datetime_interval import Interval
 
 POSSIBLE_DATETIME_FORMATS = [
     "%Y-%m-%dT%H:%M:%S%z",

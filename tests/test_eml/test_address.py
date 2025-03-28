@@ -13,11 +13,11 @@ class TestEMLAddress(TestXML):
 
     EXAMPLE_XML = """
 <address id="1" scope="system" system="https://ieb-chile.cl">
-    <deliveryPoint xml:lang="esp">Calle Las Palmeras #3425</deliveryPoint>
-    <city xml:lang="esp">Ñuñoa</city>
-    <administrativeArea xml:lang="esp">Región Metropolitana</administrativeArea>
-    <postalCode xml:lang="esp">7800003</postalCode>
-    <country xml:lang="esp">Chile</country>
+    <deliveryPoint xml:lang="spa">Calle Las Palmeras #3425</deliveryPoint>
+    <city xml:lang="spa">Ñuñoa</city>
+    <administrativeArea xml:lang="spa">Región Metropolitana</administrativeArea>
+    <postalCode xml:lang="spa">7800003</postalCode>
+    <country xml:lang="spa">Chile</country>
 </address>
     """
 
@@ -51,22 +51,22 @@ class TestEMLAddress(TestXML):
             administrative_area="Región Metropolitana",
             postal_code="7800003",
             country="Chile",
-            language=Language.ESP,
+            language=Language.SPA,
         )
         self.assertEqual("Calle Las Palmeras #3425", address.delivery_point[0], "Incorrect delivery point")
-        self.assertEqual(Language.ESP, address.delivery_point[0].language, "Incorrect language of delivery point")
+        self.assertEqual(Language.SPA, address.delivery_point[0].language, "Incorrect language of delivery point")
         self.assertEqual("Ñuñoa", address.city, "Incorrect city")
-        self.assertEqual(Language.ESP, address.city.language, "Incorrect language of city")
+        self.assertEqual(Language.SPA, address.city.language, "Incorrect language of city")
         self.assertEqual("Región Metropolitana", address.administrative_area, "Incorrect administrative area")
         self.assertEqual(
-            Language.ESP,
+            Language.SPA,
             address.administrative_area.language,
             "Incorrect language of administrative area"
         )
         self.assertEqual("7800003", address.postal_code, "Incorrect postal_code")
-        self.assertEqual(Language.ESP, address.postal_code.language, "Incorrect language of postal_code")
+        self.assertEqual(Language.SPA, address.postal_code.language, "Incorrect language of postal_code")
         self.assertEqual("Chile", address.country, "Incorrect country")
-        self.assertEqual(Language.ESP, address.country.language, "Incorrect language of country")
+        self.assertEqual(Language.SPA, address.country.language, "Incorrect language of country")
 
     def test_parse_none(self):
         self.assertIsNone(EMLAddress.parse(None, {}), "Object from None")
@@ -86,10 +86,10 @@ class TestEMLAddress(TestXML):
 
     def test_mode_delivery_point(self):
         example_xml = self.EXAMPLE_XML.replace(
-            '<deliveryPoint xml:lang="esp">Calle Las Palmeras #3425</deliveryPoint>',
+            '<deliveryPoint xml:lang="spa">Calle Las Palmeras #3425</deliveryPoint>',
             """
 <deliveryPoint
-    xml:lang="esp"
+    xml:lang="spa"
 >Calle Las Palmeras #3425</deliveryPoint>
 <deliveryPoint
     xml:lang="eng"
@@ -109,7 +109,7 @@ class TestEMLAddress(TestXML):
             "Incorrectly set english delivery point"
         )
         self.assertEqual(
-            Language.ESP,
+            Language.SPA,
             address.delivery_point[0].language,
             "Incorrectly set spanish delivery point language"
         )

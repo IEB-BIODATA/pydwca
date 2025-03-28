@@ -14,7 +14,7 @@ class TestAbstract(TestXML):
                      "added to the company's budget. At a "
                      "price tag, it's now a real estate company, "
                      "at times.")
-    ESP_PARAGRAPH = ("El equipo de marketing de la empresa se "
+    SPA_PARAGRAPH = ("El equipo de marketing de la empresa se "
                      "agregará al presupuesto de la empresa. Por "
                      "un precio, ahora es una empresa de bienes "
                      "raíces, a veces.")
@@ -89,7 +89,7 @@ class TestAbstract(TestXML):
         text_xml = f"""
 <abstract>
     <para xml:lang="eng">{self.ENG_PARAGRAPH}</para>
-    <para xml:lang="esp">{self.ESP_PARAGRAPH}</para>
+    <para xml:lang="spa">{self.SPA_PARAGRAPH}</para>
     <markdown>{self.MARKDOWN}</markdown>
 </abstract>
         """
@@ -97,8 +97,8 @@ class TestAbstract(TestXML):
         self.assertEqual(0, len(abstract.sections), "Section generated from nowhere")
         self.assertEqual(self.ENG_PARAGRAPH, abstract.paragraphs[0], "English Paragraph parsed incorrectly")
         self.assertEqual(Language.ENG, abstract.paragraphs[0].language, "English Paragraph wrong language")
-        self.assertEqual(self.ESP_PARAGRAPH, abstract.paragraphs[1], "Spanish Paragraph parsed incorrectly")
-        self.assertEqual(Language.ESP, abstract.paragraphs[1].language, "Spanish Paragraph wrong language")
+        self.assertEqual(self.SPA_PARAGRAPH, abstract.paragraphs[1], "Spanish Paragraph parsed incorrectly")
+        self.assertEqual(Language.SPA, abstract.paragraphs[1].language, "Spanish Paragraph wrong language")
         self.assertRaises(
             RuntimeError,
             abstract.to_element

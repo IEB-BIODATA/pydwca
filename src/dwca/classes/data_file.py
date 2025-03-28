@@ -510,6 +510,7 @@ class DataFile(XMLObject, ABC):
                 try:
                     line.append(field.unformat(getattr(entry, field.name)))
                 except AssertionError:  # In case the type got lost in pandas
+                    # TODO: field.TYPE will not work for Typing package
                     line.append(field.unformat(field.TYPE(getattr(entry, field.name))))
                 except Exception as e:
                     print(f"Error on {field.name} with value {getattr(entry, field.name)}", file=sys.stderr)
@@ -634,6 +635,7 @@ class DataFile(XMLObject, ABC):
         if self.__type__ == DataFileType.EXTENSION:
             foreign_key = f""",
             FOREIGN KEY ("{primary_key}") REFERENCES \"{self.__primary_key__}\""""
+        # TODO: Fix foreign key is not necessary primary key
         self.__sql__ = f"""CREATE TABLE "{self.name}" (
             {sql_columns}
             PRIMARY KEY ("{primary_key}"){foreign_key}

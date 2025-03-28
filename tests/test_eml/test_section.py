@@ -43,7 +43,7 @@ class TestSection(TestXML):
         section_esp = EMLSection(
             title="A simple section",
             paragraph="A simple paragraph",
-            language=Language.ESP
+            language=Language.SPA
         )
         self.assertEqual(section, section_esp, "Compare language")
         self.assertNotEqual(3, section_esp, "Error on equal implementation")
@@ -81,8 +81,8 @@ class TestSection(TestXML):
     <title>A simple section</title>
     <section>
         <title>One level section</title>
-        <section xml:lang="esp">
-            <title xml:lang="esp">Segundo nivel de recursión</title>
+        <section xml:lang="spa">
+            <title xml:lang="spa">Segundo nivel de recursión</title>
             <section>
                 <title>Third level</title>
                 <para>{self.PARAGRAPH}</para>
@@ -99,11 +99,11 @@ class TestSection(TestXML):
         self.assertEqual(Language.ENG, section.section.title.language, "Error on language on first recursion")
         self.assertEqual("Segundo nivel de recursión", section.section.section.title, "Error on second recursion")
         self.assertEqual(
-            Language.ESP,
+            Language.SPA,
             section.section.section.title.language,
             "Error on language (title) on second recursion"
         )
-        self.assertEqual(Language.ESP, section.section.section.language, "Error on language on second recursion")
+        self.assertEqual(Language.SPA, section.section.section.language, "Error on language on second recursion")
         self.assertEqual("Third level", section.section.section.section.title, "Error on third recursion")
         self.assertEqual(
             Language.ENG,

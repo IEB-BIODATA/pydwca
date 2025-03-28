@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import Enum
 from typing import List, Union, Tuple
 
@@ -382,12 +384,49 @@ class OccurrenceStatus(Field):
         PRESENT = 1
         ABSENCE = 0
 
-    URI = "http://rs.tdwg.org/dwc/terms/occurrenceID"
+    URI = "http://rs.tdwg.org/dwc/terms/occurrenceStatus"
     TYPE = DefaultStatus
 
     def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
         return
+
+    def format(self, value: str) -> DefaultStatus:
+        """
+        Format value to DefaultStatus.
+
+        Parameters
+        ----------
+        value : str
+            Value to be formatted as a DefaultStatus.
+
+        Returns
+        -------
+        DefaultStatus
+            Value as a DefaultStatus Enum object.
+        """
+        if value.lower() == "present":
+            return OccurrenceStatus.DefaultStatus.PRESENT
+        elif value.lower() == "absent":
+            return OccurrenceStatus.DefaultStatus.ABSENCE
+        else:
+            raise ValueError("Unknown status: {}".format(value))
+
+    def unformat(self, value: DefaultStatus) -> str:
+        """
+        Encode value from DefaultStatus to a standard string.
+
+        Parameters
+        ----------
+        value : DefaultStatus
+            An instance of DefaultStatus to be represented as a string.
+
+        Returns
+        -------
+        str
+            String representation of DefaultStatus.
+        """
+        return value.name.lower()
 
 
 class AssociatedMedia(Field):

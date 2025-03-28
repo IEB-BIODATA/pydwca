@@ -155,14 +155,14 @@ class TestEML(TestXML):
 
     def test_set_title_lang(self):
         self.initialize_resource()
-        self.empty_eml.add_title("Título de ejemplo", Language.ESP)
+        self.empty_eml.add_title("Título de ejemplo", Language.SPA)
         self.assertEqual(
             "Título de ejemplo",
             self.empty_eml.resource.titles[1],
             "Title did not set"
         )
         self.assertEqual(
-            Language.ESP,
+            Language.SPA,
             self.empty_eml.resource.titles[1].language,
             "Language did not set"
         )
@@ -170,7 +170,7 @@ class TestEML(TestXML):
 
     def test_set_titles(self):
         self.empty_eml.initialize_resource(
-            ["Example Title", I18nString("Título de ejemplo", Language.ESP)],
+            ["Example Title", I18nString("Título de ejemplo", Language.SPA)],
             ResponsibleParty(individual_name=IndividualName(first_name="Joe", last_name="Doe")),
             contact=[ResponsibleParty(position_name=PositionName("Contact"))]
         )
@@ -190,7 +190,7 @@ class TestEML(TestXML):
             "Title did not set"
         )
         self.assertEqual(
-            Language.ESP,
+            Language.SPA,
             self.empty_eml.resource.titles[1].language,
             "Language did not set"
         )

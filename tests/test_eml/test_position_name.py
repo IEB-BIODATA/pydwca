@@ -20,15 +20,15 @@ class TestPositionName(TestXML):
         self.assertEqual(Language.ENG, variable.language, "Language set incorrectly")
 
     def test_organization_name_spanish(self):
-        variable = PositionName("IEB - BIODATA Investigador Informático", lang=Language.ESP)
+        variable = PositionName("IEB - BIODATA Investigador Informático", lang=Language.SPA)
         self.assertEqual("IEB - BIODATA Investigador Informático", variable, "Not equal to string")
         self.assertEqual("IEB - BIODATA Investigador Informático", str(variable), "Not equal to string")
         self.assertEqual(
-            "<Position Name (IEB - BIODATA Investigador Informático) [esp]>",
+            "<Position Name (IEB - BIODATA Investigador Informático) [spa]>",
             repr(variable),
             "Not equal to string"
         )
-        self.assertEqual(Language.ESP, variable.language, "Language set incorrectly")
+        self.assertEqual(Language.SPA, variable.language, "Language set incorrectly")
 
     def test_parse(self):
         self.assertIsNone(PositionName.parse(None, {}), "Parsing something")
@@ -47,10 +47,10 @@ class TestPositionName(TestXML):
         )
 
     def test_to_element(self):
-        variable = PositionName("IEB - BIODATA Investigador Informático", lang=Language.ESP)
+        variable = PositionName("IEB - BIODATA Investigador Informático", lang=Language.SPA)
         expected = et.Element("positionName")
         expected.text = "IEB - BIODATA Investigador Informático"
-        expected.set("{http://www.w3.org/XML/1998/namespace}lang", "esp")
+        expected.set("{http://www.w3.org/XML/1998/namespace}lang", "spa")
         self.assertEqualTree(expected, variable.to_element(), "Error on element")
         variable.set_tag("AnInvalidTag")
         self.assertEqualTree(expected, variable.to_element(), "Error on element")
