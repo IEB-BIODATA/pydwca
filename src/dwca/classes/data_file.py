@@ -462,6 +462,8 @@ class DataFile(XMLObject, ABC):
                 import polars as pl
                 with tempfile.NamedTemporaryFile(delete=False) as file:
                     shutil.copyfileobj(source_file, file)
+                    file.seek(0)
+                    print(file.read())
                     self.__data__ = pl.scan_csv(
                         file.name,
                         has_header=False,
