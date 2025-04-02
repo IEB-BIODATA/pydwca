@@ -1,6 +1,6 @@
 from unittest import main
 from lxml import etree as et
-from eml.types import ResearchProject, Role, ResponsibleParty, OrganizationName
+from eml.types import ResearchProject, Role, ResponsibleParty, I18nString
 from test_xml.test_xml import TestXML
 
 
@@ -85,7 +85,7 @@ class TestResearchProject(TestXML):
         res_proj = ResearchProject(
             title="Example Title",
             personnel=[(
-                ResponsibleParty(organization_name=OrganizationName("Example Organization")),
+                ResponsibleParty(organization_name=I18nString("Example Organization")),
                 Role.CONTENT_PROVIDER
             )],
         )

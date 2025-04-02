@@ -3,7 +3,7 @@ import os
 import unittest
 from lxml import etree as et
 
-from eml.types import ResponsibleParty, EMLAddress, IndividualName, PositionName, OrganizationName
+from eml.types import ResponsibleParty, EMLAddress, IndividualName, I18nString
 from test_xml.test_xml import TestXML
 
 PATH = os.path.abspath(os.path.dirname(__file__))
@@ -24,8 +24,8 @@ class TestResponsibleParty(TestXML):
         self.nmap = base_file.nsmap
         self.dataset_xml = base_file.find("dataset", namespaces=base_file.nsmap)
         self.individual = IndividualName(first_name="John", last_name="Doe")
-        self.position = PositionName("Digitizer")
-        self.organization = OrganizationName("Example Organization")
+        self.position = I18nString("Digitizer")
+        self.organization = I18nString("Example Organization")
         return
 
     def test_parse_creator(self):

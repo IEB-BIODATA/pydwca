@@ -12,7 +12,7 @@ from xml_common.utils import Language
 from eml.resources import EMLResource, EMLKeywordSet, EMLLicense, EMLDistribution, EMLCoverage
 from eml.resources.coverage import TemporalCoverage
 from eml.resources.distribution import EMLOnline, EMLOffline
-from eml.types import Scope, ResponsibleParty, IndividualName, OrganizationName, PositionName, Role, I18nString, \
+from eml.types import Scope, ResponsibleParty, IndividualName, Role, I18nString, \
     EMLTextType, SemanticAnnotation
 from test_xml.test_xml import TestXML
 
@@ -59,7 +59,7 @@ class TestEML(TestXML):
         self.empty_eml.initialize_resource(
             "Example Title",
             ResponsibleParty(individual_name=IndividualName(first_name="Joe", last_name="Doe")),
-            contact=[ResponsibleParty(position_name=PositionName("Contact"))],
+            contact=[ResponsibleParty(position_name=I18nString("Contact"))],
             **kwargs
         )
 
@@ -172,7 +172,7 @@ class TestEML(TestXML):
         self.empty_eml.initialize_resource(
             ["Example Title", I18nString("Título de ejemplo", Language.SPA)],
             ResponsibleParty(individual_name=IndividualName(first_name="Joe", last_name="Doe")),
-            contact=[ResponsibleParty(position_name=PositionName("Contact"))]
+            contact=[ResponsibleParty(position_name=I18nString("Contact"))]
         )
         self.assertEqual(
             "Example Title",
@@ -209,9 +209,9 @@ class TestEML(TestXML):
         self.empty_eml.initialize_resource(
             "Example title", [
                 ResponsibleParty(individual_name=IndividualName(first_name="Joe", last_name="Doe")),
-                ResponsibleParty(organization_name=OrganizationName("Example Organization")),
+                ResponsibleParty(organization_name=I18nString("Example Organization")),
             ],
-            contact=[ResponsibleParty(position_name=PositionName("Contact"))]
+            contact=[ResponsibleParty(position_name=I18nString("Contact"))]
         )
         self.empty_eml.add_creator(
             ResponsibleParty(individual_name=IndividualName(first_name="John", last_name="Doe"))
@@ -267,7 +267,7 @@ class TestEML(TestXML):
             individual_name=IndividualName(first_name="Joe", last_name="Doe")
         ))
         self.empty_eml.add_metadata_provider(ResponsibleParty(
-            organization_name=OrganizationName("Example Organization")
+            organization_name=I18nString("Example Organization")
         ))
         self.assertEqual(
             "Doe, J.",
