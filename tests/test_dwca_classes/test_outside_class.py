@@ -128,6 +128,10 @@ class TestOutside(TestOutsideCommon):
             ("urn:lsid:example.org:taxname:8", "false", "true"),
             ("urn:lsid:example.org:taxname:19", "true", "true")
         ]
+        with open(
+                os.path.join(PATH, os.pardir, "example_data", "extension_example1.txt"), "rb"
+        ) as file:
+            print(file.read())
         self.assertEqual(3, len(list(extension1.insert_sql)), "Not the right amount of rows.")
         for (statement, values), expected in zip(extension1.insert_sql, expected_values_1):
             self.assertEqual(
