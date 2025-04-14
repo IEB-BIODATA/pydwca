@@ -211,7 +211,7 @@ class DarwinCoreArchive(DarwinCore):
         return
 
     @classmethod
-    def from_file(cls, path_to_archive: str, lazy: bool = False) -> DarwinCoreArchive:
+    def from_file(cls, path_to_archive: str, lazy: bool = False, _no_interaction: bool = False) -> DarwinCoreArchive:
         """
         Generate a Darwin Core Archive instance from an archive file (`.zip`).
 
@@ -221,6 +221,8 @@ class DarwinCoreArchive(DarwinCore):
             Path of the archive file.
         lazy : bool, optional
             Read the archive lazy. Default `False`.
+        _no_interaction : bool, optional
+            Not to show progress bar if library `tqdm` is installed. Default `False`.
 
         Returns
         -------
@@ -240,22 +242,22 @@ class DarwinCoreArchive(DarwinCore):
         darwin_core.__meta__ = metadata
         if lazy:
             core_file = archive.open(darwin_core.core.filename)
-            darwin_core.__meta__.__core__.read_file("", source_file=core_file, lazy=lazy)
+            darwin_core.__meta__.__core__.read_file("", source_file=core_file, lazy=lazy, _no_interaction=_no_interaction)
             core_file.close()
         else:
             core_file = archive.read(darwin_core.core.filename)
-            darwin_core.__meta__.__core__.read_file(core_file.decode(encoding=metadata.__core__.__encoding__))
+            darwin_core.__meta__.__core__.read_file(core_file.decode(encoding=metadata.__core__.__encoding__), _no_interaction=_no_interaction)
         darwin_core.__meta__.__core__._register_darwin_core_(0, darwin_core)
         for i, extension in enumerate(darwin_core.extensions):
             extension.set_core_field(darwin_core.core.__fields__[darwin_core.core.id])
             extension.set_primary_key(darwin_core.core.name)
             if lazy:
                 extension_file = archive.open(extension.filename)
-                darwin_core.__meta__.__extensions__[i].read_file("", source_file=extension_file, lazy=lazy)
+                darwin_core.__meta__.__extensions__[i].read_file("", source_file=extension_file, lazy=lazy, _no_interaction=_no_interaction)
                 extension_file.close()
             else:
                 extension_file = archive.read(extension.filename)
-                darwin_core.__meta__.__extensions__[i].read_file(extension_file.decode())
+                darwin_core.__meta__.__extensions__[i].read_file(extension_file.decode(), _no_interaction=_no_interaction)
         darwin_core.__dataset_meta__ = {
             "metadata": darwin_core.__metadata__
         }
@@ -275,7 +277,8 @@ class DarwinCoreArchive(DarwinCore):
             self, path_to_archive: str,
             encoding: str = "utf-8",
             compression: int = zipfile.ZIP_DEFLATED,
-            compression_level: int = 6
+            compression_level: int = 6,
+            _no_interaction: bool = False,
     ) -> None:
         """
         Generate a Darwin Core Archive file (`.zip` file) using the information of this instance.
@@ -290,6 +293,8 @@ class DarwinCoreArchive(DarwinCore):
             The ZIP compression method to use. Default `zipfile.ZIP_DEFLATED`.
         compression_level : int, optional
             Compression level to use when writing files to the archive. Default `6`.
+        _no_interaction : bool, optional
+            Not to show progress bar if library `tqdm` is installed. Default `False`.
         """
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'a', compression=compression, compresslevel=compression_level) as zip_file:
@@ -297,9 +302,9 @@ class DarwinCoreArchive(DarwinCore):
             if self.metadata is not None:
                 zip_file.writestr(self.__meta__.__metadata__, self.__metadata__.to_xml().encode(encoding))
             if self.core is not None:
-                zip_file.writestr(self.core.filename, self.core.write_file())
+                zip_file.writestr(self.core.filename, self.core.write_file(_no_interaction=_no_interaction))
             for extension in self.extensions:
-                zip_file.writestr(extension.filename, extension.write_file())
+                zip_file.writestr(extension.filename, extension.write_file(_no_interaction=_no_interaction))
             for dataset, metadata in self.dataset_metadata.items():
                 if dataset != "metadata":
                     zip_file.writestr(f"dataset/{dataset}.xml", metadata.to_xml().encode(encoding))

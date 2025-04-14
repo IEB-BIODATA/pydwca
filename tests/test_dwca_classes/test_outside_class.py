@@ -1,3 +1,4 @@
+import logging
 import os.path
 import unittest
 
@@ -108,7 +109,7 @@ class TestOutside(TestOutsideCommon):
         with open(
                 os.path.join(PATH, os.pardir, "example_data", "extension_example1.txt"), "rb"
         ) as file:
-            extension1.read_file("", source_file=file, lazy=True)
+            extension1.read_file("", source_file=file, lazy=True, _no_interaction=True)
         text_2 = """
         <extension encoding="UTF-8" linesTerminatedBy="\\n" fieldsTerminatedBy="\\t" fieldsEnclosedBy="" ignoreHeaderLines="1" rowType="http://example.org/terms/extension2">
         <files>
@@ -122,7 +123,7 @@ class TestOutside(TestOutsideCommon):
         with open(
                 os.path.join(PATH, os.pardir, "example_data", "extension_example2.txt"), "rb"
         ) as file:
-            extension2.read_file("", source_file=file, lazy=True)
+            extension2.read_file("", source_file=file, lazy=True, _no_interaction=True)
         expected_values_1 = [
             ("urn:lsid:example.org:taxname:0", "true", "false"),
             ("urn:lsid:example.org:taxname:8", "false", "true"),
@@ -131,7 +132,7 @@ class TestOutside(TestOutsideCommon):
         with open(
                 os.path.join(PATH, os.pardir, "example_data", "extension_example1.txt"), "rb"
         ) as file:
-            print(file.read())
+            logging.info(file.read())
         self.assertEqual(3, len(list(extension1.insert_sql)), "Not the right amount of rows.")
         for (statement, values), expected in zip(extension1.insert_sql, expected_values_1):
             self.assertEqual(

@@ -1,3 +1,4 @@
+import logging
 import os.path
 import sys
 import tempfile
@@ -428,7 +429,7 @@ class TestTaxon(TestTaxonCommon):
     def test_read_lazy(self):
         self.read_pandas(lazy=True)
         with open(os.path.join(PATH, os.pardir, "example_data", "taxon.txt"), "rb") as file:
-            print(file.read())
+            logging.info(file.read())
         self.assertEqual(
             163460, len(self.taxon), "Data incorrectly read."
         )

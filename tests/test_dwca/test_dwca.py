@@ -22,7 +22,7 @@ class TestDWCA(TestDWCACommon):
         super().__test_merge__()
 
     def test_read_lazy(self):
-        lazy_dwca = DarwinCoreArchive.from_file(os.path.join(PATH, os.pardir, "example_data", "example_archive.zip"), lazy=True)
+        lazy_dwca = DarwinCoreArchive.from_file(os.path.join(PATH, os.pardir, "example_data", "example_archive.zip"), lazy=True, _no_interaction=True)
         self.assertEqual(
             0, len(lazy_dwca.core.__entries__), "Entries populated in core."
         )
@@ -38,16 +38,16 @@ class TestDWCA(TestDWCACommon):
             )
 
     def test_as_pandas(self):
-        df = self.object.core.as_pandas()
+        df = self.object.core.as_pandas(_no_interaction=True)
         self.assertEqual(163460, len(df), "Wrong number of rows")
         self.assertEqual(len(self.object.core.__fields__), len(df.columns), "Wrong number of fields")
         for extension, rows in zip(self.object.extensions, [153621, 98518, 7617]):
-            df = extension.as_pandas()
+            df = extension.as_pandas(_no_interaction=True)
             self.assertEqual(rows, len(df), f"Wrong number of rows at {extension.__class__.__name__}")
             self.assertEqual(len(extension.__fields__), len(df.columns), "Wrong number of fields")
 
     def test_set_pandas_core(self):
-        df = self.object.core.as_pandas()
+        df = self.object.core.as_pandas(_no_interaction=True)
         self.assertEqual(163460, len(df), "Wrong number of rows")
         df = df[0:100]
         self.assertEqual(100, len(df), "Wrong number of rows set")

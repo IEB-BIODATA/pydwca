@@ -33,9 +33,9 @@ class TestTaxonCommon(TestXML):
         self.taxon = Taxon.from_string(self.text)
         with open(os.path.join(PATH, os.pardir, "example_data", "taxon.txt"), "rb") as file:
             if lazy:
-                self.taxon.read_file("", source_file=file, lazy=lazy)
+                self.taxon.read_file("", source_file=file, lazy=lazy, _no_interaction=True)
             else:
-                self.taxon.read_file(file.read().decode(encoding="utf-8"))
+                self.taxon.read_file(file.read().decode(encoding="utf-8"), _no_interaction=True)
         return
 
     def __test_add_field__(self):
