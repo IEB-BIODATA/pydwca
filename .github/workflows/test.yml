@@ -23,10 +23,6 @@ jobs:
         while IFS= read -r file; do
             wget "${{ secrets.CLOUDFRONT_URL }}/${file}" -O tests/example_data/${file}
         done < .github/workflows/test-files-names.txt
-    - name: Test extension example 1
-      run: cat tests/example_data/extension_example1.txt
-    - name: Test taxon
-      run: cat tests/example_data/taxon.txt
     - name: Run tests and collect coverage
       run: |
         pip install coverage
