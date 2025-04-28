@@ -471,7 +471,7 @@ class DataFile(XMLObject, ABC):
                         separator=self.__fields_end__,
                         quote_char=None,
                         schema={field.name: type_to_pl(field.TYPE, lazy=True) for field in self.__fields__},
-                        encoding=self.__encoding__,
+                        encoding=self.__encoding__.lower().replace("-", ""),
                     )
                     self.__lazy__ = True
                     self.__temp_file__ = file.name
