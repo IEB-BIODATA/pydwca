@@ -5,6 +5,7 @@ import zipfile
 
 from dwca.base import DarwinCoreArchive
 from eml import EML
+from eml.resources import EMLResource
 from eml.types import ResponsibleParty, IndividualName
 from test_dwca.test_dwca_common import TestDWCACommon
 
@@ -67,9 +68,38 @@ class TestDWCA(TestDWCACommon):
             "Empty Darwin Core", eml.package_id, "Wrong EML id"
         )
 
+    def test_set_eml_new(self):
+        new_dwca = DarwinCoreArchive("Empty Darwin Core")
+        self.assertIsNone(
+            new_dwca.metadata,
+            "Wrong metadata generated",
+        )
+        new_dwca.set_eml(EML("test_id", "example.org", EMLResource.DATASET))
+        eml = new_dwca.metadata
+        self.assertIsInstance(
+            eml, EML, "Wrong metadata generated"
+        )
+        self.assertEqual(
+            "test_id", eml.package_id, "Wrong EML id"
+        )
+
+    def test_set_eml_replace(self):
+        self.assertIsNotNone(
+            self.object.metadata,
+            "Wrong metadata generated",
+        )
+        self.object.set_eml(EML("test_id", "example.org", EMLResource.DATASET))
+        eml = self.object.metadata
+        self.assertIsInstance(
+            eml, EML, "Wrong metadata generated"
+        )
+        self.assertEqual(
+            "test_id", eml.package_id, "Wrong EML id"
+        )
+
     def test_to_file(self):
         with tempfile.NamedTemporaryFile("wb") as file:
-            self.object.to_file(file.name)
+            self.object.to_file(file.name, _no_interaction=True)
             with zipfile.ZipFile(file.name, "r") as zip_file:
                 self.assertEqual(6, len(zip_file.namelist()), "Error writing DwC-A file.")
                 self.assertCountEqual(
@@ -80,7 +110,7 @@ class TestDWCA(TestDWCACommon):
                 )
         empty_dwca = DarwinCoreArchive("Empty One")
         with tempfile.NamedTemporaryFile("wb") as file:
-            empty_dwca.to_file(file.name)
+            empty_dwca.to_file(file.name, _no_interaction=True)
             with zipfile.ZipFile(file.name, "r") as zip_file:
                 self.assertEqual(1, len(zip_file.namelist()), "Error writing empty DwC-A file.")
                 self.assertCountEqual(
@@ -103,7 +133,7 @@ class TestDWCA(TestDWCACommon):
             contact=[ResponsibleParty(_id="1", referencing=True)]
         )
         with tempfile.NamedTemporaryFile("wb") as file:
-            meta_dwca.to_file(file.name)
+            meta_dwca.to_file(file.name, _no_interaction=True)
             with zipfile.ZipFile(file.name, "r") as zip_file:
                 self.assertEqual(2, len(zip_file.namelist()), "Error writing DwC-A file with metadata.")
                 self.assertCountEqual(

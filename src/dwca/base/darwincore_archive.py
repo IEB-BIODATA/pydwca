@@ -199,15 +199,30 @@ class DarwinCoreArchive(DarwinCore):
 
     def generate_eml(self, filename: str = "eml.xml") -> None:
         """
-        Generate an EML file on the archive
+        Generate an EML file on the archive.
 
         Parameters
         ----------
         filename : str
-            Filename for the EML file to be generated
+            Filename for the EML file to be generated. Defaults to "eml.xml".
         """
         self.__meta__.__metadata__ = filename
         self.__metadata__ = EML(self.id, system="http://gbif.org", resource_type=EMLResource.DATASET)
+        return
+
+    def set_eml(self, eml: EML, filename: str = "eml.xml") -> None:
+        """
+        Set an EML file in the archive.
+
+        Parameters
+        ----------
+        eml : EML
+            Metadata instance to set.
+        filename : str, optional
+            Filename for the EML file. Defaults to "eml.xml".
+        """
+        self.__meta__.__metadata__ = filename
+        self.__metadata__ = eml
         return
 
     @classmethod
