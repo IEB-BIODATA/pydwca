@@ -14,9 +14,9 @@ PATH = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.abspath(os.path.join(PATH, os.pardir, os.pardir, "src")))
 
 project = 'Python Darwin Core Archive'
-copyright = '2024, IEB-BIODATA'
+copyright = '2025, IEB-BIODATA'
 author = 'Juan Saez Hidalgo'
-release = '0.4.1'
+release = '0.5.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
