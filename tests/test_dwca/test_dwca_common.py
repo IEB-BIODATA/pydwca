@@ -18,7 +18,7 @@ PATH = os.path.abspath(os.path.dirname(__file__))
 class TestDWCACommon(TestXML):
     def setUp(self) -> None:
         self.object = DarwinCoreArchive.from_file(
-            os.path.join(PATH, os.pardir, "example_data", "example_archive.zip")
+            os.path.join(PATH, os.pardir, "example_data", "example_archive.zip"), _no_interaction=True
         )
         return
 
@@ -73,13 +73,13 @@ class TestDWCACommon(TestXML):
 
     def __test_merge__(self):
         dataset1 = DarwinCoreArchive.from_file(
-            os.path.join(PATH, os.pardir, "example_data", "dataset_1.zip")
+            os.path.join(PATH, os.pardir, "example_data", "dataset_1.zip"), _no_interaction=True
         )
         dataset2 = DarwinCoreArchive.from_file(
-            os.path.join(PATH, os.pardir, "example_data", "dataset_2.zip")
+            os.path.join(PATH, os.pardir, "example_data", "dataset_2.zip"), _no_interaction=True
         )
         original_expected = DarwinCoreArchive.from_file(
-            os.path.join(PATH, os.pardir, "example_data", "merged_dataset.zip")
+            os.path.join(PATH, os.pardir, "example_data", "merged_dataset.zip"), _no_interaction=True
         )
         metadata = EML(
             package_id="merge_data",

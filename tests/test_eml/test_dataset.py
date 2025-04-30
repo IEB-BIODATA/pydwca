@@ -62,8 +62,8 @@ class TestEMLDataset(TestXML):
         dataset_xml = """
 <dataset>
     <title>A Title</title>
-    <title xml:lang="esp">Un Título</title>
-    <title xml:lang="esp">Un Título Diferente</title>
+    <title xml:lang="spa">Un Título</title>
+    <title xml:lang="spa">Un Título Diferente</title>
     <creator>
         <organizationName>Organization Creator</organizationName>
     </creator>

@@ -30,11 +30,11 @@ class TestKeyword(TestXML):
     def test_parse_complete(self):
         text_xml = """
 <keywordSet>
-    <keyword keywordType="place" xml:lang="esp">Concepción</keyword>
+    <keyword keywordType="place" xml:lang="spa">Concepción</keyword>
     <keyword>database</keyword>
     <keyword>online</keyword>
     <keyword>species</keyword>
-    <keyword xml:lang="esp">especies</keyword>
+    <keyword xml:lang="spa">especies</keyword>
     <keyword keywordType="taxonomic">plantae</keyword>
     <keywordThesaurus>IRIS keyword thesaurus</keywordThesaurus>
 </keywordSet>
@@ -54,7 +54,7 @@ class TestKeyword(TestXML):
             ], keyword.keywords_type,
             "Error on type of keywords"
         )
-        self.assertEqual(Language.ESP, keyword.keywords[4].language, "Error on keyword language")
+        self.assertEqual(Language.SPA, keyword.keywords[4].language, "Error on keyword language")
         self.assertEqualTree(et.fromstring(text_xml), keyword.to_element(), "Error on to element")
 
     def test_keyword_type_default(self):
@@ -116,7 +116,7 @@ class TestKeyword(TestXML):
     def test_parse_invalid_type(self):
         text_xml = """
 <keywordSet>
-    <keyword keywordType="place" xml:lang="esp">Concepción</keyword>
+    <keyword keywordType="place" xml:lang="spa">Concepción</keyword>
     <keyword>database</keyword>
     <keyword>online</keyword>
     <keyword keywordType="species">species</keyword>

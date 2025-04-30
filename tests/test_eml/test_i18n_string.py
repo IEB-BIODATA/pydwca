@@ -15,11 +15,11 @@ class TestI18nString(TestXML):
         self.assertEqual(Language.ENG, variable.language, "Language set incorrectly")
 
     def test_i18n_spanish(self):
-        variable = I18nString("Mi variable", lang=Language.ESP)
+        variable = I18nString("Mi variable", lang=Language.SPA)
         self.assertEqual("Mi variable", variable, "Not equal to string")
         self.assertEqual("Mi variable", str(variable), "Not equal to string")
-        self.assertEqual("<i18n String (Mi variable) [esp]>", repr(variable), "Not equal to string")
-        self.assertEqual(Language.ESP, variable.language, "Language set incorrectly")
+        self.assertEqual("<i18n String (Mi variable) [spa]>", repr(variable), "Not equal to string")
+        self.assertEqual(Language.SPA, variable.language, "Language set incorrectly")
 
     def test_parse(self):
         self.assertIsNone(I18nString.parse(None, {}), "Parsing something")
@@ -38,19 +38,19 @@ class TestI18nString(TestXML):
         )
 
     def test_to_element(self):
-        variable = I18nString("Mi variable", lang=Language.ESP)
+        variable = I18nString("Mi variable", lang=Language.SPA)
         self.assertRaises(RuntimeError, variable.to_element)
         variable.set_tag("title")
         expected = et.Element("title")
         expected.text = "Mi variable"
-        expected.set("{http://www.w3.org/XML/1998/namespace}lang", "esp")
+        expected.set("{http://www.w3.org/XML/1998/namespace}lang", "spa")
         self.assertEqualTree(expected, variable.to_element(), "Error on element")
 
     def test_equal(self):
         variable = I18nString("My variable")
         self.assertEqual(I18nString("My variable"), variable, "Error on equal implementation")
         self.assertNotEqual(
-            I18nString("My variable", lang=Language.ESP),
+            I18nString("My variable", lang=Language.SPA),
             variable,
             "Error on equal implementation"
         )
@@ -74,7 +74,7 @@ class TestI18nString(TestXML):
 
     def test_sort(self):
         first_variable = I18nString("A variable", Language.ENG)
-        second_variable = I18nString("Mi variable", Language.ESP)
+        second_variable = I18nString("Mi variable", Language.SPA)
         self.assertGreater(second_variable, first_variable, "'A' greater than 'M'")
         self.assertGreaterEqual(second_variable, first_variable, "'A' greater equal than 'M'")
         self.assertGreater(second_variable, "A variable", "'A' greater than 'M' (on I18nString and str)")

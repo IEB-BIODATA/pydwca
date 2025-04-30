@@ -42,45 +42,45 @@ class TestPerson(TestXML):
         self.assertEqual(Language.ENG, variable.salutation[0].language, "Language set incorrectly")
 
     def test_individual_name_spanish(self):
-        variable = IndividualName("Saez", first_name="Juan", salutation="MSc", language=Language.ESP)
+        variable = IndividualName("Saez", first_name="Juan", salutation="MSc", language=Language.SPA)
         self.assertEqual("Saez, J. MSc.", str(variable), "Not equal to string")
         self.assertEqual(
-            "<Individual Name {Last Name: Saez [esp], First Name: Juan [esp], Salutation: MSc [esp]}>",
+            "<Individual Name {Last Name: Saez [spa], First Name: Juan [spa], Salutation: MSc [spa]}>",
             repr(variable),
             "Not equal to string"
         )
-        self.assertEqual(Language.ESP, variable.last_name.language, "Language set incorrectly")
-        self.assertEqual(Language.ESP, variable.first_name[0].language, "Language set incorrectly")
-        self.assertEqual(Language.ESP, variable.salutation[0].language, "Language set incorrectly")
+        self.assertEqual(Language.SPA, variable.last_name.language, "Language set incorrectly")
+        self.assertEqual(Language.SPA, variable.first_name[0].language, "Language set incorrectly")
+        self.assertEqual(Language.SPA, variable.salutation[0].language, "Language set incorrectly")
 
     def test_individual_name_multi_language(self):
         variable = IndividualName(
             "Saez", first_name=[
                 I18nString("Juan", "eng"),
-                I18nString("Juan", "esp")
+                I18nString("Juan", "spa")
             ], salutation=[
                 I18nString("MSc", "eng"),
-                I18nString("Don", "esp")
+                I18nString("Don", "spa")
             ]
         )
         self.assertRaises(ValueError, str, variable)
         self.assertEqual("Saez, J. MSc.", variable.lang(Language.ENG), "Not equal to string")
-        self.assertEqual("Saez, J. Don.", variable.lang(Language.ESP), "Not equal to string")
+        self.assertEqual("Saez, J. Don.", variable.lang(Language.SPA), "Not equal to string")
         self.assertEqual(
             "<Individual Name {Last Name: Saez [eng], "
-            "First Name: Juan [eng]/Juan [esp], "
-            "Salutation: MSc [eng]/Don [esp]}>",
+            "First Name: Juan [eng]/Juan [spa], "
+            "Salutation: MSc [eng]/Don [spa]}>",
             repr(variable),
             "Not equal to string"
         )
         self.assertEqual(Language.ENG, variable.last_name.language, "Language set incorrectly")
         self.assertCountEqual(
-            [Language.ENG, Language.ESP],
+            [Language.ENG, Language.SPA],
             [first_name.language for first_name in variable.first_name],
             "Language set incorrectly"
         )
         self.assertCountEqual(
-            [Language.ENG, Language.ESP],
+            [Language.ENG, Language.SPA],
             [salutation.language for salutation in variable.salutation],
             "Language set incorrectly"
         )
@@ -101,41 +101,41 @@ class TestPerson(TestXML):
         example_xml = """
 <individualName>
     <surName>Saez</surName>
-    <givenName xml:lang="esp">Juan</givenName>
-    <salutation xml:lang="esp">MSc</salutation>
+    <givenName xml:lang="spa">Juan</givenName>
+    <salutation xml:lang="spa">MSc</salutation>
 </individualName>
         """
         variable = IndividualName.from_string(example_xml)
         self.assertRaises(ValueError, str, variable)
         self.assertEqual("Saez", variable.lang(Language.ENG), "Not equal to string")
-        self.assertEqual("Saez, J. MSc.", variable.lang(Language.ESP), "Not equal to string")
+        self.assertEqual("Saez, J. MSc.", variable.lang(Language.SPA), "Not equal to string")
         self.assertEqual(Language.ENG, variable.last_name.language, "Language set incorrectly")
-        self.assertEqual(Language.ESP, variable.first_name[0].language, "Language set incorrectly")
-        self.assertEqual(Language.ESP, variable.salutation[0].language, "Language set incorrectly")
+        self.assertEqual(Language.SPA, variable.first_name[0].language, "Language set incorrectly")
+        self.assertEqual(Language.SPA, variable.salutation[0].language, "Language set incorrectly")
 
     def test_to_element(self):
-        variable = IndividualName("Saez", language=Language.ESP)
+        variable = IndividualName("Saez", language=Language.SPA)
         expected = et.Element("individualName")
         sur_name = et.Element("surName")
         sur_name.text = "Saez"
-        sur_name.set("{http://www.w3.org/XML/1998/namespace}lang", "esp")
+        sur_name.set("{http://www.w3.org/XML/1998/namespace}lang", "spa")
         expected.append(sur_name)
         self.assertEqualTree(expected, variable.to_element(), "Error on element")
     
     def test_to_element_complete(self):
-        variable = IndividualName("Saez", first_name="Juan", salutation="Don", language=Language.ESP)
+        variable = IndividualName("Saez", first_name="Juan", salutation="Don", language=Language.SPA)
         expected = et.Element("individualName")
         sur_name = et.Element("surName")
         sur_name.text = "Saez"
-        sur_name.set("{http://www.w3.org/XML/1998/namespace}lang", "esp")
+        sur_name.set("{http://www.w3.org/XML/1998/namespace}lang", "spa")
         expected.append(sur_name)
         first_name = et.Element("givenName")
         first_name.text = "Juan"
-        first_name.set("{http://www.w3.org/XML/1998/namespace}lang", "esp")
+        first_name.set("{http://www.w3.org/XML/1998/namespace}lang", "spa")
         expected.append(first_name)
         salutation = et.Element("salutation")
         salutation.text = "Don"
-        salutation.set("{http://www.w3.org/XML/1998/namespace}lang", "esp")
+        salutation.set("{http://www.w3.org/XML/1998/namespace}lang", "spa")
         expected.append(salutation)
         self.assertEqualTree(expected, variable.to_element(), "Error on complete element")
 
@@ -143,23 +143,23 @@ class TestPerson(TestXML):
         variable = IndividualName(
             "Saez",
             first_name=[
-                I18nString("Juan", Language.ESP),
+                I18nString("Juan", Language.SPA),
                 I18nString("John", Language.ENG),
             ],
             salutation=[
-                I18nString("Don", Language.ESP),
+                I18nString("Don", Language.SPA),
                 I18nString("Mr.", Language.ENG),
             ],
-            language=Language.ESP
+            language=Language.SPA
         )
         expected = et.Element("individualName")
         sur_name = et.Element("surName")
         sur_name.text = "Saez"
-        sur_name.set("{http://www.w3.org/XML/1998/namespace}lang", "esp")
+        sur_name.set("{http://www.w3.org/XML/1998/namespace}lang", "spa")
         expected.append(sur_name)
         first_name_1 = et.Element("givenName")
         first_name_1.text = "Juan"
-        first_name_1.set("{http://www.w3.org/XML/1998/namespace}lang", "esp")
+        first_name_1.set("{http://www.w3.org/XML/1998/namespace}lang", "spa")
         expected.append(first_name_1)
         first_name_2 = et.Element("givenName")
         first_name_2.text = "John"
@@ -167,7 +167,7 @@ class TestPerson(TestXML):
         expected.append(first_name_2)
         salutation_1 = et.Element("salutation")
         salutation_1.text = "Don"
-        salutation_1.set("{http://www.w3.org/XML/1998/namespace}lang", "esp")
+        salutation_1.set("{http://www.w3.org/XML/1998/namespace}lang", "spa")
         expected.append(salutation_1)
         salutation_2 = et.Element("salutation")
         salutation_2.text = "Mr."
@@ -177,7 +177,7 @@ class TestPerson(TestXML):
 
     def test_lang(self):
         variable = IndividualName("Saez")
-        self.assertRaises(AssertionError, variable.lang, Language.ESP)
+        self.assertRaises(AssertionError, variable.lang, Language.SPA)
         self.assertEqual("Saez", variable.lang(Language.ENG), "Error on simple call to lang")
 
 

@@ -83,7 +83,10 @@ class DWCLanguage(Field):
         Language
             Value as a Language object.
         """
-        return Language.get_language(value)
+        try:
+            return Language.get_language(value)
+        except NotImplementedError:
+            return Language.UND
 
     def unformat(self, value: Language) -> str:
         """

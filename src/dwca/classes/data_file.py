@@ -444,7 +444,7 @@ class DataFile(XMLObject, ABC):
         self.__fields__ = ordered_fields
         return
 
-    def read_file(self, content: str, source_file: BinaryIO = None, lazy: bool = False) -> None:
+    def read_file(self, content: str, source_file: BinaryIO = None, lazy: bool = False, _no_interaction: bool = False) -> None:
         """
         Read the content of the file specified in `files` parameters (:meth:`filename`).
 
@@ -456,6 +456,8 @@ class DataFile(XMLObject, ABC):
             File to read in case of laziness.
         lazy : bool, optional
             Read the file in lazy evaluation mode. Default `False`.
+        _no_interaction : bool, optional
+            Not to show progress bar if library `tqdm` is installed. Default `False`.
         """
         if lazy:
             try:
@@ -469,6 +471,7 @@ class DataFile(XMLObject, ABC):
                         separator=self.__fields_end__,
                         quote_char=None,
                         schema={field.name: type_to_pl(field.TYPE, lazy=True) for field in self.__fields__},
+                        encoding=self.__encoding__.lower().replace("-", ""),
                     )
                     self.__lazy__ = True
                     self.__temp_file__ = file.name
@@ -479,10 +482,14 @@ class DataFile(XMLObject, ABC):
         else:
             lines = content.split(self.__lines_end__)
             lines = list(filter(lambda x: x != "", lines))
-            for line in iterate_with_bar(
+            if not _no_interaction:
+                iterator = iterate_with_bar(
                     lines[self.__ignore_header_lines__:],
                     desc=f"Reading file {self.filename}", unit="entry"
-            ):
+                )
+            else:
+                iterator = lines[self.__ignore_header_lines__:]
+            for line in iterator:
                 kwargs = dict()
                 for field, value in zip(self.__fields__, line.split(self.__fields_end__)):
                     kwargs[field.name] = field.format(value)
@@ -490,7 +497,7 @@ class DataFile(XMLObject, ABC):
         return
 
 
-    def write_file(self) -> str:
+    def write_file(self, _no_interaction: bool = False) -> str:
         """
         Write the content as a text using format information on this object.
 
@@ -504,12 +511,17 @@ class DataFile(XMLObject, ABC):
             output_file += f"###{self.__lines_end__}" * (self.__ignore_header_lines__ - 1)
             header = [field.name for field in self.__fields__]
             output_file += f"{self.__fields_end__}".join(header) + self.__lines_end__
-        for entry in iterate_with_bar(self.__entries__, desc=f"Writing data {self.uri}", unit="line"):
+        if not _no_interaction:
+            iterator = iterate_with_bar(self.__entries__, desc=f"Writing data {self.uri}", unit="line")
+        else:
+            iterator = self.__entries__
+        for entry in iterator:
             line = list()
             for field in self.__fields__:
                 try:
                     line.append(field.unformat(getattr(entry, field.name)))
                 except AssertionError:  # In case the type got lost in pandas
+                    # TODO: field.TYPE will not work for Typing package
                     line.append(field.unformat(field.TYPE(getattr(entry, field.name))))
                 except Exception as e:
                     print(f"Error on {field.name} with value {getattr(entry, field.name)}", file=sys.stderr)
@@ -634,6 +646,7 @@ class DataFile(XMLObject, ABC):
         if self.__type__ == DataFileType.EXTENSION:
             foreign_key = f""",
             FOREIGN KEY ("{primary_key}") REFERENCES \"{self.__primary_key__}\""""
+        # TODO: Fix foreign key is not necessary primary key
         self.__sql__ = f"""CREATE TABLE "{self.name}" (
             {sql_columns}
             PRIMARY KEY ("{primary_key}"){foreign_key}

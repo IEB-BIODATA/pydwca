@@ -88,19 +88,19 @@ class TaxonomicCoverage(EMLObject):
 
         Parameters
         ----------
-        _id: int
+        _id: str
             The identifier for this taxon from an authority.
         provider: str
             The taxonomic authority from which the taxonId can be retrieved, defined as the namespace URI.
         """
-        def __init__(self, _id: int, provider: str) -> None:
+        def __init__(self, _id: str, provider: str) -> None:
             self.__id__ = _id
             self.__provider__ = provider
             return
 
         @property
-        def id(self) -> int:
-            """int: The identifier for this taxon from an authority."""
+        def id(self) -> str:
+            """str: The identifier for this taxon from an authority."""
             return self.__id__
 
         @property
@@ -109,7 +109,7 @@ class TaxonomicCoverage(EMLObject):
             return self.__provider__
 
         def __eq__(self, other: Any) -> bool:
-            if isinstance(other, int):
+            if isinstance(other, str):
                 return self.id == other
             elif isinstance(other, TaxonomicCoverage.TaxonID):
                 return self.id == other.id and self.provider == other.provider
@@ -337,7 +337,7 @@ class TaxonomicCoverage(EMLObject):
             The taxonomic rank name being described.
         common_name: List[str], optional
             Specification of applicable xml_common names.
-        taxon_id: List[Tuple[int, str]], optional
+        taxon_id: List[Tuple[str, str]], optional
             Element holds an ID and ID-provider for this taxon.
         classification: List[TaxonClassification], optional
             Taxonomic Classification field is self-referencing to allow for an arbitrary depth of rank, down to species.
@@ -349,7 +349,7 @@ class TaxonomicCoverage(EMLObject):
                 rank_name: str = None,
                 rank_value: str = None,
                 common_name: List[str] = None,
-                taxon_id: List[Tuple[int, str]] = None,
+                taxon_id: List[Tuple[str, str]] = None,
                 classification: List[TaxonomicCoverage.TaxonomicClassification] = None,
         ) -> None:
             super().__init__()
@@ -433,7 +433,7 @@ class TaxonomicCoverage(EMLObject):
             taxon_id = list()
             for taxon_elem in element.findall("taxonId", nmap):
                 taxon_id.append((
-                    int(taxon_elem.text), taxon_elem.get("provider")
+                    taxon_elem.text, taxon_elem.get("provider")
                 ))
             classifications = list()
             for classification_elem in element.findall("taxonomicClassification"):

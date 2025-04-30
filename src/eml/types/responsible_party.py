@@ -6,8 +6,7 @@ from warnings import warn
 from lxml import etree as et
 
 from xml_common.utils import CamelCaseEnum
-from eml.types import EMLObject, _NoTagObject, Scope, IndividualName, OrganizationName, PositionName, EMLAddress, \
-    EMLPhone, I18nString
+from eml.types import EMLObject, _NoTagObject, Scope, IndividualName, EMLAddress, EMLPhone, I18nString
 
 
 class Role(CamelCaseEnum):
@@ -46,9 +45,9 @@ class ResponsibleParty(EMLObject, _NoTagObject):
         System attribute of reference.
     individual_name : IndividualName, optional
         The full name of the person being described.
-    organization_name : OrganizationName, optional
+    organization_name : I18nString, optional
         The full name of the organization being described.
-    position_name : PositionName, optional
+    position_name : I18nString, optional
         The name of the title or position associated with the resource.
     address : List[EMLAddress], optional
         A list of full addresses information for a given responsible party entry.
@@ -66,8 +65,8 @@ class ResponsibleParty(EMLObject, _NoTagObject):
             referencing: bool = False,
             references_system: str = None,
             individual_name: IndividualName = None,
-            organization_name: OrganizationName = None,
-            position_name: PositionName = None,
+            organization_name: I18nString = None,
+            position_name: I18nString = None,
             address: List[EMLAddress] = None,
             phone: List[EMLPhone] = None,
             mail: List[Union[str, I18nString]] = None,
@@ -102,13 +101,13 @@ class ResponsibleParty(EMLObject, _NoTagObject):
         return self.__individual__
 
     @property
-    def organization_name(self) -> OrganizationName:
-        """OrganizationName: The full name of the organization being described."""
+    def organization_name(self) -> I18nString:
+        """I18nString: The full name of the organization being described."""
         return self.__organization__
 
     @property
-    def position_name(self) -> PositionName:
-        """PositionName: The name of the title or position associated with the resource."""
+    def position_name(self) -> I18nString:
+        """I18nString: The name of the title or position associated with the resource."""
         return self.__position__
 
     @property
@@ -180,8 +179,8 @@ class ResponsibleParty(EMLObject, _NoTagObject):
             system=element.get("system", None),
             referencing=False,
             individual_name=IndividualName.parse(element.find("individualName", None), nmap),
-            organization_name=OrganizationName.parse(element.find("organizationName", None), nmap),
-            position_name=PositionName.parse(element.find("positionName", None), nmap),
+            organization_name=I18nString.parse(element.find("organizationName", None), nmap),
+            position_name=I18nString.parse(element.find("positionName", None), nmap),
             address=[EMLAddress.parse(address, nmap) for address in element.findall("address", nmap)],
             phone=[EMLPhone.parse(phone, nmap) for phone in element.findall("phone", nmap)],
             mail=[I18nString.parse(mail, nmap) for mail in element.findall("electronicMailAddress", nmap)],
@@ -209,8 +208,10 @@ class ResponsibleParty(EMLObject, _NoTagObject):
             if self.individual_name is not None:
                 resp_party.append(self.individual_name.to_element())
             if self.organization_name is not None:
+                self.organization_name.set_tag("organizationName")
                 resp_party.append(self.organization_name.to_element())
             if self.position_name is not None:
+                self.position_name.set_tag("positionName")
                 resp_party.append(self.position_name.to_element())
             for address in self.address:
                 resp_party.append(address.to_element())
