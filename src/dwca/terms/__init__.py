@@ -5,7 +5,7 @@ from dwca.terms.record_level import DWCType, DWCModified, DWCLanguage, \
     DWCReferences, DWCInstitution, DWCCollection, DWCDataset, \
     DWCInstitutionCode, DWCCollectionCode, DWCDatasetName, \
     DWCOwnerInstitutionCode, DWCBasisOfRecord, DWCInformationWithheld, \
-    DWCDataGeneralizations, DWCDynamicProperties
+    DWCDataGeneralizations, DWCDynamicProperties, DWCSource
 from dwca.terms.occurrence import OccurrenceID, CatalogNumber, RecordNumber, \
     RecordedBy, RecordedByID, IndividualCount, OrganismQuantity, \
     OrganismQuantityType, OccurrenceSex, LifeStage, ReproductiveCondition, \
@@ -66,3 +66,6 @@ from dwca.terms.chronometric_age import ChronometricAgeID, VerbatimChronometricA
     ChronometricAgeUncertaintyMethod, MaterialDated, MaterialDatedID, MaterialDatedRelationship, \
     ChronometricAgeDeterminedBy, ChronometricAgeDeterminedDate, ChronometricAgeReferences, \
     ChronometricAgeRemarks
+from dwca.terms.species_profile import IsMarine, IsFreshwater, IsTerrestrial, IsInvasive, IsHybrid,  \
+    IsExtinct, LivingPeriod, AgeInDays, SizeInMillimeters, MassInGrams, LifeForm, SpeciesSex
+from dwca.terms.distribution import ThreatStatus, AppendixCITES

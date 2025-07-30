@@ -61,12 +61,15 @@ class DWCLanguage(Field):
         Specifies a value to use if one is not supplied.
     vocabulary: str, optional
         An URI for a vocabulary that the source values for this Field are based on.
+    two_letter_coding: bool, optional
+        Specifies whether or not to use two letters coding rather than three letters coding.
     """
     URI = "http://purl.org/dc/elements/1.1/language"
     TYPE = Language
 
-    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None, two_letter_coding: bool = False) -> None:
         super().__init__(index, default, vocabulary)
+        self.__two_letter__ = two_letter_coding
         return
 
     def format(self, value: str) -> Language:
@@ -102,7 +105,10 @@ class DWCLanguage(Field):
         str
             String representation of Language.
         """
-        return value.name.lower()
+        if self.__two_letter__:
+            return value.two_letters
+        else:
+            return value.name.lower()
 
 
 class DWCLicense(Field):
@@ -254,6 +260,7 @@ class DWCCollection(Field):
 
 class DWCDataset(Field):
     """
+    An identifier for the set of data.
     An identifier for the set of data.
 
     Parameters
@@ -435,6 +442,27 @@ class DWCDynamicProperties(Field):
     """
     URI = "http://rs.tdwg.org/dwc/terms/dynamicProperties"
     TYPE = Dict[str, Any]
+
+    def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
+        super().__init__(index, default, vocabulary)
+        return
+
+
+class DWCSource(Field):
+    """
+    Source reference of this species profile, a url or full publication citation.
+
+    Parameters
+    ----------
+    index : int | str
+        Specifies the position of the column in the row.
+    default: TYPE, optional
+        Specifies a value to use if one is not supplied.
+    vocabulary: str, optional
+        An URI for a vocabulary that the source values for this Field are based on.
+    """
+    URI = "http://purl.org/dc/terms/source"
+    TYPE = str
 
     def __init__(self, index: int | str, default: TYPE = None, vocabulary: str = None) -> None:
         super().__init__(index, default, vocabulary)
