@@ -153,7 +153,7 @@ class TestOutside(TestOutsideCommon):
             ("urn:lsid:example.org:taxname:41", "false")
         ]
         # Difference between local and GitHub Action, it appears to be polar related
-        self.assertLessEqual(2, len(list(extension1.insert_sql)), "Not the right amount of rows.")
+        self.assertLessEqual(2, len(list(extension2.insert_sql)), "Not the right amount of rows.")
         for (statement, values), expected in zip(extension2.insert_sql, expected_values_2):
             self.assertEqual(
                 self.normalize_sql("""
