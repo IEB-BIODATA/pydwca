@@ -11,4 +11,6 @@ from dwca.classes.taxon import Taxon
 from dwca.classes.resource_relationship import ResourceRelationship
 from dwca.classes.measurement_or_fact import MeasurementOrFact
 from dwca.classes.chronometric_age import ChronometricAge
+from dwca.classes.species_profile import SpeciesProfile
+from dwca.classes.distribution import Distribution
 from dwca.classes.outside_class import OutsideClass

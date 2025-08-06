@@ -438,7 +438,7 @@ class TestEML(TestXML):
         self.initialize_resource()
         self.assertIsNone(self.empty_eml.resource.coverage, "Coverage from nowhere")
         self.empty_eml.set_coverage(EMLCoverage(
-            temporal=TemporalCoverage(single_datetime=[dt.date.today()])
+            temporal=TemporalCoverage(single_datetime=[dt.date(year=2020, month=2, day=8)],)
         ))
         self.assertIsNotNone(
             self.empty_eml.resource.coverage,

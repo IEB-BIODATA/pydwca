@@ -3,15 +3,97 @@ from __future__ import annotations
 from enum import Enum
 
 
-ABBREVIATIONS = {
-    "es": "spa",
-    "spanish": "spa",
-    "en": "eng",
-    "english": "eng",
-    "": "und",
+TWO_LETTERS = {
+    "en": "ENG",
+    "ja": "JPN",
+    "es": "SPA",
+    "it": "ITA",
+    "ru": "RUS",
+    "pl": "POL",
+    "fi": "FIN",
+    "pt": "POR",
+    "ca": "CAT",
+    "tr": "TUR",
+    "no": "NOR",
+    "sv": "SWE",
+    "nb": "NOB",
+    "nn": "NNO",
+    "co": "COS",
+    "hu": "HUN",
+    "af": "AFR",
+    "hr": "HRV",
+    "sl": "SLV",
+    "gl": "GLG",
+    "gd": "GLA",
+    "da": "DAN",
+    "et": "EST",
+    "ar": "ARA",
+    "he": "HEB",
+    "sr": "SRP",
+    "mt": "MLT",
+    "mg": "MLG",
+    "vi": "VIE",
+    "wo": "WOL",
+    "tl": "TGL",
+    "ko": "KOR",
+    "fo": "FAO",
+    "sm": "SMO",
+    "so": "SOM",
+    "km": "KHM",
+    "te": "TEL",
+    "ta": "TAM",
+    "id": "IND",
+    "ty": "TAH",
+    "sw": "SWA",
+    "dv": "DIV",
+    "ml": "MAL",
+    "th": "THA",
+    "jv": "JAV",
+    "mr": "MAR",
+    "gu": "GUJ",
+    "to": "TON",
+    "fj": "FIJ",
+    "sd": "SND",
+    "kn": "KAN",
+    "si": "SIN",
+    "mh": "MAH",
+    "bg": "BUL",
+    "kl": "KAL",
+    "gv": "GLV",
+    "iu": "IKU",
+    "bn": "BEN",
+    "ch": "CHA",
+    "lt": "LIT",
+    "lv": "LAV",
+    "ky": "KIR",
+    "am": "AMH",
+    "uk": "UKR",
+    "ve": "VEN",
+    "ks": "KAS",
+    "ne": "NEP",
+    "cr": "CRE",
+    "ee": "EWE",
+    "or": "ORI",
+    "eo": "EPO",
+    "de": "DEU",
+    "nl": "NLD",
+    "fr": "FRA",
+    "el": "ELL",
+    "cs": "CES",
+    "sq": "SQI",
+    "ka": "KAT",
+    "zh": "ZHO",
+    "eu": "EUS",
+    "ro": "RON",
+    "sk": "SLK",
+    "is": "ISL",
+    "mi": "MRI",
+    "cy": "CYM",
+    "ms": "MSA",
+    "fa": "FAS",
+    "my": "MYA",
+    "mk": "MKD",
 }
-
-# TODO: Change all example from esp to spa
 
 
 class Language(Enum):
@@ -393,11 +475,22 @@ class Language(Enum):
 
     @staticmethod
     def get_language(abbreviation: str) -> Language:
+        if abbreviation == "":
+            return Language.UND
         for lang in Language:
             try:
-                if lang.name.lower() == ABBREVIATIONS[abbreviation.lower()]:
+                if lang.name.lower() == TWO_LETTERS[abbreviation.lower()].lower():
                     return lang
             except KeyError:
                 if lang.name.lower() == abbreviation.lower():
                     return lang
+                elif lang.value.lower() == abbreviation.lower():
+                    return lang
         raise NotImplementedError(f"{abbreviation} language not implemented yet")
+
+    @property
+    def two_letters(self):
+        for key, value in TWO_LETTERS.items():
+            if value == self.name:
+                return key
+        raise ValueError(f"{repr(self)} does not have a two-letters abbreviation in ISO 639-1")

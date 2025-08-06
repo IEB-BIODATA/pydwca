@@ -16,7 +16,7 @@ from lxml import etree as et
 from dwca.terms import Field, DWCType, DWCModified, DWCLanguage, DWCLicense, DWCRightsHolder, DWCAccessRights, \
     DWCBibliographicCitation, DWCReferences, DWCInstitution, DWCCollection, DWCDataset, DWCInstitutionCode, \
     DWCCollectionCode, DWCDatasetName, DWCOwnerInstitutionCode, DWCBasisOfRecord, DWCInformationWithheld, \
-    DWCDataGeneralizations, DWCDynamicProperties, OutsideTerm
+    DWCDataGeneralizations, DWCDynamicProperties, OutsideTerm, DWCSource
 from xml_common import XMLObject
 from xml_common.utils import iterate_with_bar, type_to_pl, format_to_sql
 
@@ -71,7 +71,7 @@ class DataFile(XMLObject, ABC):
         DWCInstitution, DWCCollection, DWCDataset, DWCInstitutionCode,
         DWCCollectionCode, DWCDatasetName, DWCOwnerInstitutionCode,
         DWCBasisOfRecord, DWCInformationWithheld, DWCDataGeneralizations,
-        DWCDynamicProperties,
+        DWCDynamicProperties, DWCSource
     ]
 
     class Entry:
