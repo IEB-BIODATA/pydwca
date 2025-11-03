@@ -65,7 +65,7 @@ To read a DwC Archive file in `.zip` format, use the class `DarwinCoreArchive`:
 ```python
 from dwca import DarwinCoreArchive
 
-darwin_core = DarwinCoreArchive.from_archive("DwCArchive.zip")
+darwin_core = DarwinCoreArchive.from_file("DwCArchive.zip")
 ```
 
 A more extended example is in the library documentation at [https://pydwca.readthedocs.io/en/latest/usage.html](https://pydwca.readthedocs.io/en/latest/usage.html).
