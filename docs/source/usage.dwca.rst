@@ -23,7 +23,7 @@ To read this file you can:
 
     from dwca import DarwinCoreArchive
 
-    darwin_core = DarwinCoreArchive.from_archive("DwCArchive.zip")
+    darwin_core = DarwinCoreArchive.from_file("DwCArchive.zip")
 
 To check the components on it:
 
